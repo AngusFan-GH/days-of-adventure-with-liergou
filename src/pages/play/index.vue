@@ -1,16 +1,14 @@
 <template>
   <view class="container">
-    <view>首页</view>
-    <custom-tab-bar :current="0"></custom-tab-bar>
+    <view>玩</view>
+    <custom-tab-bar :current="1"></custom-tab-bar>
   </view>
 </template>
 
 <script>
 import { customTabBar } from "@/components/custom-tab-bar/custom-tab-bar.vue";
-import listCard from "@/components/list-card/list-card.vue";
 export default {
   components: {
-    listCard,
     customTabBar,
   },
   data() {
