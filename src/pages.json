@@ -22,12 +22,23 @@
 			}
 		},
 		{
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "订单信息"
+			}
+		},
+		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "授权登录"
 			}
 		}
 	],
+	"permission": {
+		"scope.userLocation": {
+			"desc": "你的位置信息将用于小程序位置接口的效果展示"
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "与李二狗一起探险的日子",

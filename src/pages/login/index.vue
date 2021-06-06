@@ -30,18 +30,11 @@
 </template>
 
 <script>
-import { appId } from "@/common/config";
-import WXBizDataCrypt from "@/common/WXBizDataCrypt";
-
 export default {
   data() {
     return {
       step: 1,
-      openId: "",
-      sessionKey: "",
       userInfo: null,
-      encryptedData: "",
-      iv: "",
     };
   },
   methods: {
@@ -50,7 +43,7 @@ export default {
         desc: "必须授权才可以继续使用",
         success: (res) => {
           this.userInfo = res.userInfo;
-          console.log("userInfo", this.userInfo);
+          console.log("getUserProfile", this.userInfo);
           this.getWeChatOpenId();
         },
         fail: () => {
@@ -64,18 +57,25 @@ export default {
     getWeChatOpenId() {
       uni.login({
         provider: "weixin",
-        success: (loginRes) => {
-          console.log(loginRes);
+        success: (res) => {
           this.$u.api
             .getWeChatOpenId({
-              code: loginRes.code,
+              code: res.code,
             })
-            .then((res) => {
-              this.openId = res.data.openId;
-              this.sessionKey = res.data.sessionKey;
-              uni.setStorageSync("openId", this.openId);
-              if (res.data.phone) {
-                uni.setStorageSync("phone", res.data.phone);
+            .then((result) => {
+              console.log("getWeChatOpenId", result);
+              const { token, user } = result;
+              uni.setStorageSync("token", token);
+              this.$u.api
+                .updateUserInfo({
+                  userInfo: this.userInfo,
+                })
+                .then((res) => console.log(res))
+                .catch((err) => console.error(err));
+              uni.setStorageSync("openId", user.openId);
+              if (user.phoneNumber) {
+                uni.setStorageSync("phone", user.phoneNumber);
+                this.navigateBack();
               } else {
                 this.step = 2;
                 uni.showToast({
@@ -86,20 +86,42 @@ export default {
             })
             .catch((err) => {
               console.error(err);
-              this.step = 2;
             });
+        },
+        fail: (err) => {
+          console.error(err);
         },
       });
     },
     getPhoneNumber(e) {
-      console.log(e);
+      console.log("getPhoneNumber", e);
       if (e.detail.errMsg == "getPhoneNumber:ok") {
         const { encryptedData, iv } = e.detail;
-        const pc = new WXBizDataCrypt(appId, this.sessionKey);
-        const data = pc.decryptData(encryptedData, iv);
-        console.log("解密后 data: ", data);
-        // 登录
+        this.$u.api
+          .decryptUserInfo({
+            encryptedData,
+            iv,
+          })
+          .then((res) => {
+            console.log("decryptUserInfo", res);
+            this.navigateBack();
+          })
+          .catch((err) => console.error(err));
       }
+    },
+    navigateBack() {
+      uni.navigateBack({
+        delta: 1,
+        success: (res) => {
+          console.log("navigateBack", res);
+        },
+        fail: (res) => {
+          console.log("navigateBack", res);
+          uni.switchTab({
+            url: "/pages/index/index",
+          });
+        },
+      });
     },
   },
 };

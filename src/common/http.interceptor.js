@@ -11,7 +11,7 @@ const install = (Vue, vm) => {
 		originalData: false,
 		loadingMask: true,
 		header: {
-			'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
+			'content-type': 'application/json;charset=UTF-8'
 		}
 	});
 
@@ -20,31 +20,42 @@ const install = (Vue, vm) => {
 		const token = uni.getStorageSync('token');
 		if (token) {
 			config.data.token = token;
+		} else if (!config.url.includes('code2session')) {
+			uni.redirectTo({
+				url: '/pages/login/index'
+			});
 		}
 		return config;
 	};
 
 	Vue.prototype.$u.http.interceptor.response = (res) => {
 		console.log('response:', res);
-		if (res.code == 1000) {
-			return res;
-		} else if (res.code == 201) {
-			vm.$u.toast(res.msg);
-			return res;
-		} else if (res.code == 500) {
-			vm.$u.toast(res.msg);
-			return res;
-		} else if (res.code == 9003) {
+		if (res.code == 200) {
+			return res.result;
+		} else if (res.code == 401) {
 			let pages = getCurrentPages();
 			let current = pages[pages.length - 1];
-			if (current.route !== 'pages/login') {
+			if (current.route !== 'pages/login/index') {
 				uni.redirectTo({
-					url: '/pages/login'
+					url: '/pages/login/index'
+				});
+				uni.showToast({
+					title: "登录失效，请重新授权",
+					icon: "none",
 				});
 			}
 			return false;
+		} else if (String(res.code).startsWith(50)) {
+			uni.showToast({
+				title: res.message || "服务器错误，请稍后重试",
+				icon: "none",
+			});
+			return false;
 		} else {
-			vm.$u.toast(res.msg);
+			uni.showToast({
+				title: res.message,
+				icon: "none",
+			});
 			return res;
 		}
 	};
