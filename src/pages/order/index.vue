@@ -79,9 +79,22 @@
     <view class="info-item">
       <view class="common-usertable-wrapper">
         <view class="mobile-item u-flex u-padding-right-30">
-          <view class="prefix-phone">手机号码</view>
+          <view class="prefix">联系人</view>
           <u-input
-            class="u-flex-1"
+            class="u-flex-1 u-margin-right-18"
+            placeholder="请输入联系人姓名"
+            v-model="name"
+            type="text"
+            input-align="right"
+            maxlength="20"
+            height="60"
+          />
+          <u-icon name="arrow-right"></u-icon>
+        </view>
+        <view class="mobile-item u-flex u-padding-right-30">
+          <view class="prefix">手机号码</view>
+          <u-input
+            class="u-flex-1 u-margin-right-18"
             placeholder="请输入手机号"
             v-model="phone"
             type="tel"
@@ -151,10 +164,13 @@ export default {
   },
   data() {
     return {
+      phone: uni.getStorageSync("phone"),
+      name:
+        uni.getStorageSync("userInfo") &&
+        uni.getStorageSync("userInfo").nickName,
       screenings: {},
       price: 0,
       count: 1,
-      phone: uni.getStorageSync("phone"),
       remark: "",
       customStyle: {
         backgroundColor: "#f63",
@@ -189,7 +205,10 @@ export default {
       this.$u.api
         .createPay({
           itemCount: this.count,
-          payerName: "test",
+          payerName:
+            this.name ||
+            (uni.getStorageSync("userInfo") &&
+              uni.getStorageSync("userInfo").nickName),
           payerPhone: this.phone,
           productItemId: this.screenings.productItemId,
         })
@@ -227,7 +246,10 @@ export default {
         fail: (err) => {
           console.error(err);
           uni.showToast({
-            title: "支付失败，请重试",
+            title:
+              err.errMsg === "requestPayment:fail cancel"
+                ? "取消支付"
+                : "支付失败，请重试",
             icon: "none",
           });
         },
@@ -352,7 +374,7 @@ export default {
     }
   }
   .common-usertable-wrapper {
-    .prefix-phone {
+    .prefix {
       width: 160rpx;
       font-size: 30rpx;
       line-height: 40rpx;

@@ -44,6 +44,7 @@ export default {
         success: (res) => {
           this.userInfo = res.userInfo;
           console.log("getUserProfile", this.userInfo);
+          uni.setStorageSync("userInfo", res.userInfo);
           this.weChatLogin();
         },
         fail: () => {
