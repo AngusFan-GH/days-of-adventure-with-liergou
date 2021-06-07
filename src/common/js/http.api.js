@@ -6,18 +6,12 @@ const install = (Vue, vm) => {
 	 * 登录凭证校验
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/code2sessionUsingGET 
 	 */
-	let getWeChatOpenId = (params = {}) => vm.$u.get('/market-boot/app/user/code2session', params);
+	let weChatLogin = (params = {}) => vm.$u.get('/market-boot/app/user/code2session', params);
 
 	/**
-	 * 商品搜索
-	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/searchUsingPOST
-	 */
-	let getCardList = (params = {}) => vm.$u.post('/market-boot/app/productitem/search', params);
-
-	/**
-	 * 解密用户信息
-	 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/decryptUsingPOST
-	 */
+		 * 解密用户信息
+		 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/decryptUsingPOST
+		 */
 	let decryptUserInfo = (params = {}) => vm.$u.post('/market-boot/app/user/decryptUserInfo', params);
 
 	/**
@@ -25,6 +19,12 @@ const install = (Vue, vm) => {
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/decryptUsingPOST
 	 */
 	let updateUserInfo = (params = {}) => vm.$u.post('/market-boot/app/user/update', params);
+
+	/**
+	 * 商品搜索
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/searchUsingPOST
+	 */
+	let getCardList = (params = {}) => vm.$u.post('/market-boot/app/productitem/search', params);
 
 	/**
 	 * 创建支付
@@ -46,7 +46,7 @@ const install = (Vue, vm) => {
 
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = {
-		getWeChatOpenId,
+		weChatLogin,
 		getCardList,
 		decryptUserInfo,
 		createPay,

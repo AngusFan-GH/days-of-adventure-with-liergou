@@ -44,7 +44,7 @@ export default {
         success: (res) => {
           this.userInfo = res.userInfo;
           console.log("getUserProfile", this.userInfo);
-          this.getWeChatOpenId();
+          this.weChatLogin();
         },
         fail: () => {
           uni.showToast({
@@ -54,16 +54,16 @@ export default {
         },
       });
     },
-    getWeChatOpenId() {
+    weChatLogin() {
       uni.login({
         provider: "weixin",
         success: (res) => {
           this.$u.api
-            .getWeChatOpenId({
+            .weChatLogin({
               code: res.code,
             })
             .then((result) => {
-              console.log("getWeChatOpenId", result);
+              console.log("weChatLogin", result);
               const { token, user } = result;
               uni.setStorageSync("token", token);
               this.$u.api

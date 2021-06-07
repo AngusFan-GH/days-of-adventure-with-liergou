@@ -1,13 +1,20 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
-      <list-card
-        v-for="(card, index) in list"
-        :key="index"
-        :data="card"
-      ></list-card>
-      <u-loadmore :status="status" @loadmore="loadmore" />
+      <view class="list">
+        <list-card
+          v-for="(card, index) in list"
+          :key="index"
+          :data="card"
+        ></list-card>
+      </view>
+      <u-loadmore v-show="!first" :status="status" @loadmore="loadmore" />
+      <view class="empty-display" v-if="!list.length">
+        <image src="/static/image/empty.png"></image>
+        <text>暂无数据</text>
+      </view>
     </view>
+    <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :current="0"></custom-tab-bar>
   </view>
 </template>
@@ -22,25 +29,62 @@ export default {
   },
   data() {
     return {
-      list: [],
+      first: true,
       status: "loadmore",
+      list: [],
       pageNum: 1,
       pageSize: 10,
       pages: 1,
+      scrollTop: 0,
     };
   },
+  onShow() {
+    this.getCardList(true);
+  },
   created() {
-    this.getCardList();
+    this.getPositon();
+  },
+  mounted() {},
+  onPullDownRefresh() {
+    this.getCardList(true);
   },
   methods: {
-    getCardList() {
+    getPositon() {
+      uni.getLocation({
+        type: "wgs84",
+        success: (res) => {
+          const position = {
+            longitude: res.longitude,
+            latitude: res.latitude,
+          };
+          uni.setStorageSync("position", position);
+        },
+      });
+    },
+    getCardList(isRefrash = false) {
+      uni.showNavigationBarLoading();
+      if (isRefrash) {
+        this.pageNum = 1;
+      }
       this.status = "loading";
+      const { latitude, longitude } = uni.getStorageSync("position");
       this.$u.api
         .getCardList({
           pageNum: this.pageNum,
           pageSize: this.pageSize,
+          latitude,
+          longitude,
         })
-        .then((res) => this.handleResult(res))
+        .then((res) => {
+          if (this.first) {
+            this.first = false;
+          }
+          if (isRefrash) {
+            this.list = [];
+            uni.stopPullDownRefresh();
+          }
+          this.handleResult(res);
+        })
         .catch((err) => this.handleErr(err));
     },
     handleResult(res) {
@@ -58,12 +102,14 @@ export default {
               roomBeginTime: v.roomBeginTime,
               roomEndTime: v.roomEndTime,
               currentPeople: v.currentPeople,
-              restPeople: v.advicePeopleMax - v.currentPeople,
+              morePeople: v.advicePeopleMax - v.currentPeople,
+              restPeople: v.advicePeopleMin - v.currentPeople,
             },
           ];
           return v;
         })
       );
+      uni.hideNavigationBarLoading();
       this.handleReadBottomStatus();
     },
     handleErr(err) {
@@ -86,17 +132,34 @@ export default {
       this.pageNum++;
       this.getCardList();
     },
+    onPageScroll(e) {
+      this.scrollTop = e.scrollTop;
+    },
   },
 };
 </script>
 
 <style lang="scss">
+@import "../../common/style/variable.scss";
 .container {
   min-height: 100%;
 
-  background-color: #ccc;
+  background-color: $background-color;
 }
 .list-container {
-  padding-top: 1px;
+  position: relative;
+}
+.list {
+  overflow: hidden;
+
+  margin: 0 24rpx 10rpx;
+}
+.empty-display {
+  position: absolute;
+  top: 375rpx;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 </style>

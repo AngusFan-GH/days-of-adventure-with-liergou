@@ -6,9 +6,8 @@ const tabBarList = [
         pagePath: "/pages/index/index",
     },
     {
-        iconPath: "https://cdn.uviewui.com/uview/common/min_button.png",
-        selectedIconPath:
-            "https://cdn.uviewui.com/uview/common/min_button_select.png",
+        iconPath: "grid",
+        selectedIconPath: "grid-fill",
         text: "玩",
         midButton: true,
         customIcon: false,

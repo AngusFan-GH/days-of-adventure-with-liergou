@@ -1,76 +1,82 @@
 <template>
   <view class="list-card">
-    <u-card :show-head="false" :foot-border-top="false" :padding="0">
-      <view class="u-flex list-card-body" slot="body">
-        <image
-          class="list-card-body-img u-margin-right-20"
-          :src="data.headPic || defaultThumb"
-          mode="aspectFill"
-        ></image>
-        <view class="list-card-body-desc u-flex-col u-row-between">
-          <view class="desc-title">{{ data.productName }}</view>
-          <view class="desc-item u-flex u-flex-nowrap">
-            <view class="desc-item-label u-margin-right-10">难度</view>
-            <u-rate :count="5" v-model="data.difficultLevel" disabled></u-rate>
-          </view>
-          <view class="desc-item u-flex u-flex-nowrap">
-            <view class="desc-item-label u-margin-right-10">类型</view>
-            <view class="desc-item-value u-flex-1 u-line-1">{{
-              data.style
-            }}</view>
-          </view>
-          <view class="desc-item u-flex u-flex-nowrap">
-            <view class="desc-item-label u-margin-right-10">特色</view>
-            <view class="desc-item-value u-flex-1 u-line-1">
-              <text
-                class="u-margin-right-8"
-                v-for="(tags, index) in data.tags"
-                :key="index"
-                >{{ tags }}</text
-              >
-            </view>
-          </view>
-          <view class="desc-item u-flex u-flex-nowrap">
-            <view class="desc-item-label u-margin-right-10">建议</view>
-            <view class="desc-item-value u-flex-1 u-flex u-row-between">
-              <view>
-                <text
-                  >{{
-                    data.advicePeopleMin !== data.advicePeopleMax
-                      ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
-                      : `${data.advicePeopleMin}`
-                  }}人</text
-                >
-                <text class="u-padding-left-8 u-padding-right-8">|</text>
-                <text>{{ data.duration }}分钟</text>
-              </view>
-              <view>{{ data.sales }}人订过</view>
-            </view>
+    <view class="shop u-flex">
+      <image
+        class="pic u-margin-right-20"
+        :src="data.headPic || defaultThumb"
+        mode="aspectFill"
+      ></image>
+      <view class="txt attributes u-line-1">
+        <view class="title u-line-1">{{ data.productName }}</view>
+        <view class="difficult desc u-flex u-margin-top-16 u-flex-nowrap">
+          <view class="label">难度</view>
+          <view class="star">
+            <u-rate
+              :count="5"
+              v-model="data.difficultLevel"
+              disabled
+              active-color="#f6be45"
+              active-icon="lock-fill"
+              inactive-icon="lock"
+              gutter="0"
+            ></u-rate>
           </view>
         </view>
-      </view>
-      <view class="list-card-footer" slot="foot">
-        <u-read-more
-          :toggle="true"
-          :show-height="110"
-          :shadow-style="shadowStyle"
-          :close-text="closeText"
-          color="#aaa"
-        >
-          <view v-for="(screening, index) in data.screenings" :key="index">
-            <card-screening
-              class="screening"
-              :screening="screening"
-            ></card-screening>
+        <view class="desc">
+          <text class="label">类型</text>
+          <text>{{ data.style }}</text>
+        </view>
+        <view class="desc attributes-list u-flex">
+          <text class="label">特色</text>
+          <text class="attributes-tag u-flex-1 u-line-1">
+            <text
+              class="u-margin-right-12"
+              v-for="(tags, index) in data.tags"
+              :key="index"
+              >{{ tags }}</text
+            >
+          </text>
+        </view>
+        <view class="limit u-flex">
+          <view class="desc">
+            <text class="label">建议</text>
+            <text
+              >{{
+                data.advicePeopleMin !== data.advicePeopleMax
+                  ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
+                  : `${data.advicePeopleMin}`
+              }}人</text
+            >
+            <text class="line"></text>
+            <text>{{ data.duration }}分钟</text>
           </view>
-          <view
-            class="screening"
-            v-if="!data.screenings || !data.screenings.length"
-            >暂无场次</view
-          >
-        </u-read-more>
+          <view class="space u-flex-1"></view>
+          <view class="book u-margin-top-16">{{ data.sales }}人订过</view>
+        </view>
       </view>
-    </u-card>
+    </view>
+    <view class="togather u-margin-top-20">
+      <u-read-more
+        :toggle="true"
+        :show-height="210"
+        :shadow-style="shadowStyle"
+        :close-text="closeText"
+        :text-indent="0"
+        color="#aaa"
+      >
+        <view v-for="(screening, index) in data.screenings" :key="index">
+          <card-screening
+            class="screening"
+            :screening="screening"
+          ></card-screening>
+        </view>
+        <view
+          class="screening"
+          v-if="!data.screenings || !data.screenings.length"
+          >暂无场次</view
+        >
+      </u-read-more>
+    </view>
   </view>
 </template>
 
@@ -107,38 +113,58 @@ export default {
 </script>
 
 <style lang="scss">
-.list-card-body {
-  overflow: hidden;
+.list-card {
+  margin-top: 24rpx;
+  padding: 24rpx 24rpx 22rpx;
 
-  width: 100%;
-  padding: 30rpx 30rpx 15rpx;
-}
-.list-card-footer {
-  width: 100%;
-  padding: 0 30rpx 15rpx;
-}
-.list-card-body-img {
-  width: 20%;
-  min-width: 20%;
-  flex-shrink: 1;
-  height: 100px;
+  border-radius: 14rpx;
+  background: #fff;
+  .pic {
+    width: 170rpx;
+    height: 228rpx;
 
-  border-radius: 4px;
-}
-.list-card-body-desc {
-  flex: 1;
-  overflow: hidden;
-  .desc-title {
-    font-weight: 600;
+    border-radius: 8rpx;
+
+    flex-shrink: 0;
   }
-  .desc-item {
-    &-label {
-      color: #ccc;
-    }
-    &-value {
-      overflow: hidden;
+  .txt {
+    width: 100%;
+    .title {
+      font-size: 30rpx;
+      font-weight: 700;
 
-      color: rgb(139, 133, 133);
+      color: #111;
+    }
+    .difficult {
+      height: 30rpx;
+    }
+    .desc {
+      line-height: 30rpx;
+
+      margin-top: 16rpx;
+
+      color: #666;
+    }
+    .label {
+      font-size: 26rpx;
+
+      margin-right: 10rpx;
+
+      color: #999;
+    }
+    .attributes-tag {
+      width: 90%;
+    }
+    .line {
+      width: 1px;
+      height: 20rpx;
+      display: inline-block;
+      background: #999;
+      margin: 0 10rpx;
+    }
+    .book {
+      color: #999;
+      font-size: 26rpx;
     }
   }
 }

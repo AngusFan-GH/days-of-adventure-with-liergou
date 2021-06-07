@@ -4,6 +4,8 @@
     :list="tabBarList"
     :mid-button="true"
     :active-color="activeColor"
+    :mid-button-size="60"
+    :before-switch="beforeSwitch"
   ></u-tabbar>
 </template>
 
@@ -23,6 +25,12 @@ export default {
   },
   computed: {
     ...mapGetters(["tabBarList"]),
+  },
+  methods: {
+    beforeSwitch(index) {
+      console.log("current", index);
+      return true;
+    },
   },
 };
 </script>

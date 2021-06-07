@@ -6,7 +6,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "主题"
+				"navigationBarTitleText": "主题",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
