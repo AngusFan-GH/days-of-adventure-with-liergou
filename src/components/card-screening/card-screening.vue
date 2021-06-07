@@ -6,9 +6,15 @@
         <text class="current-count">{{ screening.currentPeople }}人已加入</text>
       </view>
       <view class="left-bottom">
-        <text
-          >差<text class="rest-people">{{ screening.restPeople }}</text
+        <text v-if="screening.restPeople > 0"
+          >差<text class="people-count">{{ screening.restPeople }}</text
           >人即可开场，最多再加入{{ screening.morePeople }}人</text
+        >
+        <text v-else
+          >该场次已拼成，还可加入<text class="people-count">{{
+            screening.morePeople
+          }}</text
+          >人</text
         >
       </view>
     </view>
@@ -96,7 +102,7 @@ export default {
       height: 30rpx;
       line-height: 30rpx;
       margin-top: 12rpx;
-      .rest-people {
+      .people-count {
         color: red;
       }
     }
