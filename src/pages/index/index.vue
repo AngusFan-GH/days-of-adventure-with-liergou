@@ -38,13 +38,12 @@ export default {
       scrollTop: 0,
     };
   },
-  onShow() {
-    this.getCardList(true);
-  },
   created() {
     this.getPositon();
   },
-  mounted() {},
+  mounted() {
+    this.getCardList(true);
+  },
   onPullDownRefresh() {
     this.getCardList(true);
   },
@@ -104,6 +103,7 @@ export default {
               currentPeople: v.currentPeople,
               morePeople: v.advicePeopleMax - v.currentPeople,
               restPeople: v.advicePeopleMin - v.currentPeople,
+              ...v,
             },
           ];
           return v;

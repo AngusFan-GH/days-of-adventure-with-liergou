@@ -59,9 +59,11 @@ export default {
   methods: {
     joinGroup() {
       console.log(this.screening);
-      const { productItemId, restPeople } = this.screening;
       uni.navigateTo({
-        url: `/pages/order/index?id=${productItemId}&restPeople=${restPeople}`,
+        url: "/pages/order/index",
+        success: (res) => {
+          res.eventChannel.emit("acceptDataFromOpenerPage", this.screening);
+        },
       });
     },
   },

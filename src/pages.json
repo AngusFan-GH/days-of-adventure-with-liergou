@@ -13,7 +13,8 @@
 		{
 			"path": "pages/play/index",
 			"style": {
-				"navigationBarTitleText": "玩"
+				"navigationBarTitleText": "玩",
+				"enablePullDownRefresh": true
 			}
 		},
 		{

@@ -1,13 +1,20 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
-      <list-card
-        v-for="(card, index) in list"
-        :key="index"
-        :data="card"
-      ></list-card>
-      <u-loadmore :status="status" />
+      <view class="list">
+        <list-card
+          v-for="(card, index) in list"
+          :key="index"
+          :data="card"
+        ></list-card>
+      </view>
+      <u-loadmore v-show="!first" :status="status" @loadmore="loadmore" />
+      <view class="empty-display" v-if="!list.length">
+        <image src="/static/image/empty.png"></image>
+        <text>暂无数据</text>
+      </view>
     </view>
+    <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :current="0"></custom-tab-bar>
   </view>
 </template>
@@ -22,76 +29,136 @@ export default {
   },
   data() {
     return {
-      list: [],
+      first: true,
       status: "loadmore",
+      list: [],
+      pageNum: 1,
+      pageSize: 10,
+      pages: 1,
+      scrollTop: 0,
     };
   },
   created() {
-    this.getCardList();
+    this.getPositon();
   },
   mounted() {
-    uni.getLocation({
-      type: "wgs84",
-      success: function (res) {
-        console.log("当前位置的经度：" + res.longitude);
-        console.log("当前位置的纬度：" + res.latitude);
-      },
-    });
+    this.getCardList(true);
+  },
+  onPullDownRefresh() {
+    this.getCardList(true);
   },
   methods: {
-    getCardList() {
-      this.status = "loading";
-      this.$u.api
-        .getCardList()
-        .then((res) => console.log(res))
-        .catch((err) => this.handleResult());
+    getPositon() {
+      uni.getLocation({
+        type: "wgs84",
+        success: (res) => {
+          const position = {
+            longitude: res.longitude,
+            latitude: res.latitude,
+          };
+          uni.setStorageSync("position", position);
+        },
+      });
     },
-    handleResult() {
-      setTimeout(() => {
-        this.list.push(
-          ...new Array(10).fill({}).reduce((p, c, i) => {
-            p.push({
-              id: "id" + i,
-              thumb:
-                "https://img11.360buyimg.com/n7/jfs/t1/94448/29/2734/524808/5dd4cc16E990dfb6b/59c256f85a8c3757.jpg",
-              rate: Math.ceil(Math.random() * 5),
-              type: ["密室逃脱", "剧本杀"][Math.floor(Math.random() * 2)],
-              feature: [
-                "玄幻",
-                "科幻",
-                "大型机械",
-                "有剧情",
-                "小朋友",
-                "大型机械",
-                "有剧情",
-                "小朋友",
-              ],
-              suggest: `${Math.ceil(Math.random() * 5)}人 | ${Math.ceil(
-                Math.random() * 120
-              )}分钟`,
-              screenings: new Array(Math.ceil(Math.random() * 10)).fill({}),
-            });
-            return p;
-          }, [])
-        );
-        console.log(this.list);
+    getCardList(isRefrash = false) {
+      uni.showNavigationBarLoading();
+      if (isRefrash) {
+        this.pageNum = 1;
+      }
+      this.status = "loading";
+      const { latitude, longitude } = uni.getStorageSync("position");
+      this.$u.api
+        .getCardList({
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+          latitude,
+          longitude,
+        })
+        .then((res) => {
+          if (this.first) {
+            this.first = false;
+          }
+          if (isRefrash) {
+            this.list = [];
+            uni.stopPullDownRefresh();
+          }
+          this.handleResult(res);
+        })
+        .catch((err) => this.handleErr(err));
+    },
+    handleResult(res) {
+      const { records, pages } = res;
+      console.table(records);
+      this.pages = pages;
+      this.list.push(
+        ...records.map((v) => {
+          v.tags = v.tags.split(",");
+          v.difficultLevel = v.difficultLevel / 10;
+          v.screenings = [
+            {
+              price: v.price,
+              productItemId: v.productItemId,
+              roomBeginTime: v.roomBeginTime,
+              roomEndTime: v.roomEndTime,
+              currentPeople: v.currentPeople,
+              morePeople: v.advicePeopleMax - v.currentPeople,
+              restPeople: v.advicePeopleMin - v.currentPeople,
+            },
+          ];
+          return v;
+        })
+      );
+      uni.hideNavigationBarLoading();
+      this.handleReadBottomStatus();
+    },
+    handleErr(err) {
+      this.pageNum--;
+      this.handleReadBottomStatus();
+      console.error(err);
+    },
+    handleReadBottomStatus() {
+      if (this.pageNum >= this.pages) {
+        this.status = "nomore";
+      } else {
         this.status = "loadmore";
-      }, 1000);
+      }
     },
     onReachBottom() {
+      if (this.pageNum >= this.pages) return;
+      this.loadmore();
+    },
+    loadmore() {
+      this.pageNum++;
       this.getCardList();
+    },
+    onPageScroll(e) {
+      this.scrollTop = e.scrollTop;
     },
   },
 };
 </script>
 
 <style lang="scss">
+@import "../../common/style/variable.scss";
 .container {
   min-height: 100%;
 
-  background-color: #ccc;
+  background-color: $background-color;
 }
 .list-container {
-  padding-top: 1px;
+  position: relative;
+}
+.list {
+  overflow: hidden;
+
+  margin: 0 24rpx 10rpx;
+}
+.empty-display {
+  position: absolute;
+  top: 375rpx;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  text-align: center;
 }
 </style>
