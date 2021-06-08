@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view>我的</view>
-    <custom-tab-bar :current="2"></custom-tab-bar>
+    <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
   </view>
 </template>
 
@@ -12,7 +12,9 @@ export default {
     customTabBar,
   },
   data() {
-    return {};
+    return {
+      tabBarIndex: 2,
+    };
   },
   onLoad() {},
   methods: {},

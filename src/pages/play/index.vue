@@ -8,28 +8,32 @@
           :data="card"
         ></list-card>
       </view>
-      <u-loadmore v-show="!first" :status="status" @loadmore="loadmore" />
-      <view class="empty-display" v-if="!list.length">
+      <u-loadmore v-show="!loading" :status="status" @loadmore="loadmore" />
+      <view class="empty-display" v-if="!loading && !list.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
       </view>
+      <loading class="loading" v-if="loading"></loading>
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
-    <custom-tab-bar :current="0"></custom-tab-bar>
+    <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
   </view>
 </template>
 
 <script>
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
+import loading from '@/components/loading/loading.vue';
 export default {
   components: {
     listCard,
     customTabBar,
+    loading,
   },
   data() {
     return {
-      first: true,
+      tabBarIndex: 1,
+      loading: true,
       status: 'loadmore',
       list: [],
       pageNum: 1,
@@ -41,8 +45,10 @@ export default {
   created() {
     this.getPositon();
   },
-  mounted() {
-    this.getCardList(true);
+  onShow() {
+    if (this.loading) {
+      this.getCardList(true);
+    }
   },
   onPullDownRefresh() {
     this.getCardList(true);
@@ -75,9 +81,6 @@ export default {
           longitude,
         })
         .then(res => {
-          if (this.first) {
-            this.first = false;
-          }
           if (isRefrash) {
             this.list = [];
             uni.stopPullDownRefresh();
@@ -103,6 +106,7 @@ export default {
               currentPeople: v.currentPeople,
               morePeople: v.advicePeopleMax - v.currentPeople,
               restPeople: v.advicePeopleMin - v.currentPeople,
+              ...v,
             },
           ];
           return v;
@@ -110,6 +114,7 @@ export default {
       );
       uni.hideNavigationBarLoading();
       this.handleReadBottomStatus();
+      this.loading = false;
     },
     handleErr(err) {
       this.pageNum--;
@@ -145,9 +150,6 @@ export default {
 
     background-color: $background-color;
 }
-.list-container {
-    position: relative;
-}
 .list {
     overflow: hidden;
 
@@ -161,5 +163,13 @@ export default {
     transform: translate(-50%, -50%);
     text-align: center;
 }
+.loading {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+
+    transform: translate(-50%,-50%);
+}
+
 
 </style>

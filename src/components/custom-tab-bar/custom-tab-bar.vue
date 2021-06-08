@@ -1,6 +1,5 @@
 <template>
   <u-tabbar
-    v-model="current"
     :list="tabBarList"
     :mid-button="true"
     :active-color="activeColor"
@@ -14,7 +13,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'custom-tab-bar',
   props: {
-    current: 0,
+    tabBarIndex: 0,
   },
   data() {
     return {
@@ -28,8 +27,22 @@ export default {
   },
   methods: {
     beforeSwitch(index) {
-      console.log('current', index);
-      return true;
+      // this为当前pages页面this，而非tab-bar的this
+      if (this.tabBarIndex !== index) {
+        console.log('current', this.tabBarIndex, index);
+        uni.switchTab({
+          url: this.$store.state.tabBar.list[index].pagePath,
+          success: () => {
+            this.loading = true;
+            this.list = [];
+            uni.pageScrollTo({
+              scrollTop: 0,
+              duration: 0,
+            });
+          },
+        });
+      }
+      return false;
     },
   },
 };
