@@ -2,14 +2,15 @@
   <view class="container">
     <view class="u-page list-container">
       <view class="list">
-        <list-card
-          v-for="(card, index) in list"
+        <list-card v-for="(card, index) in list"
           :key="index"
-          :data="card"
-        ></list-card>
+          :data="card"></list-card>
       </view>
-      <u-loadmore v-show="!first" :status="status" @loadmore="loadmore" />
-      <view class="empty-display" v-if="!list.length">
+      <u-loadmore v-show="!first"
+        :status="status"
+        @loadmore="loadmore" />
+      <view class="empty-display"
+        v-if="!list.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
       </view>
@@ -20,8 +21,8 @@
 </template>
 
 <script>
-import { customTabBar } from "@/components/custom-tab-bar/custom-tab-bar.vue";
-import listCard from "@/components/list-card/list-card.vue";
+import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
+import listCard from '@/components/list-card/list-card.vue';
 export default {
   components: {
     listCard,
@@ -30,7 +31,7 @@ export default {
   data() {
     return {
       first: true,
-      status: "loadmore",
+      status: 'loadmore',
       list: [],
       pageNum: 1,
       pageSize: 10,
@@ -50,13 +51,13 @@ export default {
   methods: {
     getPositon() {
       uni.getLocation({
-        type: "wgs84",
+        type: 'wgs84',
         success: (res) => {
           const position = {
             longitude: res.longitude,
             latitude: res.latitude,
           };
-          uni.setStorageSync("position", position);
+          uni.setStorageSync('position', position);
         },
       });
     },
@@ -65,8 +66,8 @@ export default {
       if (isRefrash) {
         this.pageNum = 1;
       }
-      this.status = "loading";
-      const { latitude, longitude } = uni.getStorageSync("position");
+      this.status = 'loading';
+      const { latitude, longitude } = uni.getStorageSync('position');
       this.$u.api
         .getCardList({
           pageNum: this.pageNum,
@@ -92,7 +93,7 @@ export default {
       this.pages = pages;
       this.list.push(
         ...records.map((v) => {
-          v.tags = v.tags.split(",");
+          v.tags = v.tags.split(',');
           v.difficultLevel = v.difficultLevel / 10;
           v.screenings = [
             {
@@ -118,9 +119,9 @@ export default {
     },
     handleReadBottomStatus() {
       if (this.pageNum >= this.pages) {
-        this.status = "nomore";
+        this.status = 'nomore';
       } else {
-        this.status = "loadmore";
+        this.status = 'loadmore';
       }
     },
     onReachBottom() {
@@ -139,26 +140,27 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../common/style/variable.scss";
+@import '../../common/style/variable.scss';
 .container {
-  min-height: 100%;
+    min-height: 100%;
 
-  background-color: $background-color;
+    background-color: $background-color;
 }
 .list-container {
-  position: relative;
+    position: relative;
 }
 .list {
-  overflow: hidden;
+    overflow: hidden;
 
-  margin: 0 24rpx 10rpx;
+    margin: 0 24rpx 10rpx;
 }
 .empty-display {
-  position: absolute;
-  top: 375rpx;
-  left: 50%;
+    position: absolute;
+    top: 375rpx;
+    left: 50%;
 
-  transform: translate(-50%, -50%);
-  text-align: center;
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
+
 </style>

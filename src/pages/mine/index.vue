@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { customTabBar } from "@/components/custom-tab-bar/custom-tab-bar.vue";
+import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 export default {
   components: {
     customTabBar,
@@ -21,7 +21,9 @@ export default {
 
 <style lang="scss">
 .container {
-  min-height: 100%;
-  background-color: #ccc;
+    min-height: 100%;
+
+    background-color: #ccc;
 }
+
 </style>
