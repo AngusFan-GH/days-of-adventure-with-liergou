@@ -14,7 +14,10 @@
           @click="changeMode(0)"
         >
           <text class="btn-icon"></text>
-          <text>拼场预订</text>
+          <text>
+            包场预订
+            <text>({{ screening.advicePeopleMin }}人起)</text>
+          </text>
         </view>
         <view
           class="mode-choose-btn right-btn"
@@ -22,14 +25,11 @@
           @click="changeMode(1)"
         >
           <text class="btn-icon"></text>
-          <text>
-            包场预订
-            <text>({{ screening.advicePeopleMin }}人起)</text>
-          </text>
+          <text>拼场预订</text>
         </view>
       </view>
     </view>
-    <view class="info-item">
+    <view class="info-item" v-show="mode === 1">
       <view class="ping-tips-wrapper">
         <view class="tip-item">
           <view class="dot"></view>
@@ -79,7 +79,17 @@
     </view>
     <view class="info-item">
       <view class="pack-counter-wrapper">
-        <view class="counter-wrapper u-flex">
+        <view class="counter-wrapper u-flex" v-if="mode === 0">
+          <view class="info-block u-flex-1">
+            <view class="title u-line-1">到店人数</view>
+          </view>
+          <u-number-box
+            v-model="count"
+            :min="screening.advicePeopleMin"
+            :max="screening.advicePeopleMax"
+          ></u-number-box>
+        </view>
+        <view class="counter-wrapper u-flex" v-if="mode === 1">
           <view class="info-block u-flex-1">
             <view class="title u-line-1">拼场人数</view>
           </view>
@@ -91,9 +101,15 @@
         </view>
         <view
           class="desc u-padding-right-20"
-          v-show="count >= screening.restPeople"
+          v-show="mode === 1 && count >= screening.restPeople"
         >
           <text class="high-light">已达可开场人数，</text>
+          <text>订单</text>
+          <text class="high-light">不可退款，</text>
+          <text>其他玩家不可加入。</text>
+        </view>
+        <view class="desc u-padding-right-20" v-show="mode === 0">
+          <text>{{ screening.advicePeopleMin }}人起订，</text>
           <text>订单</text>
           <text class="high-light">不可退款，</text>
           <text>其他玩家不可加入。</text>
@@ -147,7 +163,16 @@
         <view class="title">预订须知:</view>
         <view class="text-wraper u-margin-bottom-12">开场前凭手机号码入场</view>
         <view class="title refund-rule u-margin-top-32">退款规则:</view>
-        <view class="text-wraper">
+        <view class="text-wraper" v-show="mode === 0">
+          <view class="tip-item u-flex">
+            <view class="dot"></view>
+            <view class="content">
+              预订成功后
+              <text class="high-light">不可退款</text>
+            </view>
+          </view>
+        </view>
+        <view class="text-wraper" v-show="mode === 1">
           <view class="tip-item u-flex">
             <view class="dot"></view>
             <view class="content">
@@ -186,6 +211,7 @@ export default {
     eventChannel.on('acceptDataFromOpenerPage', data => {
       this.price = data.price;
       this.screening = data;
+      this.count = data.advicePeopleMin;
     });
   },
   data() {
@@ -211,6 +237,18 @@ export default {
         borderRadius: '100rpx',
       },
     };
+  },
+  watch: {
+    mode(val) {
+      switch (val) {
+        case 0:
+          this.count = this.screening.advicePeopleMin;
+          break;
+        case 1:
+          this.count = 1;
+          break;
+      }
+    },
   },
   computed: {
     totalPrice() {
