@@ -1,24 +1,30 @@
 <template>
   <view class="login">
-    <image class="bg"
-      src="/static/image/bg_login.png"
-      mode="widthFix"></image>
+    <image class="bg" src="/static/image/bg_login.png" mode="widthFix"></image>
     <view class="btn-box">
       <view class="login-btn">
         <template v-if="step == 1">
-          <u-button class="btn"
+          <u-button
+            class="btn"
             type="primary"
             shape="circle"
             :ripple="true"
-            @click="getuserinfo">登录授权</u-button>
+            @click="getuserinfo"
+          >
+            登录授权
+          </u-button>
         </template>
         <template v-if="step == 2">
-          <u-button class="btn"
+          <u-button
+            class="btn"
             type="primary"
             shape="circle"
             :ripple="true"
             open-type="getPhoneNumber"
-            @getphonenumber="getPhoneNumber">授权手机号</u-button>
+            @getphonenumber="getPhoneNumber"
+          >
+            授权手机号
+          </u-button>
         </template>
       </view>
     </view>
@@ -37,7 +43,7 @@ export default {
     getuserinfo() {
       uni.getUserProfile({
         desc: '必须授权才可以继续使用',
-        success: (res) => {
+        success: res => {
           this.userInfo = res.userInfo;
           console.log('getUserProfile', this.userInfo);
           uni.setStorageSync('userInfo', res.userInfo);
@@ -54,12 +60,12 @@ export default {
     weChatLogin() {
       uni.login({
         provider: 'weixin',
-        success: (res) => {
+        success: res => {
           this.$u.api
             .weChatLogin({
               code: res.code,
             })
-            .then((result) => {
+            .then(result => {
               console.log('weChatLogin', result);
               const { token, user } = result;
               uni.setStorageSync('token', token);
@@ -67,8 +73,8 @@ export default {
                 .updateUserInfo({
                   userInfo: this.userInfo,
                 })
-                .then((res) => console.log(res))
-                .catch((err) => console.error(err));
+                .then(res => console.log(res))
+                .catch(err => console.error(err));
               uni.setStorageSync('openId', user.openId);
               if (user.phoneNumber) {
                 uni.setStorageSync('phone', user.phoneNumber);
@@ -81,11 +87,11 @@ export default {
                 });
               }
             })
-            .catch((err) => {
+            .catch(err => {
               console.error(err);
             });
         },
-        fail: (err) => {
+        fail: err => {
           console.error(err);
         },
       });
@@ -99,20 +105,20 @@ export default {
             encryptedData,
             iv,
           })
-          .then((res) => {
+          .then(res => {
             console.log('decryptUserInfo', res);
             this.navigateBack();
           })
-          .catch((err) => console.error(err));
+          .catch(err => console.error(err));
       }
     },
     navigateBack() {
       uni.navigateBack({
         delta: 1,
-        success: (res) => {
+        success: res => {
           console.log('navigateBack', res);
         },
-        fail: (res) => {
+        fail: res => {
           console.log('navigateBack', res);
           uni.switchTab({
             url: '/pages/index/index',

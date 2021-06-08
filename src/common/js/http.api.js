@@ -9,9 +9,9 @@ const install = (Vue, vm) => {
 	let weChatLogin = (params = {}) => vm.$u.get('/market-boot/app/user/code2session', params);
 
 	/**
-		 * 解密用户信息
-		 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/decryptUsingPOST
-		 */
+	 * 解密用户信息
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E7%94%A8%E6%88%B7/decryptUsingPOST
+	 */
 	let decryptUserInfo = (params = {}) => vm.$u.post('/market-boot/app/user/decryptUserInfo', params);
 
 	/**

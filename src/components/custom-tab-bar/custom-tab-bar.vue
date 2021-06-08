@@ -1,10 +1,12 @@
 <template>
-  <u-tabbar v-model="current"
+  <u-tabbar
+    v-model="current"
     :list="tabBarList"
     :mid-button="true"
     :active-color="activeColor"
     :mid-button-size="60"
-    :before-switch="beforeSwitch"></u-tabbar>
+    :before-switch="beforeSwitch"
+  ></u-tabbar>
 </template>
 
 <script>

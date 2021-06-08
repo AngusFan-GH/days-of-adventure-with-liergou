@@ -1,22 +1,31 @@
 <template>
   <view class="container">
     <view class="info-tab-header u-flex">
-      <view class="bar-image"
+      <view
+        class="bar-image"
         :class="{
           left: mode === 0,
           right: mode === 1,
-        }">
-        <view class="mode-choose-btn left-btn"
+        }"
+      >
+        <view
+          class="mode-choose-btn left-btn"
           :class="{ selected: mode === 0 }"
-          @click="changeMode(0)">
+          @click="changeMode(0)"
+        >
           <text class="btn-icon"></text>
           <text>拼场预订</text>
         </view>
-        <view class="mode-choose-btn right-btn"
+        <view
+          class="mode-choose-btn right-btn"
           :class="{ selected: mode === 1 }"
-          @click="changeMode(1)">
+          @click="changeMode(1)"
+        >
           <text class="btn-icon"></text>
-          <text>包场预订<text>({{ screening.advicePeopleMin }}人起)</text></text>
+          <text>
+            包场预订
+            <text>({{ screening.advicePeopleMin }}人起)</text>
+          </text>
         </view>
       </view>
     </view>
@@ -25,17 +34,23 @@
         <view class="tip-item">
           <view class="dot"></view>
           <view class="content">
-            <text v-if="screening.restPeople > 0">1人起拼，还差{{ screening.restPeople }}人可开场，最多可订{{
+            <text v-if="screening.restPeople > 0">
+              1人起拼，还差{{ screening.restPeople }}人可开场，最多可订{{
                 screening.morePeople
-              }}人</text>
-            <text v-else>该场次已拼成，还可加入{{ screening.morePeople }}人</text>
+              }}人
+            </text>
+            <text v-else>
+              该场次已拼成，还可加入{{ screening.morePeople }}人
+            </text>
           </view>
         </view>
         <view class="tip-item">
           <view class="dot"></view>
-          <view class="content">多人同行建议玩家统一下单，否则满{{
+          <view class="content">
+            多人同行建议玩家统一下单，否则满{{
               screening.advicePeopleMin
-            }}人开场后，其他玩家不可预订</view>
+            }}人开场后，其他玩家不可预订
+          </view>
         </view>
         <view class="tip-item">
           <view class="dot"></view>
@@ -51,11 +66,14 @@
         <view class="product-info u-flex u-row-between">
           <view class="product-name">{{ screening.productName }}</view>
           <view class="price-block">
-            <text class="sign">￥</text><text class="price">{{ price }}</text>
+            <text class="sign">￥</text>
+            <text class="price">{{ price }}</text>
           </view>
         </view>
         <view class="order-time">
-          <text class="time-desc">{{ time }} | {{ screening.duration }}分钟</text>
+          <text class="time-desc">
+            {{ time }} | {{ screening.duration }}分钟
+          </text>
         </view>
       </view>
     </view>
@@ -65,13 +83,20 @@
           <view class="info-block u-flex-1">
             <view class="title u-line-1">拼场人数</view>
           </view>
-          <u-number-box v-model="count"
+          <u-number-box
+            v-model="count"
             :min="1"
-            :max="screening.morePeople"></u-number-box>
+            :max="screening.morePeople"
+          ></u-number-box>
         </view>
-        <view class="desc u-padding-right-20"
-          v-show="count >= screening.restPeople">
-          <text class="high-light"> 已达可开场人数， </text><text> 订单 </text><text class="high-light"> 不可退款， </text><text> 其他玩家不可加入。 </text>
+        <view
+          class="desc u-padding-right-20"
+          v-show="count >= screening.restPeople"
+        >
+          <text class="high-light">已达可开场人数，</text>
+          <text>订单</text>
+          <text class="high-light">不可退款，</text>
+          <text>其他玩家不可加入。</text>
         </view>
       </view>
     </view>
@@ -80,33 +105,39 @@
       <view class="common-usertable-wrapper">
         <view class="mobile-item u-flex u-padding-right-30">
           <view class="prefix">联系人</view>
-          <u-input class="u-flex-1 u-margin-right-18"
+          <u-input
+            class="u-flex-1 u-margin-right-18"
             placeholder="请输入联系人姓名"
             v-model="name"
             type="text"
             input-align="right"
             maxlength="20"
-            height="60" />
+            height="60"
+          />
           <u-icon name="arrow-right"></u-icon>
         </view>
         <view class="mobile-item u-flex u-padding-right-30">
           <view class="prefix">手机号码</view>
-          <u-input class="u-flex-1 u-margin-right-18"
+          <u-input
+            class="u-flex-1 u-margin-right-18"
             placeholder="请输入手机号"
             v-model="phone"
             type="tel"
             input-align="right"
             maxlength="11"
-            height="60" />
+            height="60"
+          />
           <u-icon name="arrow-right"></u-icon>
         </view>
         <view class="remark-info">
           <view class="label">备注</view>
-          <u-input placeholder="可将您的其他要求告知商家"
+          <u-input
+            placeholder="可将您的其他要求告知商家"
             v-model="remark"
             type="text"
             maxlength="20"
-            height="60" />
+            height="60"
+          />
         </view>
       </view>
     </view>
@@ -120,24 +151,28 @@
           <view class="tip-item u-flex">
             <view class="dot"></view>
             <view class="content">
-              <text class="high-light"> 未达到开场要求前 </text>可随时退款，拼场成功后不可退款
+              <text class="high-light">未达到开场要求前</text>
+              可随时退款，拼场成功后不可退款
             </view>
           </view>
           <view class="tip-item u-flex">
             <view class="dot"></view>
-            <view class="content">周六(06.12) 09:00前未达开场要求，系统将自动退款</view>
+            <view class="content">
+              周六(06.12) 09:00前未达开场要求，系统将自动退款
+            </view>
           </view>
         </view>
       </view>
     </view>
     <view class="footer u-flex u-row-between">
       <view class="price">
-        <text class="price-logo">¥</text><text class="price-num">{{ totalPrice }}</text>
+        <text class="price-logo">¥</text>
+        <text class="price-num">{{ totalPrice }}</text>
       </view>
       <view>
-        <u-button :custom-style="customStyle"
-          @click="createPay"
-          shape="circle">立即支付</u-button>
+        <u-button :custom-style="customStyle" @click="createPay" shape="circle">
+          立即支付
+        </u-button>
       </view>
     </view>
   </view>
@@ -148,7 +183,7 @@ import { timeRangeFmt } from '@/common/js/time-fmt';
 export default {
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('acceptDataFromOpenerPage', (data) => {
+    eventChannel.on('acceptDataFromOpenerPage', data => {
       this.price = data.price;
       this.screening = data;
     });
@@ -214,12 +249,12 @@ export default {
           payerPhone: this.phone,
           productItemId: this.screening.productItemId,
         })
-        .then((res) => {
+        .then(res => {
           console.log(res);
           const { orderInfo } = res;
           this.pay(orderInfo);
         })
-        .catch((err) => console.error(err));
+        .catch(err => console.error(err));
     },
     pay(orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
@@ -238,14 +273,14 @@ export default {
         package: prepayId,
         signType: 'RSA',
         paySign,
-        success: (e) => {
+        success: e => {
           if (e.errMsg === 'requestPayment:ok') {
             uni.showToast({
               title: '支付成功',
             });
           }
         },
-        fail: (err) => {
+        fail: err => {
           console.error(err);
           uni.showToast({
             title:

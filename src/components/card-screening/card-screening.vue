@@ -6,10 +6,16 @@
         <text class="current-count">{{ screening.currentPeople }}人已加入</text>
       </view>
       <view class="left-bottom">
-        <text v-if="screening.restPeople > 0">差<text class="people-count">{{ screening.restPeople }}</text>人即可开场，最多再加入{{ screening.morePeople }}人</text>
-        <text v-else>该场次已拼成，还可加入<text class="people-count">{{
-            screening.morePeople
-          }}</text>人</text>
+        <text v-if="screening.restPeople > 0">
+          差
+          <text class="people-count">{{ screening.restPeople }}</text>
+          人即可开场，最多再加入{{ screening.morePeople }}人
+        </text>
+        <text v-else>
+          该场次已拼成，还可加入
+          <text class="people-count">{{ screening.morePeople }}</text>
+          人
+        </text>
       </view>
     </view>
     <view class="space u-flex-1"></view>
@@ -17,13 +23,19 @@
       <view class="rmb dpcolor">
         <text class="price u-margin-right-14">¥{{ screening.price }}/人</text>
       </view>
-      <view data-view-bid="b_play_r20lxsmk_mv"
+      <view
+        data-view-bid="b_play_r20lxsmk_mv"
         data-extend="sku_id=720575953"
-        class="btn dpbg">
-        <u-button shape="circle"
+        class="btn dpbg"
+      >
+        <u-button
+          shape="circle"
           size="mini"
           :custom-style="customStyle"
-          @click="joinGroup()">加入拼场</u-button>
+          @click="joinGroup()"
+        >
+          加入拼场
+        </u-button>
       </view>
     </view>
   </view>
@@ -59,7 +71,7 @@ export default {
       console.log(this.screening);
       uni.navigateTo({
         url: '/pages/order/index',
-        success: (res) => {
+        success: res => {
           res.eventChannel.emit('acceptDataFromOpenerPage', this.screening);
         },
       });

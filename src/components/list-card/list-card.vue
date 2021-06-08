@@ -1,21 +1,25 @@
 <template>
   <view class="list-card">
     <view class="shop u-flex">
-      <image class="pic u-margin-right-20"
+      <image
+        class="pic u-margin-right-20"
         :src="data.headPic || defaultThumb"
-        mode="aspectFill"></image>
+        mode="aspectFill"
+      ></image>
       <view class="txt attributes u-line-1">
         <view class="title u-line-1">{{ data.productName }}</view>
         <view class="difficult desc u-flex u-margin-top-16 u-flex-nowrap">
           <view class="label">难度</view>
           <view class="star">
-            <u-rate :count="5"
+            <u-rate
+              :count="5"
               v-model="data.difficultLevel"
               disabled
               active-color="#f6be45"
               active-icon="lock-fill"
               inactive-icon="lock"
-              gutter="0"></u-rate>
+              gutter="0"
+            ></u-rate>
           </view>
         </view>
         <view class="desc">
@@ -25,19 +29,25 @@
         <view class="desc attributes-list u-flex">
           <text class="label">特色</text>
           <text class="attributes-tag u-flex-1 u-line-1">
-            <text class="u-margin-right-12"
+            <text
+              class="u-margin-right-12"
               v-for="(tags, index) in data.tags"
-              :key="index">{{ tags }}</text>
+              :key="index"
+            >
+              {{ tags }}
+            </text>
           </text>
         </view>
         <view class="limit u-flex">
           <view class="desc">
             <text class="label">建议</text>
-            <text>{{
+            <text>
+              {{
                 data.advicePeopleMin !== data.advicePeopleMax
                   ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
                   : `${data.advicePeopleMin}`
-              }}人</text>
+              }}人
+            </text>
             <text class="line"></text>
             <text>{{ data.duration }}分钟</text>
           </view>
@@ -47,19 +57,26 @@
       </view>
     </view>
     <view class="togather u-margin-top-20">
-      <u-read-more :toggle="true"
+      <u-read-more
+        :toggle="true"
         :show-height="210"
         :shadow-style="shadowStyle"
         :close-text="closeText"
         :text-indent="0"
-        color="#aaa">
-        <view v-for="(screening, index) in data.screenings"
-          :key="index">
-          <card-screening class="screening"
-            :screening="screening"></card-screening>
+        color="#aaa"
+      >
+        <view v-for="(screening, index) in data.screenings" :key="index">
+          <card-screening
+            class="screening"
+            :screening="screening"
+          ></card-screening>
         </view>
-        <view class="screening"
-          v-if="!data.screenings || !data.screenings.length">暂无场次</view>
+        <view
+          class="screening"
+          v-if="!data.screenings || !data.screenings.length"
+        >
+          暂无场次
+        </view>
       </u-read-more>
     </view>
   </view>

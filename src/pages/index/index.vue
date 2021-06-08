@@ -2,15 +2,14 @@
   <view class="container">
     <view class="u-page list-container">
       <view class="list">
-        <list-card v-for="(card, index) in list"
+        <list-card
+          v-for="(card, index) in list"
           :key="index"
-          :data="card"></list-card>
+          :data="card"
+        ></list-card>
       </view>
-      <u-loadmore v-show="!first"
-        :status="status"
-        @loadmore="loadmore" />
-      <view class="empty-display"
-        v-if="!list.length">
+      <u-loadmore v-show="!first" :status="status" @loadmore="loadmore" />
+      <view class="empty-display" v-if="!list.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
       </view>
@@ -52,7 +51,7 @@ export default {
     getPositon() {
       uni.getLocation({
         type: 'wgs84',
-        success: (res) => {
+        success: res => {
           const position = {
             longitude: res.longitude,
             latitude: res.latitude,
@@ -75,7 +74,7 @@ export default {
           latitude,
           longitude,
         })
-        .then((res) => {
+        .then(res => {
           if (this.first) {
             this.first = false;
           }
@@ -85,14 +84,14 @@ export default {
           }
           this.handleResult(res);
         })
-        .catch((err) => this.handleErr(err));
+        .catch(err => this.handleErr(err));
     },
     handleResult(res) {
       const { records, pages } = res;
       console.table(records);
       this.pages = pages;
       this.list.push(
-        ...records.map((v) => {
+        ...records.map(v => {
           v.tags = v.tags.split(',');
           v.difficultLevel = v.difficultLevel / 10;
           v.screenings = [

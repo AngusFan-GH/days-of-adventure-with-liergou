@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <view> 我的 </view>
+    <view>我的</view>
     <custom-tab-bar :current="2"></custom-tab-bar>
   </view>
 </template>
