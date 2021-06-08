@@ -15,17 +15,22 @@
       <view class="ping-tips-wrapper">
         <view class="tip-item">
           <view class="dot"></view>
-          <view class="content"
-            >1人起拼,还差{{ screening.restPeople }}人可开场,最多可订{{
-              screening.morePeople
-            }}人</view
-          >
+          <view class="content">
+            <text v-if="screening.restPeople > 0"
+              >1人起拼，还差{{ screening.restPeople }}人可开场，最多可订{{
+                screening.morePeople
+              }}人</text
+            >
+            <text v-else
+              >该场次已拼成，还可加入{{ screening.morePeople }}人</text
+            >
+          </view>
         </view>
         <view class="tip-item">
           <view class="dot"></view>
           <view class="content"
             >多人同行建议玩家统一下单，否则满{{
-              screening.advicePeopleMax
+              screening.advicePeopleMin
             }}人开场后，其他玩家不可预订</view
           >
         </view>
