@@ -7,7 +7,7 @@
         </view>
         <!-- <view class="mode-choose-btn right-btn">
           <text class="btn-icon"></text
-          ><text>包场预订<text>({{screenings.advicePeopleMin}}人起)</text></text>
+          ><text>包场预订<text>({{screening.advicePeopleMin}}人起)</text></text>
         </view> -->
       </view>
     </view>
@@ -16,8 +16,8 @@
         <view class="tip-item">
           <view class="dot"></view>
           <view class="content"
-            >1人起拼,还差{{ screenings.restPeople }}人可开场,最多可订{{
-              screenings.morePeople
+            >1人起拼,还差{{ screening.restPeople }}人可开场,最多可订{{
+              screening.morePeople
             }}人</view
           >
         </view>
@@ -25,7 +25,7 @@
           <view class="dot"></view>
           <view class="content"
             >多人同行建议玩家统一下单，否则满{{
-              screenings.advicePeopleMax
+              screening.advicePeopleMax
             }}人开场后，其他玩家不可预订</view
           >
         </view>
@@ -41,14 +41,14 @@
       <view class="product-info-wrapper">
         <!-- <view class="shop-name u-line-1">空白·沉浸式剧情推理桌游馆(总店)</view> -->
         <view class="product-info u-flex u-row-between">
-          <view class="product-name">{{ screenings.productName }}</view>
+          <view class="product-name">{{ screening.productName }}</view>
           <view class="price-block">
             <text class="sign">￥</text><text class="price">{{ price }}</text>
           </view>
         </view>
         <view class="order-time">
           <text class="time-desc"
-            >2021-06-12(周六) 09:30～14:00 | {{ screenings.duration }}分钟</text
+            >{{ time }} | {{ screening.duration }}分钟</text
           >
         </view>
       </view>
@@ -62,12 +62,12 @@
           <u-number-box
             v-model="count"
             :min="1"
-            :max="screenings.morePeople"
+            :max="screening.morePeople"
           ></u-number-box>
         </view>
         <view
           class="desc u-padding-right-20"
-          v-show="count >= screenings.restPeople"
+          v-show="count >= screening.restPeople"
         >
           <text class="high-light"> 已达可开场人数， </text><text> 订单 </text
           ><text class="high-light"> 不可退款， </text
@@ -154,12 +154,13 @@
 </template>
 
 <script>
+import { timeRangeFmt } from "@/common/js/time-fmt";
 export default {
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on("acceptDataFromOpenerPage", (data) => {
       this.price = data.price;
-      this.screenings = data;
+      this.screening = data;
     });
   },
   data() {
@@ -168,7 +169,7 @@ export default {
       name:
         uni.getStorageSync("userInfo") &&
         uni.getStorageSync("userInfo").nickName,
-      screenings: {},
+      screening: {},
       price: 0,
       count: 1,
       remark: "",
@@ -188,6 +189,13 @@ export default {
   computed: {
     totalPrice() {
       return this.price * this.count;
+    },
+    time() {
+      return timeRangeFmt(
+        this.screening.roomBeginTime,
+        this.screening.roomEndTime,
+        true
+      );
     },
   },
   methods: {
@@ -210,7 +218,7 @@ export default {
             (uni.getStorageSync("userInfo") &&
               uni.getStorageSync("userInfo").nickName),
           payerPhone: this.phone,
-          productItemId: this.screenings.productItemId,
+          productItemId: this.screening.productItemId,
         })
         .then((res) => {
           console.log(res);

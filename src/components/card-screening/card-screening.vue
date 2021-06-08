@@ -2,7 +2,7 @@
   <view class="play toggle-play u-flex">
     <view class="play-left">
       <view class="left-top u-flex-1 u-line-1">
-        <text class="time u-margin-right-8">06月11日 19:30-次日00:00</text>
+        <text class="time u-margin-right-8">{{ time }}</text>
         <text class="current-count">{{ screening.currentPeople }}人已加入</text>
       </view>
       <view class="left-bottom">
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { timeRangeFmt } from "@/common/js/time-fmt";
 export default {
   props: {
     screening: {
@@ -55,6 +56,14 @@ export default {
         color: "#fff",
       },
     };
+  },
+  computed: {
+    time() {
+      return timeRangeFmt(
+        this.screening.roomBeginTime,
+        this.screening.roomEndTime
+      );
+    },
   },
   methods: {
     joinGroup() {
