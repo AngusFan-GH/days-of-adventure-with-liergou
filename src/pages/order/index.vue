@@ -130,7 +130,7 @@
             maxlength="20"
             height="60"
           />
-          <u-icon name="arrow-right"></u-icon>
+          <u-icon name="arrow-right" class="arrow-right"></u-icon>
         </view>
         <view class="mobile-item u-flex u-padding-right-30">
           <view class="prefix">手机号码</view>
@@ -143,7 +143,7 @@
             maxlength="11"
             height="60"
           />
-          <u-icon name="arrow-right"></u-icon>
+          <u-icon name="arrow-right" class="arrow-right"></u-icon>
         </view>
         <view class="remark-info">
           <view class="label">备注</view>
@@ -485,6 +485,7 @@ export default {
         }
     }
     .common-usertable-wrapper {
+        padding-right: 0;
         .prefix {
             font-size: 30rpx;
             line-height: 40rpx;
@@ -509,6 +510,9 @@ export default {
 
                 color: #777;
             }
+        }
+        .arrow-right {
+            color: #c8c8c8;
         }
     }
     .rule-bottom-wrapper {
