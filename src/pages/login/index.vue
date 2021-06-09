@@ -35,28 +35,22 @@
 export default {
   data() {
     return {
-      step: 1,
+      step: 0,
       userInfo: null,
+      phone: null,
     };
   },
-  methods: {
-    getuserinfo() {
-      uni.getUserProfile({
-        desc: '必须授权才可以继续使用',
-        success: res => {
-          this.userInfo = res.userInfo;
-          console.log('getUserProfile', this.userInfo);
-          uni.setStorageSync('userInfo', res.userInfo);
-          this.weChatLogin();
-        },
-        fail: () => {
-          uni.showToast({
-            title: '授权失败',
-            icon: 'none',
-          });
-        },
+  mounted() {
+    const token = uni.getStorageSync('token');
+    if (!token) {
+      this.weChatLogin();
+    } else {
+      uni.switchTab({
+        url: '/pages/index/index',
       });
-    },
+    }
+  },
+  methods: {
     weChatLogin() {
       uni.login({
         provider: 'weixin',
@@ -69,22 +63,25 @@ export default {
               console.log('weChatLogin', result);
               const { token, user } = result;
               uni.setStorageSync('token', token);
-              this.$u.api
-                .updateUserInfo({
-                  userInfo: this.userInfo,
-                })
-                .then(res => console.log(res))
-                .catch(err => console.error(err));
-              uni.setStorageSync('openId', user.openId);
-              if (user.phoneNumber) {
-                uni.setStorageSync('phone', user.phoneNumber);
+              const { openId, nickName, phoneNumber } = user;
+              uni.setStorageSync('openId', openId);
+              if (nickName == null) {
+                return (this.step = 1);
+              }
+              uni.setStorageSync('userInfo', {
+                avatarUrl: user.avatarUrl,
+                city: user.city,
+                country: user.country,
+                gender: user.gender,
+                language: user.language,
+                nickName: user.nickName,
+                province: user.province,
+              });
+              if (phoneNumber) {
+                uni.setStorageSync('phone', phoneNumber);
                 this.navigateBack();
               } else {
                 this.step = 2;
-                uni.showToast({
-                  title: '请授权手机号',
-                  icon: 'none',
-                });
               }
             })
             .catch(err => {
@@ -93,6 +90,28 @@ export default {
         },
         fail: err => {
           console.error(err);
+        },
+      });
+    },
+    getuserinfo() {
+      uni.getUserProfile({
+        desc: '必须授权才可以继续使用',
+        success: res => {
+          this.userInfo = res.userInfo;
+          console.log('getUserProfile', this.userInfo);
+          uni.setStorageSync('userInfo', res.userInfo);
+          this.$u.api
+            .updateUserInfo({
+              userInfo: this.userInfo,
+            })
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
+        },
+        fail: () => {
+          uni.showToast({
+            title: '授权失败',
+            icon: 'none',
+          });
         },
       });
     },

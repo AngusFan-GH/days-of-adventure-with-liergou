@@ -4,6 +4,12 @@
 	},
 	"pages": [
 		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "授权登录"
+			}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "主题",
@@ -27,12 +33,6 @@
 			"path": "pages/order/index",
 			"style": {
 				"navigationBarTitleText": "订单信息"
-			}
-		},
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "授权登录"
 			}
 		}
 	],

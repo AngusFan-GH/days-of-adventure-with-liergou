@@ -19,7 +19,7 @@ export default {
     return {
       borderTop: false,
       inactiveColor: '#909399',
-      activeColor: '#5098FF',
+      activeColor: '#f63',
     };
   },
   computed: {
@@ -28,21 +28,8 @@ export default {
   methods: {
     beforeSwitch(index) {
       // this为当前pages页面this，而非tab-bar的this
-      if (this.tabBarIndex !== index) {
-        console.log('current', this.tabBarIndex, index);
-        uni.switchTab({
-          url: this.$store.state.tabBar.list[index].pagePath,
-          success: () => {
-            this.loading = true;
-            this.list = [];
-            uni.pageScrollTo({
-              scrollTop: 0,
-              duration: 0,
-            });
-          },
-        });
-      }
-      return false;
+      console.log('current', this.tabBarIndex, index);
+      return true;
     },
   },
 };

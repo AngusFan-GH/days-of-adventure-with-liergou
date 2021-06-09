@@ -8,12 +8,17 @@
           :data="card"
         ></list-card>
       </view>
-      <u-loadmore v-show="!loading" :status="status" @loadmore="loadmore" />
+      <u-loadmore
+        v-if="list.length"
+        :status="status"
+        @loadmore="loadmore"
+        :loadText="loadText"
+      />
       <view class="empty-display" v-if="!loading && !list.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
       </view>
-      <loading class="loading" v-if="loading"></loading>
+      <loading class="loading" v-if="loading && !list.length"></loading>
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
@@ -35,11 +40,16 @@ export default {
       tabBarIndex: 0,
       loading: true,
       status: 'loadmore',
+      loadText: {
+        loadmore: '轻轻上拉',
+        loading: '努力加载中',
+        nomore: '暂时没有了',
+      },
+      scrollTop: 0,
       list: [],
       pageNum: 1,
       pageSize: 10,
       pages: 1,
-      scrollTop: 0,
     };
   },
   created() {
@@ -68,10 +78,11 @@ export default {
     },
     getCardList(isRefrash = false) {
       uni.showNavigationBarLoading();
+      this.loading = true;
+      this.status = 'loading';
       if (isRefrash) {
         this.pageNum = 1;
       }
-      this.status = 'loading';
       const { latitude, longitude } = uni.getStorageSync('position');
       this.$u.api
         .getCardList({
@@ -170,6 +181,5 @@ export default {
 
     transform: translate(-50%,-50%);
 }
-
 
 </style>
