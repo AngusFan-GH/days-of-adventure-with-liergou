@@ -72,7 +72,7 @@ export default {
       uni.navigateTo({
         url: '/pages/order/index',
         success: res => {
-          res.eventChannel.emit('acceptDataFromOpenerPage', this.screening);
+          res.eventChannel.emit('submitOrder', this.screening);
         },
       });
     },

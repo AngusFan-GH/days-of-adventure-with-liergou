@@ -1,6 +1,6 @@
 <template>
   <view class="list-card">
-    <view class="shop u-flex">
+    <view class="shop u-flex" @click="goToDetail()">
       <image
         class="pic u-margin-right-20"
         :src="data.headPic || defaultThumb"
@@ -109,6 +109,13 @@ export default {
   computed: {
     closeText() {
       return `查看全部${this.data.screenings.length}个场次`;
+    },
+  },
+  methods: {
+    goToDetail() {
+      uni.navigateTo({
+        url: `/pages/detail/index?productItemId=${this.data.productItemId}`,
+      });
     },
   },
 };

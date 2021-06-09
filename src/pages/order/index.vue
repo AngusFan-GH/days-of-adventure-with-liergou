@@ -116,7 +116,7 @@
         </view>
       </view>
     </view>
-    <view class="general-gap"></view>
+    <u-gap height="20"></u-gap>
     <view class="info-item">
       <view class="common-usertable-wrapper">
         <view class="mobile-item u-flex u-padding-right-30">
@@ -157,7 +157,7 @@
         </view>
       </view>
     </view>
-    <view class="general-gap"></view>
+    <u-gap height="20"></u-gap>
     <view class="info-item">
       <view class="rule-bottom-wrapper u-padding-30">
         <view class="title">预订须知:</view>
@@ -189,6 +189,7 @@
         </view>
       </view>
     </view>
+    <u-gap height="20"></u-gap>
     <view class="footer u-flex u-row-between">
       <view class="price">
         <text class="price-logo">¥</text>
@@ -208,7 +209,7 @@ import { timeRangeFmt } from '@/common/js/time-fmt';
 export default {
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('acceptDataFromOpenerPage', data => {
+    eventChannel.on('submitOrder', data => {
       this.price = data.price;
       this.screening = data;
       this.count = data.advicePeopleMin;
@@ -545,12 +546,6 @@ export default {
     .high-light {
         color: rgb(255, 102, 51);
     }
-}
-.general-gap {
-    width: 100%;
-    height: 20rpx;
-
-    opacity: 0;
 }
 .footer {
     position: fixed;

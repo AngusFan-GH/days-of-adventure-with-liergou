@@ -359,5 +359,6 @@
             "arrowParens": "avoid", // 箭头函数参数只有一个时省略括号
             "jsxBracketSameLine": false
         }
-    }
+    },
+    "vetur.format.defaultFormatter.html": "prettyhtml"
 }
