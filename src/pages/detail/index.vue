@@ -88,7 +88,66 @@
           <view class="tip">未拼成前随时退，拼成后不可退款</view>
         </view>
       </view>
-      <view class="pool-icon"></view>
+      <view class="arrow-right"></view>
+    </view>
+    <view class="u-flex u-flex-wrap theme-icon u-skeleton-fillet">
+      <view class="u-flex theme-icon-item" v-for="(icon, index) in data.tags" :key="index">
+        <img src="https://p0.meituan.net/scarlett/919f5eb155a5143a00c043656fa7262c4857.png" alt />
+        <view class="u-margin-left-10 icon-name">{{icon}}</view>
+      </view>
+    </view>
+    <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+    <view class="u-padding-30 theme-shop">
+      <view class="u-flex u-row-between title common">门店信息</view>
+    </view>
+    <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+    <view class="u-padding-30 theme-ugc">
+      <view class="u-flex u-row-between title common">
+        当前主题评价(3)
+        <text class="arrow-right"></text>
+      </view>
+    </view>
+    <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+    <view class="theme-detail">
+      <view class="u-padding-30 detail">
+        <view class="u-margin-bottom-20 title common">主题描述</view>
+      </view>
+      <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+      <view class="u-padding-30 detail rules">
+        <view class="u-margin-bottom-20 title common">购买须知</view>
+        <view class="u-margin-bottom-20 buy-rules">
+          <view class="u-margin-bottom-8 rule-name">预订须知</view>
+          <view class="u-relative u-margin-left-14 rule-content">无需提前入场</view>
+        </view>
+        <view class="u-margin-bottom-20 buy-rules">
+          <view class="u-margin-bottom-8 rule-name">温馨提示</view>
+          <view
+            class="u-relative u-margin-left-14 rule-content"
+          >为了保障您的权益，建议使用线上支付。若使用其他支付方式导致纠纷，本公司不承担任何责任，感谢您的理解和支持！</view>
+          <view
+            class="u-relative u-margin-left-14 rule-content"
+          >温馨提醒：您在到店使用本商品/服务期间，如涉及潜水、骑马、滑雪、热气球、游艇等项目，请关注商家的安全提示内容，了解相关注意事项，做好安全防护措施，保护您的安全。</view>
+        </view>
+      </view>
+    </view>
+    <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+    <u-gap height="200" bg-color="#f6f6f6"></u-gap>
+    <view class="theme-submit u-skeleton-rect">
+      <view class="u-relative u-flex u-row-between notice">
+        <view class="txt-area">
+          <text class="txt">当前有2场在拼，最近一场差</text>
+          <text class="txt high-light">{{data.advicePeopleMin}}</text>
+          <text class="txt">人即可开场</text>
+        </view>
+        <view class="notice-space"></view>
+        <view class="u-flex u-margin-left-4 join">
+          立即加入
+          <navigator class="u-margin-left-8 arrow-right"></navigator>
+        </view>
+      </view>
+      <view class="btn-group u-skeleton-fillet">
+        <u-button shape="circle" :custom-style="customStyle">选择场次并预订</u-button>
+      </view>
     </view>
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
   </view>
@@ -111,6 +170,10 @@ export default {
       },
       showExpandDescBtn: true,
       hasExpandDesc: false,
+      customStyle: {
+        backgroundColor: '#f63',
+        color: '#fff',
+      },
     };
   },
   methods: {
@@ -142,8 +205,7 @@ export default {
         const descTextView = query.select('.desc-text');
         descTextView
           .boundingClientRect(({ height }) => {
-            console.log(height);
-            this.showExpandDescBtn = height > 13 * 3;
+            this.showExpandDescBtn = height > 13 * 3; // px
           })
           .exec();
       });
@@ -156,11 +218,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../common/style/variable.scss';
 .container {
     min-height: 100%;
-
-    background-color: $background-color;
 }
 .bg {
     overflow: hidden;
@@ -345,13 +404,98 @@ export default {
             }
         }
     }
-    .pool-icon {
-        width: 22rpx;
-        height: 22rpx;
-
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAsCAYAAAAacYo8AAACwUlEQVRoQ+3ZPYgTQRQA4De7QfODQmYISAJWAQvFFFqKBM7zRBtTBE4RtBK1SOFPq3u2pxYpVKwURKw8C0XPHwhiqUXCCYIBo5KgLDMrFkkUd58M5HDZw8tls7uXAdNuGL7Mvrz35g0BRT9EUTeMBS+Xy3qtVtuZSqU+tlqt71Fugm84IhLG2CIiTgOAiMViJdM0X0WF9w1Pp9NbAeDTMpQQ0gOAkhBiMQq8b3ixWIw1Go0lRNzmgv7SNO0I5/xB2HjfcAkb7PpLAMi7oLamaSc453fDxI8Fl7BMJrPFtu3niLjDBUUAOGNZ1s2w8GPDJSyXy7Fer/cUEXe7oYSQC0KIK2HgA4FLGKV0MyI+BoA9HvycEMIIGh8YXMKy2Wyy3+8vIOJ+D/6aEOJckPhA4RKWz+c3cs7vA8BhD/5WpVI5bRiGE8QPCBwuUTJV1uv1OwBw1IO8VygUjtdqtd/j4kOBS5RhGFq1Wr2BiCc9yIeMsdlms/lzHHxo8GUUpfQqIp71hM2zeDxe6nQ6Xb/40OGDjDOHiBc9yNeEkENCiB9+8JHAB/jziDjvQb5NJpMz7Xabj4qPDC5h6XT6FABcB/jbThNC3um6vs80za+j4COFSxhj7JjjOLcBQHdBmwAwZVnW57XiI4cP8CXHcWSu37AMJYR80XV9yjTND2vBrwt8EPMzACCrbMKF/0YIKXLO3w/DrxtcwjKZzF7bth8h4iYX/okQ4uB/+LAdGPU5pVS9UGGMqffnVDId/qMALem6Pj2xBYhSuqLkE0LeJBKJAxNb8imlBiJeUqrJUq6tVfIgoeTRTcnDspLjiVUGQpeFEN6MMmqHsOL7gXSHcgTX7XbleHmX51A8uSO4wdDzBSJud6Ene+ip5Jh5lcH+LOd8YewgHrKA7xhX9ipF2csr+SaVvC4MO4aHre87xoctHPbzP8hhczwaPeppAAAAAElFTkSuQmCC) no-repeat;
-        background-size: cover;
+}
+.theme-icon {
+    padding: 20rpx 0 20rpx 40rpx;
+    &-item {
+        width: 33%;
+        height: 90rpx;
+        img {
+            width: 46rpx;
+            height: 46rpx;
+        }
     }
+    .icon-name {
+        font-size: 26rpx;
+        font-weight: 400;
+
+        color: #111;
+    }
+}
+.buy-rules {
+    .rule-name {
+        font-size: 26rpx;
+        font-weight: 400;
+
+        color: #777;
+    }
+    .rule-content {
+        letter-spacing: 0;
+
+        color: #111;
+        &:before {
+            position: absolute;
+            top: 16rpx;
+            left: -16rpx;
+
+            width: 6rpx;
+            height: 6rpx;
+
+            content: '';
+
+            border-radius: 50%;
+            background: #999;
+        }
+    }
+}
+.theme-submit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    box-sizing: border-box;
+    width: 100%;
+
+    background-color: #fff;
+    .notice {
+        font-size: 22rpx;
+        line-height: 80rpx;
+
+        height: 70rpx;
+        padding: 0 30rpx;
+
+        background: #fff;
+        .txt-area {
+            color: #777;
+        }
+        .high-light {
+            color: #f63;
+        }
+        .join {
+            font-size: 22rpx;
+
+            color: #999;
+        }
+    }
+    .btn-group {
+        padding: 14rpx 30rpx;
+    }
+}
+
+.common.title {
+    font-size: 34rpx;
+    font-weight: 700;
+
+    color: #111;
+}
+
+.arrow-right {
+    width: 22rpx;
+    height: 22rpx;
+
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAsCAYAAAAacYo8AAACwUlEQVRoQ+3ZPYgTQRQA4De7QfODQmYISAJWAQvFFFqKBM7zRBtTBE4RtBK1SOFPq3u2pxYpVKwURKw8C0XPHwhiqUXCCYIBo5KgLDMrFkkUd58M5HDZw8tls7uXAdNuGL7Mvrz35g0BRT9EUTeMBS+Xy3qtVtuZSqU+tlqt71Fugm84IhLG2CIiTgOAiMViJdM0X0WF9w1Pp9NbAeDTMpQQ0gOAkhBiMQq8b3ixWIw1Go0lRNzmgv7SNO0I5/xB2HjfcAkb7PpLAMi7oLamaSc453fDxI8Fl7BMJrPFtu3niLjDBUUAOGNZ1s2w8GPDJSyXy7Fer/cUEXe7oYSQC0KIK2HgA4FLGKV0MyI+BoA9HvycEMIIGh8YXMKy2Wyy3+8vIOJ+D/6aEOJckPhA4RKWz+c3cs7vA8BhD/5WpVI5bRiGE8QPCBwuUTJV1uv1OwBw1IO8VygUjtdqtd/j4kOBS5RhGFq1Wr2BiCc9yIeMsdlms/lzHHxo8GUUpfQqIp71hM2zeDxe6nQ6Xb/40OGDjDOHiBc9yNeEkENCiB9+8JHAB/jziDjvQb5NJpMz7Xabj4qPDC5h6XT6FABcB/jbThNC3um6vs80za+j4COFSxhj7JjjOLcBQHdBmwAwZVnW57XiI4cP8CXHcWSu37AMJYR80XV9yjTND2vBrwt8EPMzACCrbMKF/0YIKXLO3w/DrxtcwjKZzF7bth8h4iYX/okQ4uB/+LAdGPU5pVS9UGGMqffnVDId/qMALem6Pj2xBYhSuqLkE0LeJBKJAxNb8imlBiJeUqrJUq6tVfIgoeTRTcnDspLjiVUGQpeFEN6MMmqHsOL7gXSHcgTX7XbleHmX51A8uSO4wdDzBSJud6Ene+ip5Jh5lcH+LOd8YewgHrKA7xhX9ipF2csr+SaVvC4MO4aHre87xoctHPbzP8hhczwaPeppAAAAAElFTkSuQmCC);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 
 </style>

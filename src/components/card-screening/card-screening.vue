@@ -13,8 +13,7 @@
         </text>
         <text v-else>
           该场次已拼成，还可加入
-          <text class="people-count">{{ screening.morePeople }}</text>
-          人
+          <text class="people-count">{{ screening.morePeople }}</text>人
         </text>
       </view>
     </view>
@@ -23,19 +22,8 @@
       <view class="rmb dpcolor">
         <text class="price u-margin-right-14">¥{{ screening.price }}/人</text>
       </view>
-      <view
-        data-view-bid="b_play_r20lxsmk_mv"
-        data-extend="sku_id=720575953"
-        class="btn dpbg"
-      >
-        <u-button
-          shape="circle"
-          size="mini"
-          :custom-style="customStyle"
-          @click="joinGroup()"
-        >
-          加入拼场
-        </u-button>
+      <view data-view-bid="b_play_r20lxsmk_mv" data-extend="sku_id=720575953" class="btn dpbg">
+        <u-button shape="circle" size="mini" :custom-style="customStyle" @click="joinGroup()">加入拼场</u-button>
       </view>
     </view>
   </view>
@@ -53,7 +41,7 @@ export default {
   data() {
     return {
       customStyle: {
-        backgroundColor: 'orangered',
+        backgroundColor: '#f63',
         color: '#fff',
       },
     };

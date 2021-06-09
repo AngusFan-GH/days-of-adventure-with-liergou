@@ -4,12 +4,6 @@
 	},
 	"pages": [
 		{
-			"path": "pages/detail/index",
-			"style": {
-				"navigationBarTitleText": "详情"
-			}
-		},
-		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "授权登录"
@@ -39,6 +33,12 @@
 			"path": "pages/order/index",
 			"style": {
 				"navigationBarTitleText": "提交订单"
+			}
+		},
+		{
+			"path": "pages/detail/index",
+			"style": {
+				"navigationBarTitleText": "详情"
 			}
 		}
 	],
