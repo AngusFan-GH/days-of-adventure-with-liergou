@@ -58,8 +58,16 @@
             </view>
           </view>
           <view class="u-flex-col u-margin-top-20 u-padding-20 theme-desc u-skeleton-fillet">
-            <view class="u-flex u-row-between desc-title">剧情简介</view>
-            <view class="desc-text">{{ data.desc }}</view>
+            <view class="u-flex u-row-between desc-title">
+              <text class="title-left">剧情简介</text>
+              <text
+                class="u-relative u-margin-right-26 title-right"
+                :class="{ 'arrow-bottom': hasExpandDesc }"
+                v-if="showExpandDescBtn"
+                @click="toggleExpandDesc"
+              >{{ hasExpandDesc ? '收起' : '展开' }}</text>
+            </view>
+            <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">{{ data.desc }}</view>
           </view>
         </view>
       </view>
@@ -69,7 +77,11 @@
       <view class="u-flex-col u-flex-1 pool-tips">
         <view class="u-flex single-tip">
           <view class="dot">.</view>
-          <view class="tip">部分场次1人起拼，满{{data.advicePeopleMin}}人即可开场，每场最多{{data.advicePeopleMax}}人</view>
+          <view class="tip">
+            部分场次1人起拼，满{{ data.advicePeopleMin }}人即可开场，每场最多{{
+            data.advicePeopleMax
+            }}人
+          </view>
         </view>
         <view class="u-flex single-tip">
           <view class="dot">.</view>
@@ -97,6 +109,8 @@ export default {
       data: {
         headPic: defaultThumb,
       },
+      showExpandDescBtn: true,
+      hasExpandDesc: false,
     };
   },
   methods: {
@@ -118,8 +132,24 @@ export default {
           this.data = data;
           console.log(this.data);
           this.loading = false;
+          this.setDescTextBtn();
         })
         .catch(err => console.error(err));
+    },
+    setDescTextBtn() {
+      this.$nextTick(() => {
+        const query = uni.createSelectorQuery().in(this);
+        const descTextView = query.select('.desc-text');
+        descTextView
+          .boundingClientRect(({ height }) => {
+            console.log(height);
+            this.showExpandDescBtn = height > 13 * 3;
+          })
+          .exec();
+      });
+    },
+    toggleExpandDesc() {
+      this.hasExpandDesc = !this.hasExpandDesc;
     },
   },
 };
@@ -256,6 +286,27 @@ export default {
             background: rgba(0,0,0,.2);
             .desc-title {
                 font-size: 30rpx;
+                .title-right {
+                    font-size: 26rpx;
+                    &:after {
+                        position: absolute;
+                        top: 45%;
+                        right: -50%;
+
+                        width: 20rpx;
+                        height: 12rpx;
+
+                        content: '';
+                        transform: translateY(-46%);
+
+                        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAALCAYAAAByF90EAAAABGdBTUEAALGPC/xhBQAAAJ5JREFUKBWNkkESgyAMRUnHM3TXM7jz/uvuPIM7LkHzbGCgmtDMIDH/56EZpJQiKaWnLiKLSPmm8fO3b1E7kM3aDjXsM5hBVu15Wd/7YUndEFYz1tqw30BOHVDWdXRuF+ZA6M3MJwWG9pszzwmawdA1+pnwzpe0gxoIJTgVuQ6WfIBQGEAUHBhSjQsE4QKiGMBuIS7IgbmQENTB/rr1H8jPVeRH7I9YAAAAAElFTkSuQmCC) 50% no-repeat;
+                        background-size: 100% 100%;
+                    }
+                    &.arrow-bottom:after {
+                        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABsAAAARCAYAAAAsT9czAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAG6ADAAQAAAABAAAAEQAAAACfd25iAAAA8klEQVQ4Ea2UQQrCQAxFO1VcFRHP4BUKvf+q4NqdeAQX0pUg4/8yGdJqp0kxEDIt+f+102mqyhkxxi3ywOqUVsEjAOCI/ha5Qz6R5xDCHdUUZlgCdXDdKOcX1r0VaILNgIRpBi7CFkAuYBFmBJmBtXROawHEbbsgWXXwW3ZJp+/n9U/YAogH4gaHHukCfm2jAZSPuqeXrzeCecU08GgyzCMiRIdV+4FZmzVgurZ41GjijOMI0pOBXuaflc1piswdmpYcnsYGyVmnwwUSYQFI/4awAcmhKrEKJOIZIP0H+WZ7XJyS4ArBQ8RrK7bt756uZ3kDcnSQPDzQU3sAAAAASUVORK5CYII=) 50% no-repeat;
+                        background-size: 100% 100%;
+                    }
+                }
             }
             .desc-text {
                 font-size: 26rpx;
