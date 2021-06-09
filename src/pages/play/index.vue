@@ -52,13 +52,8 @@ export default {
       pages: 1,
     };
   },
-  created() {
+  mounted() {
     this.getPositon();
-  },
-  onShow() {
-    if (this.loading) {
-      this.getCardList(true);
-    }
   },
   onPullDownRefresh() {
     this.getCardList(true);
@@ -73,6 +68,7 @@ export default {
             latitude: res.latitude,
           };
           uni.setStorageSync('position', position);
+          this.getCardList(true);
         },
       });
     },
