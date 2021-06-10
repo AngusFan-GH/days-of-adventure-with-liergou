@@ -33,9 +33,9 @@
                 <text class="tag-item">{{ data.advicePeopleMin }}人起订</text>
                 <text class="tag-item">
                   建议{{
-                  data.advicePeopleMin !== data.advicePeopleMax
-                  ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
-                  : `${data.advicePeopleMin}`
+                    data.advicePeopleMin !== data.advicePeopleMax
+                      ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
+                      : `${data.advicePeopleMin}`
                   }}人
                 </text>
                 <text class="tag-item">{{ data.duration }}分钟</text>
@@ -46,7 +46,9 @@
                   class="u-margin-right-12 style-tags"
                   v-for="(tags, index) in data.tags"
                   :key="index"
-                >{{ tags }}</text>
+                >
+                  {{ tags }}
+                </text>
               </view>
               <view class="u-flex u-row-between u-margin-top-10 u-skeleton-rect">
                 <view class="u-flex price">
@@ -65,21 +67,23 @@
                 :class="{ 'arrow-bottom': hasExpandDesc }"
                 v-if="showExpandDescBtn"
                 @click="toggleExpandDesc"
-              >{{ hasExpandDesc ? '收起' : '展开' }}</text>
+              >
+                {{ hasExpandDesc ? '收起' : '展开' }}
+              </text>
             </view>
             <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">{{ data.desc }}</view>
           </view>
         </view>
       </view>
     </view>
-    <view class="u-flex pool-detail u-skeleton-fillet">
-      <view class="u-flex u-row-center pool-text">可拼场</view>
-      <view class="u-flex-col u-flex-1 pool-tips">
+    <view class="u-flex pool-detail">
+      <view class="u-flex u-row-center pool-text u-skeleton-rect">可拼场</view>
+      <view class="u-flex-col u-flex-1 pool-tips u-skeleton-rect">
         <view class="u-flex single-tip">
           <view class="dot">.</view>
           <view class="tip">
             部分场次1人起拼，满{{ data.advicePeopleMin }}人即可开场，每场最多{{
-            data.advicePeopleMax
+              data.advicePeopleMax
             }}人
           </view>
         </view>
@@ -90,19 +94,55 @@
       </view>
       <view class="arrow-right"></view>
     </view>
-    <view class="u-flex u-flex-wrap theme-icon u-skeleton-fillet">
-      <view class="u-flex theme-icon-item" v-for="(icon, index) in data.tags" :key="index">
+    <view class="u-flex u-flex-wrap theme-icon">
+      <view
+        class="u-flex theme-icon-item u-skeleton-fillet"
+        v-for="(icon, index) in data.tags"
+        :key="index"
+      >
         <img src="https://p0.meituan.net/scarlett/919f5eb155a5143a00c043656fa7262c4857.png" alt />
-        <view class="u-margin-left-10 icon-name">{{icon}}</view>
+        <view class="u-margin-left-10 icon-name">{{ icon }}</view>
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <view class="u-padding-30 theme-shop">
-      <view class="u-flex u-row-between title common">门店信息</view>
+      <view class="u-flex u-row-between title common u-skeleton-fillet">门店信息</view>
+      <view
+        class="u-relative u-padding-top-30 u-padding-bottom-30 u-flex u-row-between description"
+      >
+        <view>
+          <view class="u-line-1 name u-skeleton-fillet">空白·沉浸式剧情推理桌游馆(总店)</view>
+          <view class="u-margin-top-6 star u-skeleton-fillet">
+            <u-rate
+              :count="5"
+              v-model="data.difficultLevel"
+              disabled
+              active-color="#ea120e"
+              active-icon="star-fill"
+              inactive-icon="star"
+              gutter="0"
+            ></u-rate>
+          </view>
+        </view>
+        <text class="u-absolute phone-line"></text>
+        <navigator
+          class="u-margin-right-20 phone u-skeleton-circle"
+          @click="makePhoneCall()"
+        ></navigator>
+      </view>
+      <view class="u-flex u-row-between u-padding-top-30 location" @click="openLocation()">
+        <view class="u-flex dp-address u-skeleton-rect">
+          <u-icon name="map" color="#bbb" size="32"></u-icon>
+          <text class="u-relative u-margin-left-20 u-line-1 address">
+            知春路108号豪景大厦C座1603
+          </text>
+        </view>
+        <text class="arrow-right"></text>
+      </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <view class="u-padding-30 theme-ugc">
-      <view class="u-flex u-row-between title common">
+      <view class="u-flex u-row-between title common u-skeleton-fillet">
         当前主题评价(3)
         <text class="arrow-right"></text>
       </view>
@@ -110,33 +150,33 @@
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <view class="theme-detail">
       <view class="u-padding-30 detail">
-        <view class="u-margin-bottom-20 title common">主题描述</view>
+        <view class="u-margin-bottom-20 title common u-skeleton-fillet">主题描述</view>
       </view>
       <u-gap height="20" bg-color="#f6f6f6"></u-gap>
       <view class="u-padding-30 detail rules">
-        <view class="u-margin-bottom-20 title common">购买须知</view>
+        <view class="u-margin-bottom-20 title common u-skeleton-fillet">购买须知</view>
         <view class="u-margin-bottom-20 buy-rules">
-          <view class="u-margin-bottom-8 rule-name">预订须知</view>
+          <view class="u-margin-bottom-8 rule-name u-skeleton-rect">预订须知</view>
           <view class="u-relative u-margin-left-14 rule-content">无需提前入场</view>
         </view>
-        <view class="u-margin-bottom-20 buy-rules">
+        <view class="u-margin-bottom-20 buy-rules u-skeleton-rect">
           <view class="u-margin-bottom-8 rule-name">温馨提示</view>
-          <view
-            class="u-relative u-margin-left-14 rule-content"
-          >为了保障您的权益，建议使用线上支付。若使用其他支付方式导致纠纷，本公司不承担任何责任，感谢您的理解和支持！</view>
-          <view
-            class="u-relative u-margin-left-14 rule-content"
-          >温馨提醒：您在到店使用本商品/服务期间，如涉及潜水、骑马、滑雪、热气球、游艇等项目，请关注商家的安全提示内容，了解相关注意事项，做好安全防护措施，保护您的安全。</view>
+          <view class="u-relative u-margin-left-14 rule-content">
+            为了保障您的权益，建议使用线上支付。若使用其他支付方式导致纠纷，本公司不承担任何责任，感谢您的理解和支持！
+          </view>
+          <view class="u-relative u-margin-left-14 rule-content">
+            温馨提醒：您在到店使用本商品/服务期间，如涉及潜水、骑马、滑雪、热气球、游艇等项目，请关注商家的安全提示内容，了解相关注意事项，做好安全防护措施，保护您的安全。
+          </view>
         </view>
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <u-gap height="200" bg-color="#f6f6f6"></u-gap>
-    <view class="theme-submit u-skeleton-rect">
+    <view class="theme-submit">
       <view class="u-relative u-flex u-row-between notice">
         <view class="txt-area">
           <text class="txt">当前有2场在拼，最近一场差</text>
-          <text class="txt high-light">{{data.advicePeopleMin}}</text>
+          <text class="txt high-light">{{ data.advicePeopleMin }}</text>
           <text class="txt">人即可开场</text>
         </view>
         <view class="notice-space"></view>
@@ -145,7 +185,7 @@
           <navigator class="u-margin-left-8 arrow-right"></navigator>
         </view>
       </view>
-      <view class="btn-group u-skeleton-fillet">
+      <view class="btn-group">
         <u-button shape="circle" :custom-style="customStyle">选择场次并预订</u-button>
       </view>
     </view>
@@ -158,7 +198,7 @@ import defaultThumb from '@/static/image/bg_login.png';
 export default {
   onLoad(options) {
     console.log(options);
-    this.productItemId = +options.productItemId || 696115513;
+    this.productItemId = +options.productItemId || 764556152;
     this.getDetail();
   },
   data() {
@@ -186,9 +226,7 @@ export default {
           latitude: uni.getStorageSync('position').latitude,
         })
         .then(res => {
-          const data = res.records.find(
-            v => v.productItemId === this.productItemId
-          );
+          const data = res.records.find(v => v.productItemId === this.productItemId);
           data.tags = data.tags.split(',');
           data.desc =
             '唐朝乃是歌舞盛华之朝，乐文取得了辉煌之成，同时也将女伎们的身价推向了巅峰，青楼之市火爆，歌舞伎成了热门之业，虽然沦落为青楼女子并不光彩，但依然有很多人选择这一职业，在这些女子中琴棋书画兼备的也大有人在……';
@@ -212,6 +250,23 @@ export default {
     },
     toggleExpandDesc() {
       this.hasExpandDesc = !this.hasExpandDesc;
+    },
+    makePhoneCall() {
+      uni.makePhoneCall({
+        phoneNumber: '18519333232', //仅为示例
+      });
+    },
+    openLocation() {
+      const { latitude, longitude } = { latitude: 39.97558, longitude: 116.321927 };
+      uni.openLocation({
+        latitude,
+        longitude,
+        name: '空白·沉浸式剧情推理桌游馆(总店)',
+        success: res => {
+          console.log('success', res);
+        },
+        fail: err => console.error(err),
+      });
     },
   },
 };
@@ -420,6 +475,41 @@ export default {
         font-weight: 400;
 
         color: #111;
+    }
+}
+.description {
+    border-bottom: 1px solid #e1e1e1;
+    .name {
+        font-size: 26rpx;
+        font-weight: 700;
+
+        max-width: 540rpx;
+
+        color: #111;
+    }
+    .phone-line {
+        right: 18%;
+
+        width: 2rpx;
+        height: 42rpx;
+
+        transform: scaleX(.5);
+
+        background: #e1e1e1;
+    }
+    .phone {
+        width: 40rpx;
+        height: 40rpx;
+
+        background: url('data: image/png;base64,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') no-repeat;
+        background-size: contain;
+    }
+    .location {
+        .address {
+            font-size: 26rpx;
+
+            width: 500rpx;
+        }
     }
 }
 .buy-rules {

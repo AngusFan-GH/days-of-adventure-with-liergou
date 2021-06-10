@@ -2,18 +2,9 @@
   <view class="container">
     <view class="u-page list-container">
       <view class="list">
-        <list-card
-          v-for="(card, index) in list"
-          :key="index"
-          :data="card"
-        ></list-card>
+        <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
       </view>
-      <u-loadmore
-        v-if="list.length"
-        :status="status"
-        @loadmore="loadmore"
-        :loadText="loadText"
-      />
+      <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
       <view class="empty-display" v-if="!loading && !list.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
@@ -61,7 +52,7 @@ export default {
   methods: {
     getPositon() {
       uni.getLocation({
-        type: 'wgs84',
+        type: 'gcj02',
         success: res => {
           const position = {
             longitude: res.longitude,
