@@ -22,6 +22,21 @@
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
+    <u-popup
+      class="position-setting-popup"
+      v-model="showPositionPopup"
+      mode="bottom"
+      border-radius="14"
+      :mask-close-able="false"
+      :safe-area-inset-bottom="true"
+    >
+      <open-setting
+        title="地理位置授权"
+        desc="地理位置授权后方可使用"
+        authSetting="scope.userLocation"
+        @afterSetting="handleAfterSetting"
+      ></open-setting>
+    </u-popup>
   </view>
 </template>
 
@@ -29,11 +44,13 @@
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
+import openSetting from '@/components/open-setting/open-setting.vue';
 export default {
   components: {
     listCard,
     customTabBar,
     loading,
+    openSetting,
   },
   data() {
     return {
@@ -50,12 +67,17 @@ export default {
       pageNum: 1,
       pageSize: 10,
       pages: 1,
+      showPositionPopup: false,
     };
   },
   mounted() {
     this.getPositon();
   },
   onPullDownRefresh() {
+    if (this.showPositionPopup) {
+      uni.stopPullDownRefresh();
+      return;
+    }
     this.getCardList(true);
   },
   methods: {
@@ -69,6 +91,12 @@ export default {
           };
           uni.setStorageSync('position', position);
           this.getCardList(true);
+        },
+        fail: err => {
+          console.log(err);
+          if (err.errMsg === 'getLocation:fail auth deny') {
+            this.showPositionPopup = true;
+          }
         },
       });
     },
@@ -146,6 +174,10 @@ export default {
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
     },
+    handleAfterSetting() {
+      this.showPositionPopup = false;
+      this.getPositon();
+    },
   },
 };
 </script>
@@ -177,5 +209,7 @@ export default {
 
     transform: translate(-50%,-50%);
 }
+
+
 
 </style>

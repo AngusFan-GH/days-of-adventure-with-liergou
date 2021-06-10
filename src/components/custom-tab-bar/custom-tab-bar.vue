@@ -13,7 +13,10 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'custom-tab-bar',
   props: {
-    tabBarIndex: 0,
+    tabBarIndex: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
