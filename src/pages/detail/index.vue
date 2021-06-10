@@ -1,5 +1,5 @@
 <template>
-  <view class="container u-skeleton">
+  <view class="container u-skeleton safe-area-inset-bottom">
     <view class="theme-describe">
       <view class="u-relative bg">
         <view
@@ -71,7 +71,9 @@
                 {{ hasExpandDesc ? '收起' : '展开' }}
               </text>
             </view>
-            <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">{{ data.desc }}</view>
+            <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">
+              {{ data.desc }}
+            </view>
           </view>
         </view>
       </view>
@@ -111,7 +113,9 @@
         class="u-relative u-padding-top-30 u-padding-bottom-30 u-flex u-row-between description"
       >
         <view>
-          <view class="u-line-1 name u-skeleton-fillet">{{ data.shopName }}</view>
+          <view class="u-line-1 name u-skeleton-fillet">
+            {{ data.shopName }}
+          </view>
           <view class="u-margin-top-6 star u-skeleton-fillet">
             <u-rate
               :count="5"
@@ -172,7 +176,7 @@
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <u-gap height="200" bg-color="#f6f6f6"></u-gap>
-    <view class="theme-submit">
+    <view class="theme-submit safe-area-inset-bottom">
       <view class="u-relative u-flex u-row-between notice">
         <view class="txt-area">
           <text class="txt">当前有2场在拼，最近一场差</text>
@@ -261,7 +265,10 @@ export default {
       });
     },
     openLocation() {
-      const { latitude, longitude } = { latitude: 39.97558, longitude: 116.321927 };
+      const { latitude, longitude } = {
+        latitude: 39.97558,
+        longitude: 116.321927,
+      };
       uni.openLocation({
         latitude,
         longitude,

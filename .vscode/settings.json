@@ -356,7 +356,8 @@
         "prettier": {
             "singleQuote": true, // 用单引号
             "htmlWhitespaceSensitivity": "ignore", // 防止尾部>被换行
-            "arrowParens": "avoid", // 箭头函数参数只有一个时省略括号
+            "arrowParens": "avoid", // 
+            "printWidth": 100
         }
     },
 }
