@@ -111,7 +111,7 @@
         class="u-relative u-padding-top-30 u-padding-bottom-30 u-flex u-row-between description"
       >
         <view>
-          <view class="u-line-1 name u-skeleton-fillet">空白·沉浸式剧情推理桌游馆(总店)</view>
+          <view class="u-line-1 name u-skeleton-fillet">{{ data.shopName }}</view>
           <view class="u-margin-top-6 star u-skeleton-fillet">
             <u-rate
               :count="5"
@@ -134,7 +134,7 @@
         <view class="u-flex dp-address u-skeleton-rect">
           <u-icon name="map" color="#bbb" size="32"></u-icon>
           <text class="u-relative u-margin-left-20 u-line-1 address">
-            知春路108号豪景大厦C座1603
+            {{ data.shopAddress }}
           </text>
         </view>
         <text class="arrow-right"></text>
@@ -227,7 +227,11 @@ export default {
         })
         .then(res => {
           const data = res.records.find(v => v.productItemId === this.productItemId);
+          data.difficultLevel = data.difficultLevel / 10;
           data.tags = data.tags.split(',');
+          data.shopName = '空白·沉浸式剧情推理桌游馆(总店)';
+          data.shopAddress = '知春路108号豪景大厦C座1603';
+          data.shopTel = '18519333232';
           data.desc =
             '唐朝乃是歌舞盛华之朝，乐文取得了辉煌之成，同时也将女伎们的身价推向了巅峰，青楼之市火爆，歌舞伎成了热门之业，虽然沦落为青楼女子并不光彩，但依然有很多人选择这一职业，在这些女子中琴棋书画兼备的也大有人在……';
           this.data = data;
@@ -253,7 +257,7 @@ export default {
     },
     makePhoneCall() {
       uni.makePhoneCall({
-        phoneNumber: '18519333232', //仅为示例
+        phoneNumber: this.data.shopTel, //仅为示例
       });
     },
     openLocation() {
@@ -261,7 +265,7 @@ export default {
       uni.openLocation({
         latitude,
         longitude,
-        name: '空白·沉浸式剧情推理桌游馆(总店)',
+        name: this.data.shopName,
         success: res => {
           console.log('success', res);
         },
