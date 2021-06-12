@@ -4,14 +4,13 @@
       <view class="u-relative bg">
         <view
           class="u-absolute bg-img"
-          v-show="data.headPic"
-          :style="{ backgroundImage: 'url(' + data.headPic + ')' }"
+          :style="{ backgroundImage: 'url(' + data.headPicUrl + ')' }"
         ></view>
         <view class="u-flex-col u-col-center u-relative u-padding-30 theme-info">
           <view class="u-flex u-margin-top-30 theme-content">
             <view
               class="u-relative head-pic u-skeleton-fillet"
-              :style="{ backgroundImage: 'url(' + data.headPic + ')' }"
+              :style="{ backgroundImage: 'url(' + data.headPicUrl + ')' }"
             ></view>
             <view class="u-flex-col u-margin-left-20 theme-base">
               <view class="title u-skeleton-rect">{{ data.productName }}</view>
@@ -30,24 +29,18 @@
                 </view>
               </view>
               <view class="u-margin-top-10 u-line-1 theme-tag u-skeleton-rect">
-                <text class="tag-item">{{ data.advicePeopleMin }}人起订</text>
-                <text class="tag-item">
-                  建议{{
-                    data.advicePeopleMin !== data.advicePeopleMax
-                      ? `${data.advicePeopleMin}-${data.advicePeopleMax}`
-                      : `${data.advicePeopleMin}`
-                  }}人
+                <text class="tag-item" v-for="(tip, index) in data.tipList" :key="index">
+                  {{ tip }}
                 </text>
-                <text class="tag-item">{{ data.duration }}分钟</text>
               </view>
               <view class="u-flex u-flex-wrap u-margin-top-10 theme-style u-skeleton-rect">
                 <text class="style-tag">{{ data.style }}</text>
                 <text
                   class="u-margin-right-12 style-tags"
-                  v-for="(tags, index) in data.tags"
+                  v-for="(tag, index) in data.tagList"
                   :key="index"
                 >
-                  {{ tags }}
+                  {{ tag }}
                 </text>
               </view>
               <view class="u-flex u-row-between u-margin-top-10 u-skeleton-rect">
@@ -72,7 +65,7 @@
               </text>
             </view>
             <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">
-              {{ data.desc }}
+              {{ data.introduction }}
             </view>
           </view>
         </view>
@@ -99,27 +92,27 @@
     <view class="u-flex u-flex-wrap theme-icon">
       <view
         class="u-flex theme-icon-item u-skeleton-fillet"
-        v-for="(icon, index) in data.tags"
+        v-for="(icon, index) in data.iconTagList"
         :key="index"
       >
-        <img src="https://p0.meituan.net/scarlett/919f5eb155a5143a00c043656fa7262c4857.png" alt />
+        <img :src="data.iconMaps[icon]" alt />
         <view class="u-margin-left-10 icon-name">{{ icon }}</view>
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-    <view class="u-padding-30 theme-shop">
+    <view class="u-padding-30 theme-shop" v-if="data.shop">
       <view class="u-flex u-row-between title common u-skeleton-fillet">门店信息</view>
       <view
         class="u-relative u-padding-top-30 u-padding-bottom-30 u-flex u-row-between description"
       >
         <view>
           <view class="u-line-1 name u-skeleton-fillet">
-            {{ data.shopName }}
+            {{ data.shop.name }}
           </view>
           <view class="u-margin-top-6 star u-skeleton-fillet">
             <u-rate
               :count="5"
-              v-model="data.difficultLevel"
+              v-model="data.shop.level"
               disabled
               active-color="#ea120e"
               active-icon="star-fill"
@@ -138,14 +131,14 @@
         <view class="u-flex dp-address u-skeleton-rect">
           <u-icon name="map" color="#bbb" size="32"></u-icon>
           <text class="u-relative u-margin-left-20 u-line-1 address">
-            {{ data.shopAddress }}
+            {{ data.shop.address }}
           </text>
         </view>
         <text class="arrow-right"></text>
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-    <view class="u-padding-30 theme-ugc">
+    <view class="u-padding-30 theme-ugc" v-if="false">
       <view class="u-flex u-row-between title common u-skeleton-fillet">
         当前主题评价(3)
         <text class="arrow-right"></text>
@@ -155,9 +148,23 @@
     <view class="theme-detail">
       <view class="u-padding-30 detail">
         <view class="u-margin-bottom-20 title common u-skeleton-fillet">主题描述</view>
+        <view class="theme-description">【写在前面】</view>
+        <view class="theme-description" v-for="(desc, index) in data.descriptionList" :key="index">
+          {{ desc }}
+        </view>
+        <view class="theme-description">【故事背景】</view>
+        <view class="theme-description">{{ data.introduction }}</view>
+        <view>
+          <u-lazy-load
+            class="u-margin-bottom-20 pic"
+            v-for="(url, index) in data.detailPicList"
+            :key="index"
+            :image="url"
+          ></u-lazy-load>
+        </view>
       </view>
       <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-      <view class="u-padding-30 detail rules">
+      <view class="u-padding-30 rules">
         <view class="u-margin-bottom-20 title common u-skeleton-fillet">购买须知</view>
         <view class="u-margin-bottom-20 buy-rules">
           <view class="u-margin-bottom-8 rule-name u-skeleton-rect">预订须知</view>
@@ -210,9 +217,9 @@ export default {
       productItemId: null,
       loading: true,
       data: {
-        headPic: defaultThumb,
+        headPicUrl: defaultThumb,
       },
-      showExpandDescBtn: true,
+      showExpandDescBtn: false,
       hasExpandDesc: false,
       customStyle: {
         backgroundColor: '#f63',
@@ -223,23 +230,25 @@ export default {
   methods: {
     getDetail() {
       this.$u.api
-        .getCardList({
-          pageNum: 1,
-          pageSize: 1000,
-          longitude: uni.getStorageSync('position').longitude,
-          latitude: uni.getStorageSync('position').latitude,
-        })
-        .then(res => {
-          const data = res.records.find(v => v.productItemId === this.productItemId);
+        .getDetail(this.productItemId)
+        .then(data => {
+          console.log(data);
+          const exec = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
+          // 临时获取人数上下限
+          data.advicePeopleMin = exec[0];
+          data.advicePeopleMax = exec[1] || exec[0];
           data.difficultLevel = data.difficultLevel / 10;
-          data.tags = data.tags.split(',');
-          data.shopName = '空白·沉浸式剧情推理桌游馆(总店)';
-          data.shopAddress = '知春路108号豪景大厦C座1603';
-          data.shopTel = '18519333232';
-          data.desc =
-            '唐朝乃是歌舞盛华之朝，乐文取得了辉煌之成，同时也将女伎们的身价推向了巅峰，青楼之市火爆，歌舞伎成了热门之业，虽然沦落为青楼女子并不光彩，但依然有很多人选择这一职业，在这些女子中琴棋书画兼备的也大有人在……';
+          // 临时店铺信息
+          const shop = {
+            name: '空白·沉浸式剧情推理桌游馆(总店)',
+            address: '知春路108号豪景大厦C座1603',
+            tel: '18519333232',
+            level: 4,
+            latitude: 39.97558,
+            longitude: 116.321927,
+          };
+          data.shop = shop;
           this.data = data;
-          console.log(this.data);
           this.loading = false;
           this.setDescTextBtn();
         })
@@ -251,7 +260,7 @@ export default {
         const descTextView = query.select('.desc-text');
         descTextView
           .boundingClientRect(({ height }) => {
-            this.showExpandDescBtn = height > 13 * 3; // px
+            this.showExpandDescBtn = height > 17 * 3; // px
           })
           .exec();
       });
@@ -260,15 +269,13 @@ export default {
       this.hasExpandDesc = !this.hasExpandDesc;
     },
     makePhoneCall() {
+      const { tel } = this.data.shop || {};
       uni.makePhoneCall({
-        phoneNumber: this.data.shopTel, //仅为示例
+        phoneNumber: tel,
       });
     },
     openLocation() {
-      const { latitude, longitude } = {
-        latitude: 39.97558,
-        longitude: 116.321927,
-      };
+      const { latitude, longitude } = this.data.shop || {};
       uni.openLocation({
         latitude,
         longitude,
@@ -435,6 +442,8 @@ export default {
             }
             .desc-text {
                 font-size: 26rpx;
+
+                white-space: pre-wrap;
             }
         }
     }
@@ -523,29 +532,49 @@ export default {
         }
     }
 }
-.buy-rules {
-    .rule-name {
-        font-size: 26rpx;
-        font-weight: 400;
+.theme-detail {
+    .detail {
+        .theme-description {
+            font-size: 28rpx;
+            font-weight: 400;
 
-        color: #777;
+            margin-bottom: 30rpx;
+
+            white-space: pre-wrap;
+
+            opacity: .8;
+            color: #111;
+        }
+        .pic {
+            display: block;
+
+            width: 100%;
+        }
     }
-    .rule-content {
-        letter-spacing: 0;
+    .buy-rules {
+        .rule-name {
+            font-size: 26rpx;
+            font-weight: 400;
 
-        color: #111;
-        &:before {
-            position: absolute;
-            top: 16rpx;
-            left: -16rpx;
+            color: #777;
+        }
+        .rule-content {
+            letter-spacing: 0;
 
-            width: 6rpx;
-            height: 6rpx;
+            color: #111;
+            &:before {
+                position: absolute;
+                top: 16rpx;
+                left: -16rpx;
 
-            content: '';
+                width: 6rpx;
+                height: 6rpx;
 
-            border-radius: 50%;
-            background: #999;
+                content: '';
+
+                border-radius: 50%;
+                background: #999;
+            }
         }
     }
 }

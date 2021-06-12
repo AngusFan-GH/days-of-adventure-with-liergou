@@ -27,6 +27,12 @@ const install = (Vue, vm) => {
 	let getCardList = (params = {}) => vm.$u.post('/market-boot/app/productitem/search', params);
 
 	/**
+	 * 商品详情
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/searchUsingPOST
+	 */
+	let getDetail = (productItemId) => vm.$u.get(`/market-boot/app/productitem/view/${productItemId}`);
+
+	/**
 	 * 创建支付
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/createPayUsingPOST
 	 */
@@ -52,7 +58,8 @@ const install = (Vue, vm) => {
 		createPay,
 		handleWeChatNotice,
 		queryPay,
-		updateUserInfo
+		updateUserInfo,
+		getDetail
 	};
 };
 
