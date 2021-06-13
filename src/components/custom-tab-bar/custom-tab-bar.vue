@@ -32,6 +32,10 @@ export default {
     beforeSwitch(index) {
       // this为当前pages页面this，而非tab-bar的this
       console.log('current', this.tabBarIndex, index);
+      if (this.tabBarIndex === index) {
+        this.handletabBarClick && this.handletabBarClick();
+        return false;
+      }
       return true;
     },
   },

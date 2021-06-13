@@ -4,7 +4,7 @@ $moment.locale('zh_CN');
 
 export function timeRangeFmt(startTime, endTime, isFull = false) {
     if (startTime == null && endTime == null) return null;
-    console.log(startTime, endTime, isFull);
+    // console.log(startTime, endTime, isFull);
 
     const isMissed = $moment(endTime).isBefore();
     if (isMissed) {

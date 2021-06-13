@@ -35,13 +35,9 @@
           <view class="dot"></view>
           <view class="content">
             <text v-if="screening.restPeople > 0">
-              1人起拼，还差{{ screening.restPeople }}人可开场，最多可订{{
-                screening.morePeople
-              }}人
+              1人起拼，还差{{ screening.restPeople }}人可开场，最多可订{{ screening.morePeople }}人
             </text>
-            <text v-else>
-              该场次已拼成，还可加入{{ screening.morePeople }}人
-            </text>
+            <text v-else>该场次已拼成，还可加入{{ screening.morePeople }}人</text>
           </view>
         </view>
         <view class="tip-item">
@@ -71,9 +67,7 @@
           </view>
         </view>
         <view class="order-time">
-          <text class="time-desc">
-            {{ time }} | {{ screening.duration }}分钟
-          </text>
+          <text class="time-desc">{{ time }} | {{ screening.duration }}分钟</text>
         </view>
       </view>
     </view>
@@ -93,16 +87,9 @@
           <view class="info-block u-flex-1">
             <view class="title u-line-1">拼场人数</view>
           </view>
-          <u-number-box
-            v-model="count"
-            :min="1"
-            :max="screening.morePeople"
-          ></u-number-box>
+          <u-number-box v-model="count" :min="1" :max="screening.morePeople"></u-number-box>
         </view>
-        <view
-          class="desc u-padding-right-20"
-          v-show="mode === 1 && count >= screening.restPeople"
-        >
+        <view class="desc u-padding-right-20" v-show="mode === 1 && count >= screening.restPeople">
           <text class="high-light">已达可开场人数，</text>
           <text>订单</text>
           <text class="high-light">不可退款，</text>
@@ -182,9 +169,7 @@
           </view>
           <view class="tip-item u-flex">
             <view class="dot"></view>
-            <view class="content">
-              周六(06.12) 09:00前未达开场要求，系统将自动退款
-            </view>
+            <view class="content">周六(06.12) 09:00前未达开场要求，系统将自动退款</view>
           </view>
         </view>
       </view>
@@ -196,9 +181,7 @@
         <text class="price-num">{{ totalPrice }}</text>
       </view>
       <view>
-        <u-button :custom-style="customStyle" @click="createPay" shape="circle">
-          立即支付
-        </u-button>
+        <u-button :custom-style="customStyle" @click="createPay" shape="circle">立即支付</u-button>
       </view>
     </view>
   </view>
@@ -219,9 +202,7 @@ export default {
     return {
       mode: 0,
       phone: uni.getStorageSync('phone'),
-      name:
-        uni.getStorageSync('userInfo') &&
-        uni.getStorageSync('userInfo').nickName,
+      name: uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName,
       screening: {},
       price: 0,
       count: 1,
@@ -256,11 +237,7 @@ export default {
       return this.price * this.count;
     },
     time() {
-      return timeRangeFmt(
-        this.screening.roomBeginTime,
-        this.screening.roomEndTime,
-        true
-      );
+      return timeRangeFmt(this.screening.roomBeginTime, this.screening.roomEndTime, true);
     },
   },
   methods: {
@@ -270,10 +247,7 @@ export default {
     createPay() {
       if (!/\d{11}/.test(this.phone)) {
         uni.showToast({
-          title:
-            this.phone == null || this.phone === ''
-              ? '请填写手机号'
-              : '手机号输入有误',
+          title: this.phone == null || this.phone === '' ? '请填写手机号' : '手机号输入有误',
           icon: 'none',
         });
         return;
@@ -283,8 +257,7 @@ export default {
           itemCount: this.count,
           payerName:
             this.name ||
-            (uni.getStorageSync('userInfo') &&
-              uni.getStorageSync('userInfo').nickName),
+            (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
           payerPhone: this.phone,
           productItemId: this.screening.productItemId,
         })
@@ -322,10 +295,7 @@ export default {
         fail: err => {
           console.error(err);
           uni.showToast({
-            title:
-              err.errMsg === 'requestPayment:fail cancel'
-                ? '取消支付'
-                : '支付失败，请重试',
+            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
             icon: 'none',
           });
         },

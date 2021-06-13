@@ -209,11 +209,13 @@ import defaultThumb from '@/static/image/bg_login.png';
 export default {
   onLoad(options) {
     console.log(options);
-    this.productItemId = +options.productItemId || 764556152;
+    // this.productId = +options.productId;
+    this.productItemId = +options.productItemId;
     this.getDetail();
   },
   data() {
     return {
+      // productId: null,
       productItemId: null,
       loading: true,
       data: {
@@ -230,6 +232,7 @@ export default {
   methods: {
     getDetail() {
       this.$u.api
+        // .getDetail(this.productId)
         .getDetail(this.productItemId)
         .then(data => {
           console.log(data);

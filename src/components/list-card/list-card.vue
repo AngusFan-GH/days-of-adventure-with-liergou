@@ -54,6 +54,7 @@
     </view>
     <view class="togather u-margin-top-20">
       <u-read-more
+        ref="uReadMore"
         :toggle="true"
         :show-height="122"
         :shadow-style="shadowStyle"
@@ -84,6 +85,16 @@ export default {
       default: {},
     },
   },
+  watch: {
+    data: {
+      immediate: true,
+      handler() {
+        this.$nextTick(() => {
+          this.$refs.uReadMore.init();
+        });
+      },
+    },
+  },
   data() {
     return {
       defaultThumb,
@@ -102,7 +113,8 @@ export default {
   methods: {
     goToDetail() {
       uni.navigateTo({
-        url: `/pages/detail/index?productItemId=${this.data.productItemId}`,
+        // url: `/pages/detail/index?productId=${this.data.productId}`,
+        url: `/pages/detail/index?productItemId=${this.data.rooms[0].productItemId}`,
       });
     },
   },

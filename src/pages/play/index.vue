@@ -12,10 +12,11 @@
       <loading class="loading" v-if="loading && !list.length"></loading>
     </view>
     <u-popup
+      v-if="showFilter"
       v-model="showFilter"
       mode="center"
-      :mask-close-able="false"
       :safe-area-inset-bottom="true"
+      :mask-close-able="false"
       z-index="997"
       width="90%"
       height="85%"
@@ -23,38 +24,7 @@
       negative-top="100"
       :mask-custom-style="filterMaskStyle"
     >
-      <view class="u-relative filter">
-        <view class="u-flex main" :class="{ reverse: revertFilter }">
-          <view class="u-flex-1 tabs">
-            <!-- <scroll-view :scroll-y="true" style="height: 100%"> -->
-            <view class="u-flex-col" style="height: 100%">
-              <view
-                v-for="(tab, index) in filterTabs"
-                :key="index"
-                class="u-flex-1 u-flex u-row-center u-padding-top-40 u-padding-bottom-40 tab"
-                :class="{ selected: currentFiltertab === index }"
-                @click="handleClickFilterTab(index)"
-              >
-                {{ tab.label }}
-              </view>
-            </view>
-            <!-- </scroll-view> -->
-          </view>
-          <view class="u-flex-4 form">
-            <scroll-view :scroll-y="true" style="height: 100%">
-              <view class="tab-value"></view>
-            </scroll-view>
-          </view>
-        </view>
-        <view
-          class="u-absolute u-flex u-row-around btn-container"
-          :class="{ reverse: revertFilter }"
-        >
-          <u-button :ripple="true">重置</u-button>
-          <u-icon name="fingerprint" size="32" @longtap="handleRevertFilter()"></u-icon>
-          <u-button :ripple="true">确定</u-button>
-        </view>
-      </view>
+      <filter :data="filterData" @confirm="handleFilterConfirm"></filter>
     </u-popup>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
@@ -65,14 +35,13 @@
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
+import filter from './filter/filter.vue';
 export default {
   components: {
     listCard,
     customTabBar,
     loading,
-  },
-  onShow() {
-    this.showFilter = true;
+    filter,
   },
   data() {
     return {
@@ -90,34 +59,11 @@ export default {
       pageSize: 10,
       pages: 1,
       showFilter: true,
-      revertFilter: false,
-      filterTabs: [
-        {
-          label: '地址',
-        },
-        {
-          label: '类型',
-        },
-        {
-          label: '特色',
-        },
-        {
-          label: '时间',
-        },
-        {
-          label: '人数',
-        },
-        {
-          label: '价格',
-        },
-        {
-          label: '优先包场',
-        },
-      ],
-      currentFiltertab: 0,
+      filterData: null,
     };
   },
   mounted() {
+    this.showFilter = true;
     this.getPositon();
   },
   onPullDownRefresh() {
@@ -160,22 +106,57 @@ export default {
       if (isRefrash) {
         this.pageNum = 1;
       }
-      const { latitude, longitude } = uni.getStorageSync('position');
+      const params = this.handleParams();
+      console.warn(params);
       this.$u.api
-        .getCardList({
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          latitude,
-          longitude,
-        })
+        .getCardList(params)
         .then(res => {
           if (isRefrash) {
             this.list = [];
+            uni.pageScrollTo({
+              duration: 0,
+              scrollTop: 0,
+            });
             uni.stopPullDownRefresh();
           }
           this.handleResult(res);
         })
         .catch(err => this.handleErr(err));
+    },
+    handleParams() {
+      const params = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+      };
+      const { position, blockBooking, price, styles, features, people } = this.filterData || {};
+      if (position != null) {
+        const { longitude, latitude } = uni.getStorageSync('position');
+        params.distance = position;
+        params.longitude = longitude;
+        params.latitude = latitude;
+      }
+      if (blockBooking != null) {
+        params.blockBooking = blockBooking;
+      }
+      if (price != null) {
+        const [priceFrom, priceTo] = price;
+        params.priceFrom = priceFrom;
+        params.priceTo = priceTo;
+      }
+      if (styles && styles.length) {
+        params.styles = styles;
+      }
+      if (features && features.length) {
+        params.tags = features;
+      }
+      if (people != null) {
+        if (people > 10) {
+          params.peopleFrom = 11;
+        } else {
+          params.peopleFrom = params.peopleTo = people;
+        }
+      }
+      return params;
     },
     handleResult(res) {
       const { records, pages } = res;
@@ -185,18 +166,14 @@ export default {
         ...records.map(v => {
           v.tags = v.tags.split(',');
           v.difficultLevel = v.difficultLevel / 10;
-          v.screenings = [
-            {
-              price: v.price,
-              productItemId: v.productItemId,
-              roomBeginTime: v.roomBeginTime,
-              roomEndTime: v.roomEndTime,
-              currentPeople: v.currentPeople,
-              morePeople: v.advicePeopleMax - v.currentPeople,
-              restPeople: v.advicePeopleMin - v.currentPeople,
+          v.screenings = v.rooms.map(room => {
+            return {
+              morePeople: v.advicePeopleMax - room.currentPeople,
+              restPeople: v.advicePeopleMin - room.currentPeople,
+              ...room,
               ...v,
-            },
-          ];
+            };
+          });
           return v;
         })
       );
@@ -227,11 +204,14 @@ export default {
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
     },
-    handleRevertFilter() {
-      this.revertFilter = !this.revertFilter;
+    handleFilterConfirm(e) {
+      console.log('handleFilterConfirm', e);
+      this.filterData = e;
+      this.showFilter = false;
+      this.getCardList(true);
     },
-    handleClickFilterTab(index) {
-      this.currentFiltertab = index;
+    handletabBarClick() {
+      this.showFilter = !this.showFilter;
     },
   },
 };
@@ -263,51 +243,6 @@ export default {
     left: 50%;
 
     transform: translate(-50%,-50%);
-}
-.filter {
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding-bottom: 100rpx;
-    .main {
-        width: 100%;
-        height: 100%;
-        .tabs,
-        .form {
-            height: 100%;
-
-            background-color: blue;
-        }
-        .tabs {
-            border-right: 1px solid #999;
-            .tab {
-                &:not(:nth-last-child(1)) {
-                    border-bottom: 1px solid #999;
-                }
-                &.selected {
-                    color: red;
-                }
-            }
-        }
-        &.reverse {
-            .tabs {
-                border-right: 0;
-                border-left: 1px solid #999;
-            }
-        }
-    }
-    .btn-container {
-        bottom: 0;
-        left: 0;
-
-        width: 100%;
-        height: 100rpx;
-
-        border-top: 1px solid #999;
-    }
-    .reverse {
-        flex-direction: row-reverse;
-    }
 }
 
 </style>
