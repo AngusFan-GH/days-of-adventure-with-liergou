@@ -100,19 +100,19 @@
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-    <view class="u-padding-30 theme-shop" v-if="data.shop">
+    <view class="u-padding-30 theme-shop" v-if="data.shopInfo">
       <view class="u-flex u-row-between title common u-skeleton-fillet">门店信息</view>
       <view
         class="u-relative u-padding-top-30 u-padding-bottom-30 u-flex u-row-between description"
       >
         <view>
           <view class="u-line-1 name u-skeleton-fillet">
-            {{ data.shop.name }}
+            {{ data.shopInfo.shopName }}
           </view>
           <view class="u-margin-top-6 star u-skeleton-fillet">
             <u-rate
               :count="5"
-              v-model="data.shop.level"
+              v-model="data.shopInfo.star"
               disabled
               active-color="#ea120e"
               active-icon="star-fill"
@@ -131,7 +131,7 @@
         <view class="u-flex dp-address u-skeleton-rect">
           <u-icon name="map" color="#bbb" size="32"></u-icon>
           <text class="u-relative u-margin-left-20 u-line-1 address">
-            {{ data.shop.address }}
+            {{ data.shopInfo.address }}
           </text>
         </view>
         <text class="arrow-right"></text>
@@ -238,16 +238,7 @@ export default {
           data.advicePeopleMin = exec[0];
           data.advicePeopleMax = exec[1] || exec[0];
           data.difficultLevel = data.difficultLevel / 10;
-          // 临时店铺信息
-          const shop = {
-            name: '空白·沉浸式剧情推理桌游馆(总店)',
-            address: '知春路108号豪景大厦C座1603',
-            tel: '18519333232',
-            level: 4,
-            latitude: 39.97558,
-            longitude: 116.321927,
-          };
-          data.shop = shop;
+          data.shopInfo.star = data.shopInfo.star / 10;
           this.data = data;
           this.loading = false;
           this.setDescTextBtn();
@@ -269,17 +260,17 @@ export default {
       this.hasExpandDesc = !this.hasExpandDesc;
     },
     makePhoneCall() {
-      const { tel } = this.data.shop || {};
+      const { phoneNumberList } = this.data.shopInfo || {};
       uni.makePhoneCall({
-        phoneNumber: tel,
+        phoneNumber: phoneNumberList[0],
       });
     },
     openLocation() {
-      const { latitude, longitude } = this.data.shop || {};
+      const { latitude, longitude, shopName } = this.data.shopInfo || {};
       uni.openLocation({
         latitude,
         longitude,
-        name: this.data.shopName,
+        name: shopName,
         success: res => {
           console.log('success', res);
         },
