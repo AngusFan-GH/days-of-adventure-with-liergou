@@ -29,11 +29,7 @@
         <view class="desc attributes-list u-flex">
           <text class="label">特色</text>
           <text class="attributes-tag u-flex-1 u-line-1">
-            <text
-              class="u-margin-right-12"
-              v-for="(tags, index) in data.tags"
-              :key="index"
-            >
+            <text class="u-margin-right-12" v-for="(tags, index) in data.tags" :key="index">
               {{ tags }}
             </text>
           </text>
@@ -59,24 +55,16 @@
     <view class="togather u-margin-top-20">
       <u-read-more
         :toggle="true"
-        :show-height="210"
+        :show-height="122"
         :shadow-style="shadowStyle"
         :close-text="closeText"
         :text-indent="0"
         color="#aaa"
       >
         <view v-for="(screening, index) in data.screenings" :key="index">
-          <card-screening
-            class="screening"
-            :screening="screening"
-          ></card-screening>
+          <card-screening class="screening" :screening="screening"></card-screening>
         </view>
-        <view
-          class="screening"
-          v-if="!data.screenings || !data.screenings.length"
-        >
-          暂无场次
-        </view>
+        <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view>
       </u-read-more>
     </view>
   </view>

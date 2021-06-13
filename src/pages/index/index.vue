@@ -124,18 +124,14 @@ export default {
         ...records.map(v => {
           v.tags = v.tags.split(',');
           v.difficultLevel = v.difficultLevel / 10;
-          v.screenings = [
-            {
-              price: v.price,
-              productItemId: v.productItemId,
-              roomBeginTime: v.roomBeginTime,
-              roomEndTime: v.roomEndTime,
-              currentPeople: v.currentPeople,
-              morePeople: v.advicePeopleMax - v.currentPeople,
-              restPeople: v.advicePeopleMin - v.currentPeople,
+          v.screenings = v.rooms.map(room => {
+            return {
+              morePeople: v.advicePeopleMax - room.currentPeople,
+              restPeople: v.advicePeopleMin - room.currentPeople,
+              ...room,
               ...v,
-            },
-          ];
+            };
+          });
           return v;
         })
       );
@@ -201,7 +197,5 @@ export default {
 
     transform: translate(-50%,-50%);
 }
-
-
 
 </style>
