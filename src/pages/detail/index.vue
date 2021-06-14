@@ -58,14 +58,14 @@
               <text
                 class="u-relative u-margin-right-26 title-right"
                 :class="{ 'arrow-bottom': hasExpandDesc }"
-                v-if="showExpandDescBtn"
+                v-show="showExpandDescBtn"
                 @click="toggleExpandDesc"
               >
                 {{ hasExpandDesc ? '收起' : '展开' }}
               </text>
             </view>
             <view class="desc-text" :class="{ 'u-line-3': !hasExpandDesc }">
-              {{ data.introduction }}
+              <text class="text">{{ data.introduction }}</text>
             </view>
           </view>
         </view>
@@ -251,7 +251,7 @@ export default {
     setDescTextBtn() {
       this.$nextTick(() => {
         const query = uni.createSelectorQuery().in(this);
-        const descTextView = query.select('.desc-text');
+        const descTextView = query.select('.desc-text .text');
         descTextView
           .boundingClientRect(({ height }) => {
             this.showExpandDescBtn = height > 17 * 3; // px
