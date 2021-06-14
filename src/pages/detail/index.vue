@@ -183,7 +183,7 @@
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <u-gap height="200" bg-color="#f6f6f6"></u-gap>
-    <view class="theme-submit safe-area-inset-bottom">
+    <!-- <view class="theme-submit safe-area-inset-bottom">
       <view class="u-relative u-flex u-row-between notice">
         <view class="txt-area">
           <text class="txt">当前有2场在拼，最近一场差</text>
@@ -199,7 +199,7 @@
       <view class="btn-group">
         <u-button shape="circle" :custom-style="customStyle">选择场次并预订</u-button>
       </view>
-    </view>
+    </view> -->
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
   </view>
 </template>

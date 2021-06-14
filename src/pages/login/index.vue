@@ -101,7 +101,10 @@ export default {
             .updateUserInfo({
               userInfo: this.userInfo,
             })
-            .then(res => console.log(res))
+            .then(res => {
+              console.log('updateUserInfo', res);
+              this.step = 2;
+            })
             .catch(err => console.error(err));
         },
         fail: () => {
@@ -123,6 +126,7 @@ export default {
           })
           .then(res => {
             console.log('decryptUserInfo', res);
+            uni.setStorageSync('phone', res.phoneNumber);
             this.navigateBack();
           })
           .catch(err => console.error(err));
