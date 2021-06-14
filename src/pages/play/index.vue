@@ -136,7 +136,8 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
-      const { position, blockBooking, price, styles, features, people } = this.filterData || {};
+      const { position, blockBooking, price, styles, features, people, time } =
+        this.filterData || {};
       if (position != null) {
         const { longitude, latitude } = uni.getStorageSync('position');
         params.distance = position;
@@ -163,6 +164,11 @@ export default {
         } else {
           params.peopleFrom = params.peopleTo = people;
         }
+      }
+      if (time != null) {
+        const { start, end } = time;
+        if (start) params.startTimeStart = start;
+        if (end) params.startTimeEnd = end;
       }
       return params;
     },

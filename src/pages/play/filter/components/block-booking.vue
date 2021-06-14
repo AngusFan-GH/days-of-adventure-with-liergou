@@ -41,7 +41,7 @@ export default {
         },
         {
           label: '优先拼场',
-          value: 2,
+          value: 0,
         },
       ],
       current: null,

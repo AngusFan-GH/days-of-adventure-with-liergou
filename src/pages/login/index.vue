@@ -1,16 +1,13 @@
 <template>
   <view class="login">
     <image class="bg" src="/static/image/bg_login.png" mode="widthFix"></image>
+    <view class="u-font-26 u-text-center u-margin-top-50" v-if="step == 0">
+      正在获取授权信息...
+    </view>
     <view class="btn-box">
       <view class="login-btn">
         <template v-if="step == 1">
-          <u-button
-            class="btn"
-            type="primary"
-            shape="circle"
-            :ripple="true"
-            @click="getuserinfo"
-          >
+          <u-button class="btn" type="primary" shape="circle" :ripple="true" @click="getuserinfo">
             登录授权
           </u-button>
         </template>

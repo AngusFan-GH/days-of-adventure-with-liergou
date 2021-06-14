@@ -23,24 +23,24 @@
         <scroll-view :scroll-y="true" style="height: 100%">
           <view class="tab-content">
             <filterAdress
-              v-show="currentFiltertab === 'position'"
+              v-if="currentFiltertab === 'position'"
               v-model="filterData.position"
             ></filterAdress>
             <filterType
-              v-show="currentFiltertab === 'styles'"
+              v-if="currentFiltertab === 'styles'"
               v-model="filterData.styles"
             ></filterType>
             <filterFeature
-              v-show="currentFiltertab === 'features'"
+              v-if="currentFiltertab === 'features'"
               v-model="filterData.features"
             ></filterFeature>
-            <filterTime v-show="currentFiltertab === 'time'"></filterTime>
+            <filterTime v-if="currentFiltertab === 'time'" v-model="filterData.time"></filterTime>
             <filterPeopleCount
-              v-show="currentFiltertab === 'people'"
+              v-if="currentFiltertab === 'people'"
               v-model="filterData.people"
             ></filterPeopleCount>
             <filterPrice
-              v-show="currentFiltertab === 'price'"
+              v-if="currentFiltertab === 'price'"
               v-model="filterData.price"
             ></filterPrice>
             <filterBlockBooking
@@ -105,10 +105,10 @@ export default {
           label: '特色',
           value: 'features',
         },
-        // {
-        //   label: '时间',
-        //   value: 'time',
-        // },
+        {
+          label: '时间',
+          value: 'time',
+        },
         {
           label: '人数',
           value: 'people',
@@ -204,6 +204,7 @@ export default {
         }
     }
     .btn-container {
+        z-index: 1;
         bottom: 0;
         left: 0;
 

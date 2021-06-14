@@ -1,5 +1,6 @@
 <template>
   <u-tabbar
+    :show="showTabBar"
     :list="tabBarList"
     :mid-button="true"
     :active-color="activeColor"
@@ -26,7 +27,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['tabBarList']),
+    ...mapGetters(['tabBarList', 'showTabBar']),
   },
   methods: {
     beforeSwitch(index) {

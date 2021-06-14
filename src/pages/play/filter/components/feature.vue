@@ -31,7 +31,6 @@ export default {
     value: {
       immediate: true,
       handler(newVal) {
-        console.log(newVal);
         this.btnList.map(v => {
           v.active = newVal.findIndex(value => v.value === value) >= 0;
           return v;

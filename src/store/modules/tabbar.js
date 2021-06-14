@@ -25,7 +25,8 @@ const tabBarList = [
 ];
 
 const state = {
-    list: tabBarList
+    list: tabBarList,
+    show: true
 };
 
 export default {

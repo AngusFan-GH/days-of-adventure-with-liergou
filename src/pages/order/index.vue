@@ -4,11 +4,20 @@
       <view
         class="bar-image"
         :class="{
-          left: mode === 0,
-          right: mode === 1,
+          left: mode === 1,
+          right: mode === 0,
         }"
       >
         <view
+          class="mode-choose-btn right-btn"
+          :class="{ selected: mode === 1 }"
+          @click="changeMode(1)"
+        >
+          <text class="btn-icon"></text>
+          <text>拼场预订</text>
+        </view>
+        <view
+          v-if="blockBooking"
           class="mode-choose-btn left-btn"
           :class="{ selected: mode === 0 }"
           @click="changeMode(0)"
@@ -18,14 +27,6 @@
             包场预订
             <text>({{ screening.advicePeopleMin }}人起)</text>
           </text>
-        </view>
-        <view
-          class="mode-choose-btn right-btn"
-          :class="{ selected: mode === 1 }"
-          @click="changeMode(1)"
-        >
-          <text class="btn-icon"></text>
-          <text>拼场预订</text>
         </view>
       </view>
     </view>
@@ -175,13 +176,18 @@
       </view>
     </view>
     <u-gap height="20"></u-gap>
-    <view class="footer u-flex u-row-between">
-      <view class="price">
-        <text class="price-logo">¥</text>
-        <text class="price-num">{{ totalPrice }}</text>
-      </view>
-      <view>
-        <u-button :custom-style="customStyle" @click="createPay" shape="circle">立即支付</u-button>
+    <view class="safe-area-inset-bottom"></view>
+    <view class="footer safe-area-inset-bottom">
+      <view class="u-flex u-row-between footer-main">
+        <view class="price">
+          <text class="price-logo">¥</text>
+          <text class="price-num">{{ totalPrice }}</text>
+        </view>
+        <view>
+          <u-button :custom-style="customStyle" @click="createPay" shape="circle">
+            立即支付
+          </u-button>
+        </view>
       </view>
     </view>
   </view>
@@ -195,12 +201,14 @@ export default {
     eventChannel.on('submitOrder', data => {
       this.price = data.price;
       this.screening = data;
-      this.count = data.advicePeopleMin;
+      // this.count = data.advicePeopleMin;
+      this.blockBooking = data.blockBooking === 1;
     });
   },
   data() {
     return {
-      mode: 0,
+      mode: 1, // 0包场，1拼场
+      blockBooking: true,
       phone: uni.getStorageSync('phone'),
       name: uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName,
       screening: {},
@@ -523,12 +531,14 @@ export default {
     left: 0;
 
     width: 100%;
-    height: 120rpx;
-    padding: 30rpx;
-    padding: 0 30rpx;
 
     border-top: #ccc;
     background-color: #fff;
+    &-main {
+        height: 120rpx;
+        padding-right: 30rpx;
+        padding-left: 30rpx;
+    }
     .price {
         font-size: 60rpx;
         font-weight: bolder;
