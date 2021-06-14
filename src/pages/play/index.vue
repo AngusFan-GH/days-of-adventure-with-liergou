@@ -59,7 +59,15 @@ export default {
       pageSize: 10,
       pages: 1,
       showFilter: true,
-      filterData: null,
+      filterData: {
+        position: null,
+        blockBooking: null,
+        price: null,
+        styles: null,
+        features: null,
+        people: null,
+        time: null,
+      },
     };
   },
   mounted() {

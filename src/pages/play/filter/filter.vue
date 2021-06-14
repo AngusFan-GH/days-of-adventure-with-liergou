@@ -79,18 +79,7 @@ export default {
     filterPeopleCount,
   },
   props: {
-    data: {
-      type: Object,
-      default: {
-        position: null,
-        blockBooking: null,
-        price: null,
-        styles: null,
-        features: null,
-        people: null,
-        time: null,
-      },
-    },
+    data: Object,
   },
   watch: {
     data: {
