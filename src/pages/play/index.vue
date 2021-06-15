@@ -167,8 +167,8 @@ export default {
       }
       if (time != null) {
         const { start, end } = time;
-        if (start) params.startTimeStart = start;
-        if (end) params.startTimeEnd = end;
+        if (start) params.roomBeginTimeFrom = start;
+        if (end) params.roomBeginTimeTo = end;
       }
       return params;
     },

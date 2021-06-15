@@ -69,9 +69,9 @@ export default {
     };
   },
   watch: {
-    show(newVal) {
-      this.$store.commit('toggleTabBar', !newVal);
-    },
+    // show(newVal) {
+    //   this.$store.commit('toggleTabBar', !newVal);
+    // },
   },
   methods: {
     chooseTime(type) {
@@ -80,10 +80,11 @@ export default {
     },
     confirm(e) {
       const { day, hour, minute, month, second, year } = e;
+      console.log(e);
       this.$emit(
         'input',
         this.value
-          ? { [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}`, ...this.value }
+          ? { ...this.value, [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}` }
           : { [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}` }
       );
     },

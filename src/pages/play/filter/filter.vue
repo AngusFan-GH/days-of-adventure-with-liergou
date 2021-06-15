@@ -105,10 +105,10 @@ export default {
           label: '特色',
           value: 'features',
         },
-        // {
-        //   label: '时间',
-        //   value: 'time',
-        // },
+        {
+          label: '时间',
+          value: 'time',
+        },
         {
           label: '人数',
           value: 'people',
