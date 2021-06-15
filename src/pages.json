@@ -28,18 +28,25 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
-		},
+		}
+	],
+	"subPackages": [
 		{
-			"path": "pages/order/index",
-			"style": {
-				"navigationBarTitleText": "提交订单"
-			}
-		},
-		{
-			"path": "pages/detail/index",
-			"style": {
-				"navigationBarTitleText": "详情"
-			}
+			"root": "subPackages",
+			"pages": [
+				{
+					"path": "order/index",
+					"style": {
+						"navigationBarTitleText": "提交订单"
+					}
+				},
+				{
+					"path": "detail/index",
+					"style": {
+						"navigationBarTitleText": "详情"
+					}
+				}
+			]
 		}
 	],
 	"permission": {

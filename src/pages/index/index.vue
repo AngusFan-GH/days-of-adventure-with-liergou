@@ -1,6 +1,20 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
+      <u-sticky bg-color="#f0f0f0">
+        <u-search
+          class="search"
+          placeholder="输入剧本名，快速找到哈"
+          v-model="keyword"
+          :clearabled="true"
+          :show-action="false"
+          shape="square"
+          border-color="#fff"
+          margin="10rpx 24rpx"
+          @search="search"
+          @clear="clear"
+        ></u-search>
+      </u-sticky>
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
       </view>
@@ -59,6 +73,7 @@ export default {
       pageSize: 10,
       pages: 1,
       showPositionPopup: false,
+      keyword: null,
     };
   },
   mounted() {
@@ -92,6 +107,12 @@ export default {
         },
       });
     },
+    search() {
+      this.getCardList(true);
+    },
+    clear() {
+      this.getCardList(true);
+    },
     getCardList(isRefrash = false) {
       uni.showNavigationBarLoading();
       this.loading = true;
@@ -100,13 +121,18 @@ export default {
         this.pageNum = 1;
       }
       const { latitude, longitude } = uni.getStorageSync('position');
+      const params = {
+        pageNum: this.pageNum,
+        pageSize: this.pageSize,
+        latitude,
+        longitude,
+      };
+      const name = this.keyword && this.keyword.trim();
+      if (name) {
+        params.name = name;
+      }
       this.$u.api
-        .getCardList({
-          pageNum: this.pageNum,
-          pageSize: this.pageSize,
-          latitude,
-          longitude,
-        })
+        .getCardList(params)
         .then(res => {
           if (isRefrash) {
             this.list = [];
@@ -173,6 +199,8 @@ export default {
 <style lang="scss">
 @import '../../common/style/variable.scss';
 .container {
+    overflow: hidden;
+
     min-height: 100%;
 
     background-color: $background-color;

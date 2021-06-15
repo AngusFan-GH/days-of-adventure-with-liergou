@@ -58,7 +58,7 @@ export default {
     joinGroup() {
       console.log(this.screening);
       uni.navigateTo({
-        url: '/pages/order/index',
+        url: '/subPackages/order/index',
         success: res => {
           res.eventChannel.emit('submitOrder', this.screening);
         },
