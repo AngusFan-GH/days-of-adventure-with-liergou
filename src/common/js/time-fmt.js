@@ -4,8 +4,6 @@ $moment.locale("zh_CN");
 
 export function timeRangeFmt(startTime, endTime, isFull = false) {
     if (startTime == null && endTime == null) return null;
-    // console.log(startTime, endTime, isFull);
-
     const isMissed = $moment(endTime).isBefore();
     if (isMissed) {
         return "已结束";
@@ -65,7 +63,6 @@ export function dateSlideSelectionDataMaker(startDate = Date.now(), length = 15)
     });
     return new Array(length).fill(null).map((_, index) => {
         const date = $moment(startDate).add(index, "days");
-        console.log(date.format('YYYY-MM-DD'));
         const [week, day] = date.calendar($moment(startDate), {
             sameDay: "[今天] MM-DD",
             nextDay: "dddd MM-DD",

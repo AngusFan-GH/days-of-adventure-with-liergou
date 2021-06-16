@@ -124,7 +124,6 @@ export default {
         this.pageNum = 1;
       }
       const params = this.handleParams();
-      console.warn(params);
       this.$u.api
         .getCardList(params)
         .then(res => {
@@ -231,13 +230,14 @@ export default {
       this.scrollTop = e.scrollTop;
     },
     handleFilterConfirm(e) {
-      console.log('handleFilterConfirm', e);
       this.filterData = e;
       this.showFilter = false;
       this.getCardList(true);
     },
     handletabBarClick() {
-      this.showFilter = !this.showFilter;
+      if (!this.showFilter) {
+        this.showFilter = true;
+      }
     },
     dateChange(e) {
       this.filterData.time = e;

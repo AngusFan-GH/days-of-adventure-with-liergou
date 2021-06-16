@@ -87,6 +87,7 @@ export default {
       handler(newVal) {
         this.filterData = newVal || {};
       },
+      deep: true,
     },
   },
   data() {

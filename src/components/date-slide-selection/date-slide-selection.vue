@@ -28,7 +28,8 @@ export default {
   },
   watch: {
     date(newVal) {
-      this.current = this.dateList.findIndex(v => timeFmt(newVal, 'YYYY-MM-DD') === v.date);
+      const index = this.dateList.findIndex(v => timeFmt(newVal, 'YYYY-MM-DD') === v.date);
+      this.current = index >= 0 ? index : 0;
     },
   },
   computed: {
@@ -44,7 +45,6 @@ export default {
   methods: {
     chooseDate(index) {
       this.current = index;
-      console.log(this.dateList[index]);
       const date = this.dateList[index].date;
       this.$emit('change', this.dateToTimeRange(date));
     },
