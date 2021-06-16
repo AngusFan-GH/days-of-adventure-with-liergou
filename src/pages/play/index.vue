@@ -1,10 +1,12 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
-      <date-slide-selection
-        :date="filterData.time && filterData.time.start"
-        @change="dateChange"
-      ></date-slide-selection>
+      <u-sticky bg-color="#f0f0f0">
+        <date-slide-selection
+          :date="filterData.time && filterData.time.start"
+          @change="dateChange"
+        ></date-slide-selection>
+      </u-sticky>
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
       </view>
@@ -174,11 +176,11 @@ export default {
       }
       if (time != null) {
         const { start, end } = time;
-        if (start) params.startTimeStart = start;
-        if (end) params.startTimeEnd = end;
+        if (start) params.roomBeginTimeFrom = start;
+        if (end) params.roomBeginTimeTo = end;
       } else {
-        params.startTimeStart = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD');
-        params.startTimeEnd = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
+        params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD');
+        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
       }
       return params;
     },
