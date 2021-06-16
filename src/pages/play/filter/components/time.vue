@@ -83,7 +83,7 @@ export default {
       this.$emit(
         'input',
         this.value
-          ? { [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}`, ...this.value }
+          ? { ...this.value, [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}` }
           : { [this.current]: `${year}-${month}-${day} ${hour}:${minute}:${second}` }
       );
     },
