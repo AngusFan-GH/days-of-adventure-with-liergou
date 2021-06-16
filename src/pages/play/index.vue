@@ -1,6 +1,12 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
+      <u-sticky bg-color="#f0f0f0">
+        <date-slide-selection
+          :date="filterData.time && filterData.time.start"
+          @change="dateChange"
+        ></date-slide-selection>
+      </u-sticky>
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
       </view>
@@ -36,12 +42,15 @@ import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
+import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
+import { timeFmt } from '@/common/js/time-fmt';
 export default {
   components: {
     listCard,
     customTabBar,
     loading,
     filter,
+    dateSlideSelection,
   },
   data() {
     return {
@@ -169,6 +178,9 @@ export default {
         const { start, end } = time;
         if (start) params.roomBeginTimeFrom = start;
         if (end) params.roomBeginTimeTo = end;
+      } else {
+        params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD');
+        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
       }
       return params;
     },
@@ -226,6 +238,10 @@ export default {
     },
     handletabBarClick() {
       this.showFilter = !this.showFilter;
+    },
+    dateChange(e) {
+      this.filterData.time = e;
+      this.getCardList(true);
     },
   },
 };

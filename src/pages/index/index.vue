@@ -107,10 +107,12 @@ export default {
         },
       });
     },
-    search() {
+    search(e) {
+      this.keyword = e.trim();
       this.getCardList(true);
     },
     clear() {
+      this.keyword = null;
       this.getCardList(true);
     },
     getCardList(isRefrash = false) {
@@ -127,9 +129,8 @@ export default {
         latitude,
         longitude,
       };
-      const name = this.keyword && this.keyword.trim();
-      if (name) {
-        params.name = name;
+      if (this.keyword) {
+        params.name = this.keyword;
       }
       this.$u.api
         .getCardList(params)
