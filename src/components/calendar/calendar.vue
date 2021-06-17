@@ -27,6 +27,7 @@
               today: isToday(item.year, item.month, item.date),
               isWorkDay: isWorkDay(item.year, item.month, item.date),
               nolm: !item.isCurM,
+              disabled: isDisabled(item.year, item.month, item.date),
             }"
           >
             {{ Number(item.date) }}
@@ -76,6 +77,8 @@ export default {
       type: Boolean,
       default: true,
     },
+    min: null,
+    max: null,
   },
   watch: {
     value: {
@@ -183,6 +186,17 @@ export default {
         return true;
       }
     },
+    isDisabled(y, m, d) {
+      let ymd = `${y}/${m}/${d}`;
+      let date = new Date(ymd.replace(/-/g, '/')).getTime();
+      if (
+        (this.min && new Date(this.min.replace(/-/g, '/')).getTime() > date) ||
+        (this.max && new Date(this.max.replace(/-/g, '/')).getTime() < date)
+      ) {
+        return true;
+      }
+      return false;
+    },
     isToday(y, m, d) {
       let checkD = y + '-' + m + '-' + d;
       let today = this.getToday().date;
@@ -208,6 +222,12 @@ export default {
     // 点击回调
     selectOne(i) {
       let date = `${i.year}-${i.month}-${i.date}`;
+      if (this.min && new Date(this.min.replace(/-/g, '/')).getTime() > new Date(date).getTime()) {
+        return;
+      }
+      if (this.max && new Date(date.replace(/-/g, '/')).getTime() > new Date(this.max).getTime()) {
+        return;
+      }
       let week = new Date(date).getDay();
       let weekText = ['日', '一', '二', '三', '四', '五', '六'];
       let formatWeek = '星期' + weekText[week];
@@ -362,7 +382,10 @@ export default {
                     }
 
                     &.nolm {
-                        opacity: .3;
+                        opacity: .7;
+                    }
+                    &.disabled {
+                        opacity: .2;
                     }
                 }
 

@@ -1,15 +1,22 @@
 <template>
   <view class="filter-time">
-    <ren-calendar v-model="date" :collapsible="false" @onDayClick="changeDay"></ren-calendar>
+    <calendar
+      v-model="date"
+      :collapsible="false"
+      :min="min"
+      :max="max"
+      @onDayClick="changeDay"
+    ></calendar>
   </view>
 </template>
 
 <script>
-import renCalendar from '@/components/ren-calendar/ren-calendar.vue';
+import calendar from '@/components/calendar/calendar.vue';
 import { isToday, timeFmt } from '@/common/js/time-fmt';
+const $moment = require('moment');
 export default {
   name: 'filter-time',
-  components: { renCalendar },
+  components: { calendar },
   model: {
     prop: 'value',
     event: 'input',
@@ -22,6 +29,8 @@ export default {
   },
   data() {
     return {
+      max: $moment().add(14, 'days').format('YYYY-MM-DD'),
+      min: $moment().format('YYYY-MM-DD'),
       date: null,
     };
   },
@@ -29,16 +38,14 @@ export default {
     value: {
       immediate: true,
       handler(time) {
-        this.date = time && timeFmt(time.start, 'YYYY-MM-DD');
-        console.log('date---', this.date);
+        this.date = time && $moment(time.start).format('YYYY-MM-DD');
       },
     },
   },
   methods: {
     changeDay({ date }) {
-      console.log(date);
       this.$emit('input', {
-        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD') : date + ' 00:00:00',
+        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss') : date + ' 00:00:00',
         end: date + ' 23:59:59',
       });
     },

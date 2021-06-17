@@ -178,7 +178,7 @@ export default {
         if (start) params.roomBeginTimeFrom = start;
         if (end) params.roomBeginTimeTo = end;
       } else {
-        params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD');
+        params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss');
         params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
       }
       return params;

@@ -50,7 +50,7 @@ export default {
     },
     dateToTimeRange(date) {
       return {
-        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:DD') : date + ' 00:00:00',
+        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss') : date + ' 00:00:00',
         end: date + ' 23:59:59',
       };
     },
