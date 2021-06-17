@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { timeFmt, dateStr2timestamp } from '@/common/js/time-fmt';
 export default {
   name: 'ren-calendar',
   created() {
@@ -84,7 +85,7 @@ export default {
     value: {
       immediate: true,
       handler(date) {
-        this.choose = date;
+        this.choose = date && timeFmt(date, 'YYYY-MM-DD');
       },
     },
   },
@@ -188,10 +189,10 @@ export default {
     },
     isDisabled(y, m, d) {
       let ymd = `${y}/${m}/${d}`;
-      let date = new Date(ymd.replace(/-/g, '/')).getTime();
+      let date = new Date(ymd).getTime();
       if (
-        (this.min && new Date(this.min.replace(/-/g, '/')).getTime() > date) ||
-        (this.max && new Date(this.max.replace(/-/g, '/')).getTime() < date)
+        (this.min && dateStr2timestamp(this.min) > date) ||
+        (this.max && dateStr2timestamp(this.max) < date)
       ) {
         return true;
       }
@@ -222,10 +223,11 @@ export default {
     // 点击回调
     selectOne(i) {
       let date = `${i.year}-${i.month}-${i.date}`;
-      if (this.min && new Date(this.min.replace(/-/g, '/')).getTime() > new Date(date).getTime()) {
-        return;
-      }
-      if (this.max && new Date(date.replace(/-/g, '/')).getTime() > new Date(this.max).getTime()) {
+      const dateTimestamp = new Date(date).getTime();
+      if (
+        (this.min && dateStr2timestamp(this.min) > dateTimestamp) ||
+        (this.max && dateStr2timestamp(this.max) < dateTimestamp)
+      ) {
         return;
       }
       let week = new Date(date).getDay();
@@ -243,8 +245,8 @@ export default {
         }
         return false;
       }
+      this.$emit('input', new Date(date).getTime());
       this.$emit('onDayClick', response);
-      this.$emit('input', date);
     },
     changeMonth(type) {
       if (type == 'pre') {

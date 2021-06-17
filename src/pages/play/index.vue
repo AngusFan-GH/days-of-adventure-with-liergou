@@ -3,7 +3,8 @@
     <view class="u-page list-container">
       <u-sticky bg-color="#f0f0f0">
         <date-slide-selection
-          :date="filterData.time && filterData.time.start"
+          :date="filterData.time && filterData.time.date"
+          :length="dateLength"
           @change="dateChange"
         ></date-slide-selection>
       </u-sticky>
@@ -30,7 +31,7 @@
       negative-top="100"
       :mask-custom-style="filterMaskStyle"
     >
-      <filter :data="filterData" @confirm="handleFilterConfirm"></filter>
+      <filter :data="filterData" :dateLength="dateLength" @confirm="handleFilterConfirm"></filter>
     </u-popup>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
@@ -77,6 +78,7 @@ export default {
         people: null,
         time: null,
       },
+      dateLength: 14,
     };
   },
   mounted() {
@@ -174,9 +176,13 @@ export default {
         }
       }
       if (time != null) {
-        const { start, end } = time;
-        if (start) params.roomBeginTimeFrom = start;
-        if (end) params.roomBeginTimeTo = end;
+        const { startTime, endTime, date } = time;
+        params.roomBeginTimeFrom = `${timeFmt(date, 'YYYY-MM-DD')} ${
+          startTime ? timeFmt(startTime, 'HH:mm:ss') : '00:00:00'
+        }`;
+        params.roomBeginTimeTo = `${timeFmt(date, 'YYYY-MM-DD')} ${
+          endTime ? timeFmt(endTime, 'HH:mm:ss') : '23:59:59'
+        }`;
       } else {
         params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss');
         params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
@@ -240,7 +246,9 @@ export default {
       }
     },
     dateChange(e) {
-      this.filterData.time = e;
+      this.filterData.time = {
+        date: e,
+      };
       this.getCardList(true);
     },
   },

@@ -84,5 +84,10 @@ export function isToday(date) {
 }
 
 export function timeFmt(date, fmtStr) {
+    date = date || Date.now();
     return $moment(date).format(fmtStr);
+}
+
+export function dateStr2timestamp(dateStr) {
+    return new Date(dateStr.replace(/-/g, '/')).getTime();
 }

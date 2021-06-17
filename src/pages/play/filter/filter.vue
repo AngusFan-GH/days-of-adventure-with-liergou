@@ -34,7 +34,11 @@
               v-if="currentFiltertab === 'features'"
               v-model="filterData.features"
             ></filterFeature>
-            <filterTime v-if="currentFiltertab === 'time'" v-model="filterData.time"></filterTime>
+            <filterTime
+              v-if="currentFiltertab === 'time'"
+              v-model="filterData.time"
+              :dateLength="dateLength"
+            ></filterTime>
             <filterPeopleCount
               v-if="currentFiltertab === 'people'"
               v-model="filterData.people"
@@ -80,6 +84,10 @@ export default {
   },
   props: {
     data: Object,
+    dateLength: {
+      type: Number,
+      default: 0,
+    },
   },
   watch: {
     data: {

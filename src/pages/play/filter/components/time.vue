@@ -3,20 +3,33 @@
     <calendar
       v-model="date"
       :collapsible="false"
-      :min="min"
-      :max="max"
+      :min="minDate"
+      :max="maxDate"
       @onDayClick="changeDay"
     ></calendar>
+    <view class="u-flex u-row-between u-margin-top-10">
+      <view class="u-flex-1">
+        <time-picker v-model="startTime" @change="startTimeChange"></time-picker>
+      </view>
+      <view class="u-margin-left-10 u-margin-right-10">至</view>
+      <view class="u-flex-1">
+        <time-picker
+          v-model="endTime"
+          :default="[23, 59, 59]"
+          @change="endTimeChange"
+        ></time-picker>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
 import calendar from '@/components/calendar/calendar.vue';
-import { isToday, timeFmt } from '@/common/js/time-fmt';
+import timePicker from '@/components/time-picker/time-picker.vue';
 const $moment = require('moment');
 export default {
   name: 'filter-time',
-  components: { calendar },
+  components: { calendar, timePicker },
   model: {
     prop: 'value',
     event: 'input',
@@ -26,27 +39,54 @@ export default {
       type: Object,
       default: {},
     },
-  },
-  data() {
-    return {
-      max: $moment().add(14, 'days').format('YYYY-MM-DD'),
-      min: $moment().format('YYYY-MM-DD'),
-      date: null,
-    };
+    dateLength: {
+      type: Number,
+      default: 0,
+    },
   },
   watch: {
     value: {
       immediate: true,
       handler(time) {
-        this.date = time && $moment(time.start).format('YYYY-MM-DD');
+        this.date = time && time.date;
+        this.startTime = time && time.startTime;
+        this.endTime = time && time.endTime;
+        console.log('time from index:', time, this.date, this.startTime, this.endTime);
       },
     },
   },
+  data() {
+    return {
+      minDate: $moment().format('YYYY-MM-DD'),
+      date: null,
+      startTime: null,
+      endTime: null,
+    };
+  },
+  computed: {
+    maxDate() {
+      return $moment()
+        .add(this.dateLength - 1, 'days')
+        .format('YYYY-MM-DD');
+    },
+  },
   methods: {
-    changeDay({ date }) {
+    changeDay() {
       this.$emit('input', {
-        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss') : date + ' 00:00:00',
-        end: date + ' 23:59:59',
+        ...this.value,
+        date: this.date,
+      });
+    },
+    startTimeChange() {
+      this.$emit('input', {
+        ...this.value,
+        startTime: this.startTime,
+      });
+    },
+    endTimeChange() {
+      this.$emit('input', {
+        ...this.value,
+        endTime: this.endTime,
       });
     },
   },

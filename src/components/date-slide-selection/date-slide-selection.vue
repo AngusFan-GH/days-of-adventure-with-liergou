@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { dateSlideSelectionDataMaker, isToday, timeFmt } from '@/common/js/time-fmt';
+import { dateSlideSelectionDataMaker, timeFmt, dateStr2timestamp } from '@/common/js/time-fmt';
 export default {
   name: 'date-slide-selection',
   props: {
@@ -28,7 +28,8 @@ export default {
   },
   watch: {
     date(newVal) {
-      const index = this.dateList.findIndex(v => timeFmt(newVal, 'YYYY-MM-DD') === v.date);
+      const date = newVal && timeFmt(newVal, 'YYYY-MM-DD');
+      const index = this.dateList.findIndex(v => date === v.date);
       this.current = index >= 0 ? index : 0;
     },
   },
@@ -46,13 +47,7 @@ export default {
     chooseDate(index) {
       this.current = index;
       const date = this.dateList[index].date;
-      this.$emit('change', this.dateToTimeRange(date));
-    },
-    dateToTimeRange(date) {
-      return {
-        start: isToday(date) ? timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss') : date + ' 00:00:00',
-        end: date + ' 23:59:59',
-      };
+      this.$emit('change', dateStr2timestamp(date));
     },
   },
 };
