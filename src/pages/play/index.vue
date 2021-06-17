@@ -44,7 +44,7 @@ import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
 import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
-import { timeFmt } from '@/common/js/time-fmt';
+import { timeFmt, isToday } from '@/common/js/time-fmt';
 export default {
   components: {
     listCard,
@@ -246,8 +246,11 @@ export default {
       }
     },
     dateChange(e) {
+      const { startTime, endTime } = this.filterData.time || {};
       this.filterData.time = {
         date: e,
+        startTime: startTime || isToday(e) ? new Date().getTime() : e,
+        endTime: endTime || new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
       };
       this.getCardList(true);
     },

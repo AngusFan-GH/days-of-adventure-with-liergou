@@ -60,7 +60,7 @@ export default {
     //时间选择变更
     onTimeChange(e) {
       let time =
-        timeFmt(this.value, 'YYYY-MM-DD') +
+        timeFmt(this.value, 'YYYY/MM/DD') +
         ' ' +
         this.formatTimeArray(e.detail.value, this.showSeconds);
       time = new Date(time).getTime();

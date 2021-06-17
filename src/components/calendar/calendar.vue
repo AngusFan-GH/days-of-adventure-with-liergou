@@ -23,7 +23,7 @@
           <view
             class="day"
             :class="{
-              choose: choose == `${item.year}-${item.month}-${item.date}` && item.isCurM,
+              choose: choose == `${item.year}/${item.month}/${item.date}` && item.isCurM,
               today: isToday(item.year, item.month, item.date),
               isWorkDay: isWorkDay(item.year, item.month, item.date),
               nolm: !item.isCurM,
@@ -85,7 +85,7 @@ export default {
     value: {
       immediate: true,
       handler(date) {
-        this.choose = date && timeFmt(date, 'YYYY-MM-DD');
+        this.choose = date && timeFmt(date, 'YYYY/MM/DD');
       },
     },
   },
@@ -123,7 +123,7 @@ export default {
       let weekText = ['日', '一', '二', '三', '四', '五', '六'];
       let formatWeek = '星期' + weekText[week];
       let today = {
-        date: y + '-' + this.formatNum(m + 1) + '-' + this.formatNum(d),
+        date: y + '/' + this.formatNum(m + 1) + '/' + this.formatNum(d),
         week: formatWeek,
       };
       return today;
@@ -179,8 +179,7 @@ export default {
     isWorkDay(y, m, d) {
       //是否工作日
       let ymd = `${y}/${m}/${d}`;
-      let formatDY = new Date(ymd.replace(/-/g, '/'));
-      let week = formatDY.getDay();
+      let week = new Date(ymd).getDay();
       if (week == 0 || week == 6) {
         return false;
       } else {
@@ -199,7 +198,7 @@ export default {
       return false;
     },
     isToday(y, m, d) {
-      let checkD = y + '-' + m + '-' + d;
+      let checkD = y + '/' + m + '/' + d;
       let today = this.getToday().date;
       if (checkD == today) {
         return true;
@@ -222,7 +221,7 @@ export default {
     },
     // 点击回调
     selectOne(i) {
-      let date = `${i.year}-${i.month}-${i.date}`;
+      let date = `${i.year}/${i.month}/${i.date}`;
       const dateTimestamp = new Date(date).getTime();
       if (
         (this.min && dateStr2timestamp(this.min) > dateTimestamp) ||

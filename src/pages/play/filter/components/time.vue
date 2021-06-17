@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      minDate: $moment().format('YYYY-MM-DD'),
+      minDate: $moment().format('YYYY/MM/DD'),
       date: null,
       startTime: null,
       endTime: null,
@@ -67,7 +67,7 @@ export default {
     maxDate() {
       return $moment()
         .add(this.dateLength - 1, 'days')
-        .format('YYYY-MM-DD');
+        .format('YYYY/MM/DD');
     },
   },
   methods: {
