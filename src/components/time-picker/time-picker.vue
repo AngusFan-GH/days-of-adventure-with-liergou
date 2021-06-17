@@ -3,7 +3,7 @@
     class="time-picker"
     indicator-class="time-picker-item"
     :value="timeValue"
-    @change="onTimeChange"
+    @change="change"
   >
     <picker-view-column>
       <view v-for="(v, i) in 24" :key="i">{{ formatNum(i) }}时</view>
@@ -26,12 +26,13 @@ export default {
   },
   props: {
     value: null,
+    min: null,
+    max: null,
+    date: null,
     default: {
       type: Array,
       default: [0, 0, 0],
     },
-    min: null,
-    max: null,
     showSeconds: {
       type: Boolean,
       default: false,
@@ -52,20 +53,27 @@ export default {
   },
   data() {
     return {
-      date: null,
-      timeValue: null, //时间选择器的值
+      timeValue: [0, 0, 0], //时间选择器的值
     };
   },
   methods: {
     //时间选择变更
-    onTimeChange(e) {
+    change(e) {
+      let timeArr = e.detail.value;
+      if (this.min && this.compareEarlierTimeArray(timeArr, this.min)) {
+        timeArr = this.min;
+      } else if (this.max && this.compareEarlierTimeArray(this.max, timeArr)) {
+        timeArr = this.max;
+      }
       let time =
-        timeFmt(this.value, 'YYYY/MM/DD') +
-        ' ' +
-        this.formatTimeArray(e.detail.value, this.showSeconds);
+        timeFmt(this.value, 'YYYY/MM/DD') + ' ' + this.formatTimeArray(timeArr, this.showSeconds);
       time = new Date(time).getTime();
-      this.$emit('input', time);
-      this.$emit('change', time);
+      if (this.value !== time) {
+        this.emitTime(time);
+      } else {
+        this.$set(this, 'timeValue', null);
+        this.$nextTick(() => (this.timeValue = timeArr));
+      }
     },
     formatNum(e) {
       return e < 10 ? '0' + e : e;
@@ -75,6 +83,16 @@ export default {
       if (!s) r.length = 2;
       r.forEach((v, k) => (r[k] = ('0' + v).slice(-2)));
       return r.join(':');
+    },
+    compareEarlierTimeArray(target, competitor) {
+      const dateArr = [0, 0, 0];
+      const targetTimestamp = new Date(...dateArr.concat(target)).getTime();
+      const competitorTimestamp = new Date(...dateArr.concat(competitor)).getTime();
+      return competitorTimestamp > targetTimestamp;
+    },
+    emitTime(time) {
+      this.$emit('input', time);
+      this.$emit('change', time);
     },
   },
 };

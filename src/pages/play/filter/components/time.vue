@@ -9,12 +9,19 @@
     ></calendar>
     <view class="u-flex u-row-between u-margin-top-10">
       <view class="u-flex-1">
-        <time-picker v-model="startTime" @change="startTimeChange"></time-picker>
+        <time-picker
+          v-model="startTime"
+          :max="startTimeMax"
+          :date="date"
+          @change="startTimeChange"
+        ></time-picker>
       </view>
       <view class="u-margin-left-10 u-margin-right-10">至</view>
       <view class="u-flex-1">
         <time-picker
           v-model="endTime"
+          :min="endTimeMin"
+          :date="date"
           :default="[23, 59, 59]"
           @change="endTimeChange"
         ></time-picker>
@@ -51,43 +58,54 @@ export default {
         this.date = time && time.date;
         this.startTime = time && time.startTime;
         this.endTime = time && time.endTime;
-        console.log('time from index:', time, this.date, this.startTime, this.endTime);
       },
     },
   },
   data() {
     return {
       minDate: $moment().format('YYYY/MM/DD'),
+      maxDate: $moment()
+        .add(this.dateLength - 1, 'days')
+        .format('YYYY/MM/DD'),
       date: null,
       startTime: null,
       endTime: null,
     };
   },
   computed: {
-    maxDate() {
-      return $moment()
-        .add(this.dateLength - 1, 'days')
-        .format('YYYY/MM/DD');
+    startTimeMax() {
+      return this.timestamp2timeArr(this.endTime);
+    },
+    endTimeMin() {
+      return this.timestamp2timeArr(this.startTime);
     },
   },
   methods: {
     changeDay() {
       this.$emit('input', {
-        ...this.value,
         date: this.date,
+        startTime: this.isToday(this.date) ? Date.now() : this.date,
+        endTime: new Date(`${$moment(this.date).format('YYYY/MM/DD')} 23:59:59`).getTime(),
       });
     },
-    startTimeChange() {
+    startTimeChange(e) {
       this.$emit('input', {
         ...this.value,
-        startTime: this.startTime,
+        startTime: e,
       });
     },
-    endTimeChange() {
+    endTimeChange(e) {
       this.$emit('input', {
         ...this.value,
-        endTime: this.endTime,
+        endTime: e,
       });
+    },
+    isToday(date) {
+      return $moment(date).isSame(Date.now(), 'days');
+    },
+    timestamp2timeArr(time) {
+      if (!time) return null;
+      return $moment(time).format('HH:mm:ss').split(':');
     },
   },
 };

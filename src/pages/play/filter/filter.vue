@@ -56,9 +56,9 @@
       </view>
     </view>
     <view class="u-absolute u-flex u-row-around btn-container" :class="{ reverse: revertFilter }">
-      <u-button :ripple="true" @click="reset()">重置</u-button>
-      <u-icon name="fingerprint" size="32" @longtap="handleRevertFilter()"></u-icon>
-      <u-button :ripple="true" @click="confirm()">确定</u-button>
+      <u-button :ripple="true" @click="reset()" size="medium">重置</u-button>
+      <u-icon name="fingerprint" size="36" @longtap="handleRevertFilter()"></u-icon>
+      <u-button :ripple="true" @click="confirm()" type="primary" size="medium">确定</u-button>
     </view>
   </view>
 </template>

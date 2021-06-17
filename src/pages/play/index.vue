@@ -246,11 +246,10 @@ export default {
       }
     },
     dateChange(e) {
-      const { startTime, endTime } = this.filterData.time || {};
       this.filterData.time = {
         date: e,
-        startTime: startTime || isToday(e) ? new Date().getTime() : e,
-        endTime: endTime || new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
+        startTime: isToday(e) ? new Date().getTime() : e,
+        endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
       };
       this.getCardList(true);
     },
