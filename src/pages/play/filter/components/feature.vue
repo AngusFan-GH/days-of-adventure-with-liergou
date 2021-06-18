@@ -52,7 +52,6 @@ export default {
         { label: '角色扮演', value: '角色扮演', active: false },
         { label: '有剧情', value: '有剧情', active: false },
         { label: '多种支线', value: '多种支线', active: false },
-        { label: '有剧', value: '有剧', active: false },
         { label: '情感', value: '情感', active: false },
       ],
     };

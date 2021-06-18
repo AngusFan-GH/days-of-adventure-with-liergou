@@ -91,3 +91,20 @@ export function timeFmt(date, fmtStr) {
 export function dateStr2timestamp(dateStr) {
     return new Date(dateStr.replace(/-/g, '/')).getTime();
 }
+
+export function defaultStartTimeMaker(date) {
+    let time = date ? isToday(date) ? Date.now() : date : Date.now();
+    const timeArr = $moment(time).toArray();
+    timeArr.length = 5;
+    const seconds = timeArr.pop();
+    if (seconds === 0) {
+        return new Date(...timeArr);
+    }
+    if (seconds > 30) {
+        timeArr[3] += 1;
+        timeArr.push(0);
+    } else {
+        timeArr[4] = 30;
+    }
+    return new Date(...timeArr).getTime();
+}

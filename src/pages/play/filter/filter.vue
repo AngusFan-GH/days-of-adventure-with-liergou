@@ -54,10 +54,72 @@
           </view>
         </scroll-view>
       </view>
+      <view class="preview" v-show="showPreview">
+        <view class="preview-item" v-for="(item, index) in displayFilterTabs" :key="index">
+          <view class="preview-item-label">{{ item.label }}</view>
+          <view class="preview-item-value" v-if="item.value === 'position'">
+            <text>
+              {{
+                filterData[item.value] ? '附近' + filterData[item.value] / 1000 + '公里' : '附近'
+              }}
+            </text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'styles'">
+            <text class="u-padding-right-10" v-for="(style, i) in filterData[item.value]" :key="i">
+              {{ style }}
+            </text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'features'">
+            <text
+              class="u-padding-right-10"
+              v-for="(feature, i) in filterData[item.value]"
+              :key="i"
+            >
+              {{ feature }}
+            </text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'time'">
+            <text>{{ displayTime }}</text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'people'">
+            <text>{{ filterData[item.value] > 10 ? '10+' : filterData[item.value] + '人' }}</text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'price'">
+            <text v-if="filterData[item.value][0] && filterData[item.value][1] != null">
+              {{ filterData[item.value][0] + '-' + filterData[item.value][1] + '元' }}
+            </text>
+            <text v-if="filterData[item.value][0] && !filterData[item.value][1]">
+              {{ filterData[item.value][0] + '元以上' }}
+            </text>
+            <text v-if="!filterData[item.value][0] && filterData[item.value][1]">
+              {{ filterData[item.value][1] + '元以下' }}
+            </text>
+          </view>
+          <view class="preview-item-value" v-if="item.value === 'blockBooking'">
+            <text>
+              {{ filterData[item.value] == 1 ? '是' : '否' }}
+            </text>
+          </view>
+        </view>
+        <view v-if="!displayFilterTabs.length">这里还什么都没有</view>
+      </view>
+      <view
+        class="preview-btn"
+        :class="{ reverse: revertFilter }"
+        @touchstart="touchStart()"
+        @touchend="touchEnd()"
+      >
+        <u-icon
+          class="preview-btn-icon"
+          :name="showPreview ? 'eye-fill' : 'eye'"
+          color="#ccc"
+          size="34"
+        ></u-icon>
+      </view>
     </view>
     <view class="u-absolute u-flex u-row-around btn-container" :class="{ reverse: revertFilter }">
       <u-button :ripple="true" @click="reset()" size="medium">重置</u-button>
-      <u-icon name="fingerprint" size="36" @longtap="handleRevertFilter()"></u-icon>
+      <u-icon name="fingerprint" size="36" @longpress="handleRevertFilter()"></u-icon>
       <u-button :ripple="true" @click="confirm()" type="primary" size="medium">确定</u-button>
     </view>
   </view>
@@ -71,6 +133,7 @@ import filterPrice from './components/price.vue';
 import filterFeature from './components/feature.vue';
 import filterBlockBooking from './components/block-booking.vue';
 import filterPeopleCount from './components/people-count.vue';
+import { timeFmt, isToday } from '@/common/js/time-fmt';
 export default {
   name: 'filter',
   components: {
@@ -133,7 +196,20 @@ export default {
       ],
       currentFiltertab: 'position',
       filterData: {},
+      showPreview: false,
     };
+  },
+  computed: {
+    displayFilterTabs() {
+      return this.filterTabs.filter(v => this.filterData[v.value] != null);
+    },
+    displayTime() {
+      const { date, startTime, endTime } = this.filterData.time || {};
+      return `${isToday(date) ? '今日' : timeFmt(date, 'MM月DD日')} ${timeFmt(
+        startTime,
+        'HH:mm'
+      )}-${timeFmt(endTime, 'HH:mm')}`;
+    },
   },
   methods: {
     handleRevertFilter() {
@@ -147,10 +223,15 @@ export default {
       this.$emit('confirm', this.filterData);
     },
     reset() {
-      console.log('reset', this.filterData);
       Object.keys(this.filterData).forEach(key => {
         this.filterData[key] = null;
       });
+    },
+    touchStart() {
+      this.showPreview = true;
+    },
+    touchEnd() {
+      this.showPreview = false;
     },
   },
 };
@@ -163,8 +244,65 @@ export default {
     height: 100%;
     padding-bottom: 100rpx;
     .main {
+        position: relative;
+
         width: 100%;
         height: 100%;
+        .preview {
+            position: absolute;
+            z-index: 9;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+            padding: 50rpx;
+
+            background-color: #ccc;
+            &-item {
+                padding: 10rpx;
+                &-label {
+                    font-weight: bold;
+
+                    margin-bottom: 10rpx;
+                }
+                &-value {
+                    margin-left: 2em;
+                }
+            }
+        }
+        .preview-btn {
+            position: absolute;
+            z-index: 10;
+            right: -100rpx;
+            bottom: -100rpx;
+
+            clip: rect(0,100rpx,100rpx,0);
+
+            width: 200rpx;
+            height: 200rpx;
+
+            opacity: .5;
+            border-radius: 50%;
+            background-color: #000;
+            &-icon {
+                position: absolute;
+                top: 25%;
+                left: 25%;
+
+                transform: translate(-25%, -25%);
+            }
+            &.reverse {
+                right: auto;
+                bottom: -100rpx;
+                left: -100rpx;
+
+                transform: rotate(90deg);
+                .preview-btn-icon {
+                    transform: rotate(-90deg);
+                }
+            }
+        }
         .tabs,
         .form {
             height: 100%;
@@ -187,14 +325,15 @@ export default {
                     font-size: 32rpx;
 
                     position: absolute;
-                    top: 22px;
-                    right: 10px;
+                    top: 0;
+                    right: 0;
 
                     display: block;
 
-                    content: '*';
+                    content: ' ';
 
-                    color: #2979ff;
+                    border-right: 20rpx solid #2979ff;
+                    border-bottom: 20rpx solid transparent;
                 }
             }
         }
@@ -226,5 +365,6 @@ export default {
         flex-direction: row-reverse;
     }
 }
+
 
 </style>

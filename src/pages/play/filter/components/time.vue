@@ -22,10 +22,13 @@
           v-model="endTime"
           :min="endTimeMin"
           :date="date"
-          :default="[23, 59, 59]"
+          :default="[23, 30]"
           @change="endTimeChange"
         ></time-picker>
       </view>
+    </view>
+    <view class="u-flex u-row-center u-margin-top-60">
+      <u-icon name="reload" color="#ccc" size="42" @click="reset()"></u-icon>
     </view>
   </view>
 </template>
@@ -33,6 +36,7 @@
 <script>
 import calendar from '@/components/calendar/calendar.vue';
 import timePicker from '@/components/time-picker/time-picker.vue';
+import { defaultStartTimeMaker } from '@/common/js/time-fmt';
 const $moment = require('moment');
 export default {
   name: 'filter-time',
@@ -84,8 +88,8 @@ export default {
     changeDay() {
       this.$emit('input', {
         date: this.date,
-        startTime: this.isToday(this.date) ? Date.now() : this.date,
-        endTime: new Date(`${$moment(this.date).format('YYYY/MM/DD')} 23:59:59`).getTime(),
+        startTime: defaultStartTimeMaker(this.date),
+        endTime: new Date(`${$moment(this.date).format('YYYY/MM/DD')} 23:30`).getTime(),
       });
     },
     startTimeChange(e) {
@@ -100,12 +104,12 @@ export default {
         endTime: e,
       });
     },
-    isToday(date) {
-      return $moment(date).isSame(Date.now(), 'days');
-    },
     timestamp2timeArr(time) {
       if (!time) return null;
-      return $moment(time).format('HH:mm:ss').split(':');
+      return $moment(time).format('HH:mm').split(':');
+    },
+    reset() {
+      this.$emit('input', null);
     },
   },
 };

@@ -44,7 +44,7 @@ import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
 import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
-import { timeFmt, isToday } from '@/common/js/time-fmt';
+import { timeFmt, defaultStartTimeMaker } from '@/common/js/time-fmt';
 export default {
   components: {
     listCard,
@@ -181,17 +181,16 @@ export default {
           startTime ? timeFmt(startTime, 'HH:mm:ss') : '00:00:00'
         }`;
         params.roomBeginTimeTo = `${timeFmt(date, 'YYYY-MM-DD')} ${
-          endTime ? timeFmt(endTime, 'HH:mm:ss') : '23:59:59'
+          endTime ? timeFmt(endTime, 'HH:mm:ss') : '23:30:00'
         }`;
       } else {
-        params.roomBeginTimeFrom = timeFmt(Date.now(), 'YYYY-MM-DD HH:mm:ss');
-        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
+        params.roomBeginTimeFrom = timeFmt(defaultStartTimeMaker(), 'YYYY-MM-DD HH:mm:ss');
+        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:30:00';
       }
       return params;
     },
     handleResult(res) {
       const { records, pages } = res;
-      console.table(records);
       this.pages = pages;
       this.list.push(
         ...records.map(v => {
@@ -248,8 +247,8 @@ export default {
     dateChange(e) {
       this.filterData.time = {
         date: e,
-        startTime: isToday(e) ? new Date().getTime() : e,
-        endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
+        startTime: defaultStartTimeMaker(e),
+        endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:30:00`).getTime(),
       };
       this.getCardList(true);
     },

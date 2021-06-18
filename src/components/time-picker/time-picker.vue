@@ -9,10 +9,7 @@
       <view v-for="(v, i) in 24" :key="i">{{ formatNum(i) }}时</view>
     </picker-view-column>
     <picker-view-column>
-      <view v-for="(v, i) in 60" :key="i">{{ formatNum(i) }}分</view>
-    </picker-view-column>
-    <picker-view-column v-if="showSeconds">
-      <view v-for="(v, i) in 60" :key="i">{{ formatNum(i) }}秒</view>
+      <view v-for="(v, i) in [0, 30]" :key="i">{{ formatNum(v) }}分</view>
     </picker-view-column>
   </picker-view>
 </template>
@@ -31,11 +28,7 @@ export default {
     date: null,
     default: {
       type: Array,
-      default: [0, 0, 0],
-    },
-    showSeconds: {
-      type: Boolean,
-      default: false,
+      default: [0, 0],
     },
   },
   watch: {
@@ -53,7 +46,7 @@ export default {
   },
   data() {
     return {
-      timeValue: [0, 0, 0], //时间选择器的值
+      timeValue: [0, 0], //时间选择器的值
     };
   },
   methods: {
@@ -65,8 +58,7 @@ export default {
       } else if (this.max && this.compareEarlierTimeArray(this.max, timeArr)) {
         timeArr = this.max;
       }
-      let time =
-        timeFmt(this.value, 'YYYY/MM/DD') + ' ' + this.formatTimeArray(timeArr, this.showSeconds);
+      let time = timeFmt(this.value, 'YYYY/MM/DD') + ' ' + this.formatTimeArray(timeArr);
       time = new Date(time).getTime();
       if (this.value !== time) {
         this.emitTime(time);
@@ -80,7 +72,7 @@ export default {
     },
     formatTimeArray(t, s) {
       let r = [...t];
-      if (!s) r.length = 2;
+      r.length = 2;
       r.forEach((v, k) => (r[k] = ('0' + v).slice(-2)));
       return r.join(':');
     },
