@@ -458,6 +458,7 @@ export default {
       this.handleDisplaySession();
     },
     dateChange(e) {
+      this.date = e;
       // this.chosenSession = null;
       this.handleDisplaySession(e);
     },
