@@ -273,9 +273,9 @@ export default {
             (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
           payerPhone: this.phone,
           uniqueId: this.screening.uniqueId,
+          userNote: this.remark,
         })
         .then(res => {
-          console.log(res);
           const { orderInfo } = res;
           this.pay(orderInfo);
         })
