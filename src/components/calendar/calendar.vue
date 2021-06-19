@@ -85,6 +85,13 @@ export default {
     value: {
       immediate: true,
       handler(date) {
+        if (date) {
+          this.y = new Date(date).getFullYear();
+          this.m = new Date(date).getMonth() + 1;
+        } else {
+          this.y = new Date().getFullYear();
+          this.m = new Date().getMonth() + 1;
+        }
         this.choose = date && timeFmt(date, 'YYYY/MM/DD');
       },
     },
