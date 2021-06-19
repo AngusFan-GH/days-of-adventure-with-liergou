@@ -1,18 +1,20 @@
 <template>
-  <view class="u-padding-top-20 u-flex date-slide-selection">
-    <view
-      v-for="(item, index) in dateList"
-      :key="index"
-      class="item"
-      :class="{ active: current === index }"
-      @click="chooseDate(index)"
-    >
-      <view class="date">
-        <view class="date-week">{{ item.week }}</view>
-        <view class="date-day">{{ item.day }}</view>
+  <scroll-view :scroll-x="true" class="container">
+    <view class="u-padding-top-20 u-flex date-slide-selection">
+      <view
+        v-for="(item, index) in dateList"
+        :key="index"
+        class="item"
+        :class="{ active: current === index }"
+        @click="chooseDate(index)"
+      >
+        <view class="date">
+          <view class="date-week">{{ item.week }}</view>
+          <view class="date-day">{{ item.day }}</view>
+        </view>
       </view>
     </view>
-  </view>
+  </scroll-view>
 </template>
 
 <script>
@@ -54,12 +56,13 @@ export default {
 </script>
 
 <style lang="scss">
-.date-slide-selection {
-    overflow: auto;
-
+.container {
     width: 100%;
 
+    border-bottom: 1px solid #eeeef0;
     background-color: #fff;
+}
+.date-slide-selection {
     &::-webkit-scrollbar {
         display: none;
 

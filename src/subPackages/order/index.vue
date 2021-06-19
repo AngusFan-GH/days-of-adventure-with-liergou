@@ -59,7 +59,7 @@
     </view>
     <view class="info-item">
       <view class="product-info-wrapper">
-        <!-- <view class="shop-name u-line-1">空白·沉浸式剧情推理桌游馆(总店)</view> -->
+        <view class="shop-name u-line-1">{{ screening.shopName }}</view>
         <view class="product-info u-flex u-row-between">
           <view class="product-name">{{ screening.productName }}</view>
           <view class="price-block">
@@ -200,8 +200,14 @@ export default {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
       this.price = data.price;
-      this.screening = data;
+      this.screening = {
+        morePeople: data.advicePeopleMax - data.currentPeople,
+        restPeople: data.advicePeopleMin - data.currentPeople,
+        ...data,
+      };
       this.blockBooking = data.blockBooking === 1;
+      this.changeMode(data.orderMode);
+      console.log(data);
     });
   },
   data() {
@@ -249,7 +255,7 @@ export default {
   },
   methods: {
     changeMode(mode) {
-      this.mode = mode;
+      this.mode = mode == null ? 1 : mode;
     },
     createPay() {
       if (!/\d{11}/.test(this.phone)) {

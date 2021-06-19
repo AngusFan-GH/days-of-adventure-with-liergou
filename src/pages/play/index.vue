@@ -78,7 +78,7 @@ export default {
         people: null,
         time: null,
       },
-      dateLength: 14,
+      dateLength: 15,
     };
   },
   mounted() {

@@ -113,7 +113,10 @@ export default {
   methods: {
     goToDetail() {
       uni.navigateTo({
-        url: `/subPackages/detail/index?productId=${this.data.productId}`,
+        url: `/subPackages/detail/index`,
+        success: res => {
+          res.eventChannel.emit('submitDetail', this.data);
+        },
       });
     },
   },

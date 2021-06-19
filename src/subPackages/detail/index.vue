@@ -138,13 +138,13 @@
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-    <view class="u-padding-30 theme-ugc" v-if="false">
+    <view class="u-padding-30 theme-ugc" v-if="data.commit">
       <view class="u-flex u-row-between title common u-skeleton-fillet">
         当前主题评价(3)
         <text class="arrow-right"></text>
       </view>
     </view>
-    <u-gap height="20" bg-color="#f6f6f6"></u-gap>
+    <u-gap height="20" bg-color="#f6f6f6" v-if="data.commit"></u-gap>
     <view class="theme-detail">
       <view class="u-padding-30 detail">
         <view class="u-margin-bottom-20 title common u-skeleton-fillet">主题描述</view>
@@ -184,7 +184,7 @@
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <u-gap height="200" bg-color="#f6f6f6"></u-gap>
     <view class="theme-submit safe-area-inset-bottom">
-      <view class="u-relative u-flex u-row-between notice">
+      <!-- <view class="u-relative u-flex u-row-between notice">
         <view class="txt-area">
           <text class="txt">当前有2场在拼，最近一场差</text>
           <text class="txt high-light">{{ data.advicePeopleMin }}</text>
@@ -195,12 +195,15 @@
           立即加入
           <navigator class="u-margin-left-8 arrow-right"></navigator>
         </view>
-      </view>
+      </view> -->
       <view class="btn-group">
-        <u-button shape="circle" :custom-style="customStyle">选择场次并预订</u-button>
+        <u-button shape="circle" :custom-style="customStyle" @click="openChooseSession()">
+          选择场次并预订
+        </u-button>
       </view>
     </view>
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
+    <!-- 拼场规则弹框 -->
     <u-popup
       v-model="showPoolRuleDesc"
       mode="bottom"
@@ -237,19 +240,123 @@
         </view>
       </view>
     </u-popup>
+    <!-- 选择预定场次弹框 -->
+    <u-popup
+      v-model="showChooseSession"
+      mode="bottom"
+      :safe-area-inset-bottom="true"
+      :closeable="true"
+    >
+      <view class="u-padding-top-20 choose-session">
+        <view class="u-flex u-row-center title">
+          <text class="gray-line"></text>
+          选择预订场次
+          <text class="gray-line"></text>
+        </view>
+        <view class="week">
+          <date-slide-selection
+            :date="date"
+            :length="15"
+            @change="dateChange"
+          ></date-slide-selection>
+        </view>
+        <scroll-view scroll-y="true" class="main">
+          <view
+            class="u-flex u-margin-bottom-20 u-padding-left-30 u-padding-right-30 session"
+            v-for="(session, index) in displaySession"
+            :key="index"
+            :class="{
+              disabled: session.disabled,
+              selected: chosenSession && session.uniqueId === chosenSession.uniqueId,
+            }"
+            @click="chooseSession(session)"
+          >
+            <view class="u-flex-1 info">
+              <view class="u-flex info-content">
+                <text class="u-margin-right-12 info-time">{{ session.time }}</text>
+                <text class="info-joint">
+                  {{
+                    session.status === 1 && dataFromList.blockBooking === 1 ? '可包场' : '可拼场'
+                  }}
+                </text>
+              </view>
+              <view
+                class="u-line-1 tip"
+                v-show="
+                  !session.disabled &&
+                  session.currentPeople &&
+                  data.advicePeopleMin - session.currentPeople > 0
+                "
+              >
+                已加入{{ session.currentPeople }}人，差
+                <text class="high-light">
+                  {{ data.advicePeopleMin - session.currentPeople }}
+                </text>
+                人可开场，最多再加入{{ data.advicePeopleMax - session.currentPeople }}人
+              </view>
+              <view
+                class="u-line-1 tip"
+                v-show="
+                  !session.disabled &&
+                  session.currentPeople &&
+                  data.advicePeopleMin - session.currentPeople <= 0
+                "
+              >
+                已开场，最多再加入
+                <text class="high-light">{{ data.advicePeopleMax - session.currentPeople }}</text>
+                人
+              </view>
+            </view>
+            <view class="price">
+              ¥{{ session.price }}/人
+              <text v-show="session.disabled">订满</text>
+            </view>
+          </view>
+        </scroll-view>
+        <view class="btn-container">
+          <view class="choosed" v-show="!chosenSession">尚未选择预订场次</view>
+          <view class="choosed" v-show="chosenSession">
+            <view>
+              预订场次：
+              <text class="choosed-msg">{{ chosenSession.date }} {{ chosenSession.time }}</text>
+            </view>
+            <view v-show="chosenSession.currentPeople">
+              已加入玩家：
+              <text>{{ chosenSession.currentPeople }}人</text>
+            </view>
+          </view>
+          <view class="btn" :class="{ disabled: !chosenSession }">
+            <u-button
+              shape="circle"
+              :custom-style="customStyle"
+              :disabled="!chosenSession"
+              @click="goToOrder()"
+            >
+              下一步，选择人数
+            </u-button>
+          </view>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
 <script>
 import defaultThumb from '@/static/image/bg_login.png';
+import { timeFmt } from '@/common/js/time-fmt';
 export default {
-  onLoad(options) {
-    console.log('productId:', options.productId);
-    this.productId = +options.productId;
+  onLoad() {
+    const eventChannel = this.getOpenerEventChannel();
+    eventChannel.on('submitDetail', data => {
+      this.dataFromList = data;
+      console.log('dataFromList', data);
+      this.productId = +data.productId;
+    });
     this.getDetail();
   },
   data() {
     return {
+      dataFromList: null,
       productId: null,
       loading: true,
       data: {
@@ -262,6 +369,10 @@ export default {
         color: '#fff',
       },
       showPoolRuleDesc: false,
+      showChooseSession: false,
+      date: null,
+      displaySession: [],
+      chosenSession: null,
     };
   },
   methods: {
@@ -269,12 +380,11 @@ export default {
       this.$u.api
         .getDetail(this.productId)
         .then(data => {
-          const exec = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
-          // 临时获取人数上下限
-          data.advicePeopleMin = exec[0];
-          data.advicePeopleMax = exec[1] || exec[0];
           data.difficultLevel = data.difficultLevel / 10;
           data.shopInfo.star = data.shopInfo.star / 10;
+          // 获取人数上下限
+          data.advicePeopleMin = this.dataFromList.advicePeopleMin;
+          data.advicePeopleMax = this.dataFromList.advicePeopleMax;
           // 遍历所有场次取价格最小值
           data.price = Math.min.apply(
             Math,
@@ -333,6 +443,59 @@ export default {
     },
     openPoolRuleDesc() {
       this.showPoolRuleDesc = true;
+    },
+    openChooseSession() {
+      this.chosenSession = null;
+      this.showChooseSession = true;
+      this.handleDisplaySession();
+    },
+    dateChange(e) {
+      // this.chosenSession = null;
+      this.handleDisplaySession(e);
+    },
+    handleDisplaySession(date) {
+      let { rooms, advicePeopleMin } = this.data || {};
+      rooms = rooms || {};
+      date = date || Date.now();
+      date = timeFmt(date, 'MM-DD');
+      const res = rooms[date] || [];
+      this.displaySession = res.map(room => {
+        return {
+          time: `${timeFmt(room.roomBeginTime, 'HH:mm')}-${timeFmt(room.roomEndTime, 'HH:mm')}`,
+          date: `${timeFmt(this.date, 'dddd')}(${timeFmt(this.date, 'MM-DD')})`,
+          status: room.currentPeople === 0 ? 1 : 0,
+          disabled: advicePeopleMin === room.currentPeople,
+          ...room,
+        };
+      });
+    },
+    chooseSession(session) {
+      if (session.disabled) {
+        return;
+      }
+      this.chosenSession = session;
+    },
+    goToOrder() {
+      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName } =
+        this.dataFromList;
+      const shopInfo = this.data.shopInfo || {};
+      const data = {
+        ...this.chosenSession,
+        productName,
+        advicePeopleMin,
+        advicePeopleMax,
+        duration,
+        shopName: shopInfo.shopName,
+        blockBooking,
+        orderMode: blockBooking === 1 ? 0 : 1,
+      };
+      console.log(data);
+      uni.navigateTo({
+        url: '/subPackages/order/index',
+        success: res => {
+          res.eventChannel.emit('submitOrder', data);
+        },
+      });
     },
   },
 };
@@ -693,6 +856,104 @@ export default {
 
             color: #333;
         }
+    }
+}
+.choose-session {
+    .title {
+        font-size: 28rpx;
+        line-height: 60rpx;
+
+        height: 64rpx;
+        padding: 0 20rpx;
+
+        color: #999;
+        background-color: #fff;
+        .gray-line {
+            width: 100rpx;
+            height: 2rpx;
+            margin: 0 20rpx;
+
+            background: #eeeef0;
+        }
+    }
+    .week {
+        width: 100%;
+    }
+    .main {
+        box-sizing: border-box;
+        height: 40vh;
+        padding: 30rpx;
+        .session {
+            height: 120rpx;
+
+            border: 1px solid #eeeef0;
+            border-radius: 4rpx;
+            &.selected {
+                border: 1px solid #f63;
+                background-color: #fff5f2;
+            }
+            &.disabled {
+                background: #fafafa;
+                .info-time,
+                .info-joint,
+                .price {
+                    color: #ccc!important;
+                }
+            }
+            .info {
+                overflow: hidden;
+                &-content {
+                    flex-wrap: nowrap;
+                }
+                &-time {
+                    font-size: 30rpx;
+
+                    color: #666;
+                }
+                &-joint {
+                    font-size: 24rpx;
+
+                    color: #4ba418;
+                }
+                .tip {
+                    color: #999;
+                }
+            }
+            .price {
+                font-size: 24rpx;
+
+                white-space: nowrap;
+
+                color: #f63;
+
+                flex-shrink: 0;
+            }
+        }
+    }
+    .btn-container {
+        width: 100%;
+
+        border-top: 1px solid #eeeef0;
+        background-color: #fff;
+        .choosed {
+            font-size: 26rpx;
+
+            padding: 30rpx;
+
+            color: #999;
+            &-msg {
+                color: #333;
+            }
+        }
+        .btn {
+            padding: 20rpx 30rpx;
+            &.disabled {
+                opacity: .5;
+            }
+        }
+    }
+    .high-light {
+        color: #f63;
     }
 }
 
