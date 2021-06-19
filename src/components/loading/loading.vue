@@ -1,5 +1,7 @@
 <template>
-  <view class="loading tank"></view>
+  <view class="loading tank">
+    <text>{{ label }}</text>
+  </view>
 </template>
 
 <script>

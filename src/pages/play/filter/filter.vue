@@ -101,7 +101,8 @@
             </text>
           </view>
         </view>
-        <view v-if="!displayFilterTabs.length">这里还什么都没有</view>
+
+        <view v-if="!displayFilterTabs.length" class="empty">这里还什么配置都没有呢</view>
       </view>
       <view
         class="preview-btn"
@@ -270,6 +271,13 @@ export default {
                     margin-left: 2em;
                 }
             }
+            .empty {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+
+                transform: translate(-50%, -50%);
+            }
         }
         .preview-btn {
             position: absolute;
@@ -365,6 +373,7 @@ export default {
         flex-direction: row-reverse;
     }
 }
+
 
 
 </style>

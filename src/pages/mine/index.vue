@@ -1,31 +1,114 @@
 <template>
   <view class="container">
-    <view>我的</view>
+    <view class="u-flex user-info">
+      <u-avatar
+        :src="user.avatarUrl"
+        size="large"
+        mode="square"
+        :show-sex="true"
+        :sex-icon="user.gender == 1 ? 'man' : 'woman'"
+      ></u-avatar>
+      <view class="u-flex-1 u-margin-left-20 main">
+        <view class="u-margin-bottom-10 u-line-1 name">{{ user.nickName }}</view>
+      </view>
+    </view>
+    <loading class="loading" v-if="loading" :label="labels[current]"></loading>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
   </view>
 </template>
 
 <script>
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
+import loading from '@/components/loading/loading.vue';
 export default {
   components: {
     customTabBar,
+    loading,
+  },
+  onShow() {
+    this.current = 0;
+    this.labels.unshift((this.user.gender == 1 ? '少侠' : '女侠') + '，你好');
+    this.timer = setInterval(() => {
+      if (this.current === this.labels.length - 1) {
+        this.labels.splice(
+          2,
+          0,
+          Math.ceil(Math.random() * 5) === 5 ? '又见面了' : '我们是不是见过'
+        );
+        return (this.current = 0);
+      }
+      this.current++;
+    }, 2 * 1000);
   },
   data() {
     return {
       tabBarIndex: 2,
+      user: uni.getStorageSync('userInfo'),
+      loading: true,
+      labels: [
+        '欢迎来到这里',
+        '我就是个动画',
+        '在这看家的',
+        '这里没别的了',
+        '暂时先这些',
+        '别看了',
+        '就这些',
+        '真就这些了',
+        '也不用着急',
+        '面包会有的',
+        '功能也会有的',
+        '都在路上了',
+        '等等就有了',
+        '玩着玩着就有了',
+        '都看了这么久了',
+        '这么无聊么',
+        '剧本不香了么',
+        '赶快去玩吧',
+        '我记性不好',
+        '刚才说了啥',
+        '马上就忘了',
+      ],
+      current: 0,
+      timer: null,
+      first: true,
     };
   },
-  onLoad() {},
   methods: {},
+  onHide() {
+    console.log('clear');
+    clearInterval(this.timer);
+    this.timer = null;
+  },
 };
 </script>
 
 <style lang="scss">
 .container {
-    min-height: 100%;
+    overflow: hidden;
 
-    background-color: #ccc;
+    min-height: 100%;
+}
+.user-info {
+    padding: 30rpx 40rpx;
+
+    background-color: #ff5000;
+    background-image: linear-gradient(to right, #fd9126, #ff5000);
+    .main {
+        overflow: hidden;
+    }
+    .name {
+        font-size: 40rpx;
+        font-weight: bold;
+
+        color: #fff;
+    }
+}
+.loading {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+
+    transform: translate(-50%,-50%);
 }
 
 </style>

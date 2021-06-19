@@ -14,9 +14,6 @@ $bullet-color: #f63;
     linear-gradient($bullet-color 0 0) right;
     background-repeat: no-repeat;
     background-origin: border-box;
-    &::before {
-        content: '稍等一会';
-    }
     &:after {
         position: absolute;
         top: 100%;
