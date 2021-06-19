@@ -35,7 +35,7 @@ export default {
       if (this.current === this.labels.length - 1) {
         this.labels.splice(
           2,
-          0,
+          1,
           Math.ceil(Math.random() * 5) === 5 ? '又见面了' : '我们是不是见过'
         );
         return (this.current = 0);
@@ -50,7 +50,8 @@ export default {
       loading: true,
       labels: [
         '欢迎来到这里',
-        '我就是个动画',
+        '很高兴认识你',
+        '我是个动画',
         '在这看家的',
         '这里没别的了',
         '暂时先这些',
@@ -63,7 +64,7 @@ export default {
         '都在路上了',
         '等等就有了',
         '玩着玩着就有了',
-        '都看了这么久了',
+        '都看这么久了',
         '这么无聊么',
         '剧本不香了么',
         '赶快去玩吧',
