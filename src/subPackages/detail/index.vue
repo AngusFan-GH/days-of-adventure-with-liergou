@@ -275,10 +275,19 @@
               <view class="u-flex-1 info">
                 <view class="u-flex info-content">
                   <text class="u-margin-right-12 info-time">{{ session.time }}</text>
-                  <text class="info-joint" v-show="dataFromList.blockBooking === 1">
+                  <text
+                    class="info-joint"
+                    v-show="dataFromList.blockBooking === 1 && !session.timeout"
+                  >
                     可包场/拼场
                   </text>
-                  <text class="info-joint" v-show="dataFromList.blockBooking === 0">可拼场</text>
+                  <text
+                    class="info-joint"
+                    v-show="dataFromList.blockBooking === 0 && !session.timeout"
+                  >
+                    可拼场
+                  </text>
+                  <text class="info-joint" v-show="session.timeout">已结束</text>
                 </view>
                 <view
                   class="u-line-1 tip"
@@ -309,7 +318,7 @@
               </view>
               <view class="price">
                 ¥{{ session.price }}/人
-                <text v-show="session.disabled">订满</text>
+                <text v-show="session.disabled && !session.timeout">订满</text>
               </view>
             </view>
           </scroll-view>
@@ -453,6 +462,7 @@ export default {
       this.showPoolRuleDesc = true;
     },
     openChooseSession() {
+      this.date = null;
       this.chosenSession = null;
       this.showChooseSession = true;
       this.handleDisplaySession();
@@ -469,10 +479,12 @@ export default {
       date = timeFmt(date, 'MM-DD');
       const res = rooms[date] || [];
       this.displaySession = res.map(room => {
+        const timeout = new Date(room.roomEndTime).getTime() <= Date.now();
         return {
           time: `${timeFmt(room.roomBeginTime, 'HH:mm')}-${timeFmt(room.roomEndTime, 'HH:mm')}`,
           date: `${timeFmt(this.date, 'dddd')}(${timeFmt(this.date, 'MM-DD')})`,
-          disabled: room.currentPeople >= advicePeopleMax,
+          disabled: room.currentPeople >= advicePeopleMax || timeout,
+          timeout,
           ...room,
         };
       });
