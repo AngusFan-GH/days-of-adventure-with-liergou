@@ -53,7 +53,14 @@
       </view>
     </view>
     <view class="togather u-margin-top-20">
+      <view v-if="data.screenings.length === 1">
+        <card-screening
+          class="screening"
+          :screening="data.screenings && data.screenings[0]"
+        ></card-screening>
+      </view>
       <u-read-more
+        v-if="data.screenings.length > 1"
         ref="uReadMore"
         :toggle="true"
         :show-height="122"
@@ -90,7 +97,7 @@ export default {
       immediate: true,
       handler() {
         this.$nextTick(() => {
-          this.$refs.uReadMore.init();
+          this.$refs.uReadMore && this.$refs.uReadMore.init();
         });
       },
     },
