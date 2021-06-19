@@ -71,7 +71,7 @@
         </view>
       </view>
     </view>
-    <view class="u-flex pool-detail">
+    <view class="u-flex pool-detail" @click="openPoolRuleDesc()">
       <view class="u-flex u-row-center pool-text u-skeleton-rect">可拼场</view>
       <view class="u-flex-col u-flex-1 pool-tips u-skeleton-rect">
         <view class="u-flex single-tip">
@@ -201,6 +201,42 @@
       </view>
     </view>
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
+    <u-popup
+      v-model="showPoolRuleDesc"
+      mode="bottom"
+      :safe-area-inset-bottom="true"
+      :border-radius="40"
+      :closeable="true"
+    >
+      <view class="u-flex-col pool-rule-desc">
+        <view class="u-flex u-row-center u-padding-left-30 u-padding-right-30 title">
+          <text>拼场规则</text>
+        </view>
+        <view
+          class="u-margin-bottom-40 content"
+          v-for="(rule, index) in data.poolRuleDescMap"
+          :key="index"
+        >
+          <view class="content-title">{{ rule.label }}</view>
+          <view
+            class="u-margin-top-10 content-info"
+            v-for="(info, index) in rule.value"
+            :key="index"
+          >
+            {{ info }}
+          </view>
+        </view>
+        <view class="btn">
+          <u-button
+            shape="circle"
+            :custom-style="customStyle"
+            @click="this.showPoolRuleDesc = false"
+          >
+            我知道了
+          </u-button>
+        </view>
+      </view>
+    </u-popup>
   </view>
 </template>
 
@@ -208,7 +244,7 @@
 import defaultThumb from '@/static/image/bg_login.png';
 export default {
   onLoad(options) {
-    console.log(options);
+    console.log('productId:', options.productId);
     this.productId = +options.productId;
     this.getDetail();
   },
@@ -225,6 +261,7 @@ export default {
         backgroundColor: '#f63',
         color: '#fff',
       },
+      showPoolRuleDesc: false,
     };
   },
   methods: {
@@ -232,7 +269,6 @@ export default {
       this.$u.api
         .getDetail(this.productId)
         .then(data => {
-          console.log(JSON.parse(JSON.stringify(data)));
           const exec = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
           // 临时获取人数上下限
           data.advicePeopleMin = exec[0];
@@ -251,6 +287,12 @@ export default {
               )
             )
           );
+          data.poolRuleDescMap = ['拼场方式', '详细规则'].map(rule => {
+            return {
+              label: rule,
+              value: data.poolRuleDescMap[rule],
+            };
+          });
           this.data = data;
           this.loading = false;
           this.setDescTextBtn();
@@ -284,10 +326,13 @@ export default {
         longitude,
         name: shopName,
         success: res => {
-          console.log('success', res);
+          console.log('openLocation success:', res);
         },
         fail: err => console.error(err),
       });
+    },
+    openPoolRuleDesc() {
+      this.showPoolRuleDesc = true;
     },
   },
 };
@@ -614,14 +659,12 @@ export default {
         padding: 14rpx 30rpx;
     }
 }
-
 .common.title {
     font-size: 34rpx;
     font-weight: 700;
 
     color: #111;
 }
-
 .arrow-right {
     width: 22rpx;
     height: 22rpx;
@@ -629,6 +672,28 @@ export default {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAsCAYAAAAacYo8AAACwUlEQVRoQ+3ZPYgTQRQA4De7QfODQmYISAJWAQvFFFqKBM7zRBtTBE4RtBK1SOFPq3u2pxYpVKwURKw8C0XPHwhiqUXCCYIBo5KgLDMrFkkUd58M5HDZw8tls7uXAdNuGL7Mvrz35g0BRT9EUTeMBS+Xy3qtVtuZSqU+tlqt71Fugm84IhLG2CIiTgOAiMViJdM0X0WF9w1Pp9NbAeDTMpQQ0gOAkhBiMQq8b3ixWIw1Go0lRNzmgv7SNO0I5/xB2HjfcAkb7PpLAMi7oLamaSc453fDxI8Fl7BMJrPFtu3niLjDBUUAOGNZ1s2w8GPDJSyXy7Fer/cUEXe7oYSQC0KIK2HgA4FLGKV0MyI+BoA9HvycEMIIGh8YXMKy2Wyy3+8vIOJ+D/6aEOJckPhA4RKWz+c3cs7vA8BhD/5WpVI5bRiGE8QPCBwuUTJV1uv1OwBw1IO8VygUjtdqtd/j4kOBS5RhGFq1Wr2BiCc9yIeMsdlms/lzHHxo8GUUpfQqIp71hM2zeDxe6nQ6Xb/40OGDjDOHiBc9yNeEkENCiB9+8JHAB/jziDjvQb5NJpMz7Xabj4qPDC5h6XT6FABcB/jbThNC3um6vs80za+j4COFSxhj7JjjOLcBQHdBmwAwZVnW57XiI4cP8CXHcWSu37AMJYR80XV9yjTND2vBrwt8EPMzACCrbMKF/0YIKXLO3w/DrxtcwjKZzF7bth8h4iYX/okQ4uB/+LAdGPU5pVS9UGGMqffnVDId/qMALem6Pj2xBYhSuqLkE0LeJBKJAxNb8imlBiJeUqrJUq6tVfIgoeTRTcnDspLjiVUGQpeFEN6MMmqHsOL7gXSHcgTX7XbleHmX51A8uSO4wdDzBSJud6Ene+ip5Jh5lcH+LOd8YewgHrKA7xhX9ipF2csr+SaVvC4MO4aHre87xoctHPbzP8hhczwaPeppAAAAAElFTkSuQmCC);
     background-repeat: no-repeat;
     background-size: 100% 100%;
+}
+.pool-rule-desc {
+    padding: 35rpx 30rpx;
+    .title {
+        font-size: 32rpx;
+        font-weight: 600;
+
+        color: #111;
+    }
+    .content {
+        &-title {
+            font-size: 26rpx;
+
+            color: #999;
+        }
+        &-info {
+            font-size: 26rpx;
+            line-height: 36rpx;
+
+            color: #333;
+        }
+    }
 }
 
 </style>
