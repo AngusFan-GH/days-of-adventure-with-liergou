@@ -115,7 +115,7 @@ export default {
       uni.navigateTo({
         url: `/subPackages/detail/index`,
         success: res => {
-          res.eventChannel.emit('submitDetail', this.data);
+          res.eventChannel.emit('submitDetail', JSON.parse(JSON.stringify(this.data)));
         },
       });
     },

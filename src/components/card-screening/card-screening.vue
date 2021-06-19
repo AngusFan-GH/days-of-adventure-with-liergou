@@ -60,7 +60,7 @@ export default {
       uni.navigateTo({
         url: '/subPackages/order/index',
         success: res => {
-          res.eventChannel.emit('submitOrder', this.screening);
+          res.eventChannel.emit('submitOrder', JSON.parse(JSON.stringify(this.screening)));
         },
       });
     },
