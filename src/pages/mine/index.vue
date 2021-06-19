@@ -27,7 +27,10 @@ export default {
   },
   onShow() {
     this.current = 0;
-    this.labels.unshift((this.user.gender == 1 ? '少侠' : '女侠') + '，你好');
+    if (this.first) {
+      this.labels.unshift((this.user.gender == 1 ? '少侠' : '女侠') + '，你好');
+      this.first = false;
+    }
     this.timer = setInterval(() => {
       if (this.current === this.labels.length - 1) {
         this.labels.splice(
@@ -75,7 +78,6 @@ export default {
   },
   methods: {},
   onHide() {
-    console.log('clear');
     clearInterval(this.timer);
     this.timer = null;
   },
