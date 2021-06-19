@@ -479,7 +479,7 @@ export default {
       date = timeFmt(date, 'MM-DD');
       const res = rooms[date] || [];
       this.displaySession = res.map(room => {
-        const timeout = new Date(room.roomEndTime).getTime() <= Date.now();
+        const timeout = new Date(room.roomEndTime.replace(/-/g, '/')).getTime() <= Date.now();
         return {
           time: `${timeFmt(room.roomBeginTime, 'HH:mm')}-${timeFmt(room.roomEndTime, 'HH:mm')}`,
           date: `${timeFmt(this.date, 'dddd')}(${timeFmt(this.date, 'MM-DD')})`,
