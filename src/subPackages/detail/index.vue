@@ -45,7 +45,7 @@
               </view>
               <view class="u-flex u-row-between u-margin-top-10 u-skeleton-rect">
                 <view class="u-flex price">
-                  <text class="price-num">¥{{ data.price }}</text>
+                  <text class="price-num">¥{{ data.price || '--' }}</text>
                   <text class="u-margin-left-6 price-desc">起</text>
                 </view>
                 <view class="book-num">{{ data.sales }}人订过</view>
@@ -209,14 +209,12 @@ import defaultThumb from '@/static/image/bg_login.png';
 export default {
   onLoad(options) {
     console.log(options);
-    // this.productId = +options.productId;
-    this.productItemId = +options.productItemId;
+    this.productId = +options.productId;
     this.getDetail();
   },
   data() {
     return {
-      // productId: null,
-      productItemId: null,
+      productId: null,
       loading: true,
       data: {
         headPicUrl: defaultThumb,
@@ -232,16 +230,27 @@ export default {
   methods: {
     getDetail() {
       this.$u.api
-        // .getDetail(this.productId)
-        .getDetail(this.productItemId)
+        .getDetail(this.productId)
         .then(data => {
-          console.log(data);
+          console.log(JSON.parse(JSON.stringify(data)));
           const exec = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
           // 临时获取人数上下限
           data.advicePeopleMin = exec[0];
           data.advicePeopleMax = exec[1] || exec[0];
           data.difficultLevel = data.difficultLevel / 10;
           data.shopInfo.star = data.shopInfo.star / 10;
+          // 遍历所有场次取价格最小值
+          data.price = Math.min.apply(
+            Math,
+            Array.from(
+              new Set(
+                Object.values(data.rooms || {}).reduce(
+                  (set, room) => set.concat(room.map(v => v.price)),
+                  []
+                )
+              )
+            )
+          );
           this.data = data;
           this.loading = false;
           this.setDescTextBtn();

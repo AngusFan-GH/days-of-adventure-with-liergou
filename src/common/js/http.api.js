@@ -30,7 +30,7 @@ const install = (Vue, vm) => {
 	 * 商品详情
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/searchUsingPOST
 	 */
-	let getDetail = (productItemId) => vm.$u.get(`/market-boot/app/productitem/view/${productItemId}`);
+	let getDetail = (productId) => vm.$u.get(`/market-boot/app/productitem/view/${productId}`);
 
 	/**
 	 * 创建支付

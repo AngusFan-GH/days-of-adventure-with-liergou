@@ -113,8 +113,7 @@ export default {
   methods: {
     goToDetail() {
       uni.navigateTo({
-        // url: `/subPackages/detail/index?productId=${this.data.productId}`,
-        url: `/subPackages/detail/index?productItemId=${this.data.rooms[0].productItemId}`,
+        url: `/subPackages/detail/index?productId=${this.data.productId}`,
       });
     },
   },

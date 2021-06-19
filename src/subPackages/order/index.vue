@@ -201,7 +201,6 @@ export default {
     eventChannel.on('submitOrder', data => {
       this.price = data.price;
       this.screening = data;
-      // this.count = data.advicePeopleMin;
       this.blockBooking = data.blockBooking === 1;
     });
   },
@@ -267,7 +266,7 @@ export default {
             this.name ||
             (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
           payerPhone: this.phone,
-          productItemId: this.screening.productItemId,
+          uniqueId: this.screening.uniqueId,
         })
         .then(res => {
           console.log(res);
