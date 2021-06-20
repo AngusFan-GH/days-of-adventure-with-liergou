@@ -272,7 +272,7 @@ export default {
             this.name ||
             (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
           payerPhone: this.phone,
-          uniqueId: this.screening.uniqueId,
+          productItemUniqueId: this.screening.uniqueId,
           userNote: this.remark,
         })
         .then(res => {
