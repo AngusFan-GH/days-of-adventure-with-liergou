@@ -70,12 +70,12 @@ export default {
       pages: 1,
       showFilter: true,
       filterData: {
-        position: null,
+        position: 0,
         blockBooking: null,
         price: null,
         styles: null,
         features: null,
-        people: null,
+        people: 1,
         time: null,
       },
       dateLength: 15,
@@ -174,6 +174,8 @@ export default {
         } else {
           params.peopleFrom = params.peopleTo = people;
         }
+      } else {
+        params.peopleFrom = params.peopleTo = 1;
       }
       if (time != null) {
         const { startTime, endTime, date } = time;

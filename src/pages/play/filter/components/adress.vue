@@ -27,6 +27,9 @@ export default {
     value: {
       immediate: true,
       handler(newVal) {
+        if (newVal == null) {
+          return this.handleClick(0);
+        }
         const index = this.btnList.findIndex(v => v.value === newVal);
         this.current = index >= 0 ? index : null;
       },
@@ -39,18 +42,18 @@ export default {
           label: '附近',
           value: 0,
         },
-        {
-          label: '附近1公里',
-          value: 1000,
-        },
-        {
-          label: '附近3公里',
-          value: 2000,
-        },
-        {
-          label: '附近5公里',
-          value: 5000,
-        },
+        // {
+        //   label: '附近1公里',
+        //   value: 1000,
+        // },
+        // {
+        //   label: '附近3公里',
+        //   value: 2000,
+        // },
+        // {
+        //   label: '附近5公里',
+        //   value: 5000,
+        // },
       ],
       current: null,
     };

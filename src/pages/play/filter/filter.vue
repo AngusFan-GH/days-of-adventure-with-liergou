@@ -153,6 +153,9 @@ export default {
       default: 0,
     },
   },
+  created() {
+    this.currentFiltertab = this.filterTabs[0].value;
+  },
   watch: {
     data: {
       immediate: true,
@@ -166,6 +169,10 @@ export default {
     return {
       revertFilter: uni.getStorageSync('revert-filter'),
       filterTabs: [
+        {
+          label: '人数',
+          value: 'people',
+        },
         {
           label: '位置',
           value: 'position',
@@ -183,10 +190,6 @@ export default {
           value: 'time',
         },
         {
-          label: '人数',
-          value: 'people',
-        },
-        {
           label: '价格',
           value: 'price',
         },
@@ -195,7 +198,7 @@ export default {
           value: 'blockBooking',
         },
       ],
-      currentFiltertab: 'position',
+      currentFiltertab: null,
       filterData: {},
       showPreview: false,
     };
@@ -225,7 +228,17 @@ export default {
     },
     reset() {
       Object.keys(this.filterData).forEach(key => {
-        this.filterData[key] = null;
+        switch (key) {
+          case 'position':
+            this.filterData[key] = 0;
+            break;
+          case 'people':
+            this.filterData[key] = 1;
+            break;
+          default:
+            this.filterData[key] = null;
+            break;
+        }
       });
     },
     touchStart() {

@@ -29,6 +29,9 @@ export default {
     value: {
       immediate: true,
       handler(newVal) {
+        if (newVal == null) {
+          return this.handleClick(0);
+        }
         const index = this.btnList.findIndex(v => v.value === newVal);
         this.current = index >= 0 ? index : null;
       },

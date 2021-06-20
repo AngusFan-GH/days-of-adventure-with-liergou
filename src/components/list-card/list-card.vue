@@ -7,7 +7,13 @@
         mode="aspectFill"
       ></image>
       <view class="txt attributes u-line-1">
-        <view class="title u-line-1">{{ data.productName }}</view>
+        <view class="u-flex u-row-between">
+          <view class="u-flex-1 u-line-1 title">{{ data.productName }}</view>
+          <view class="u-line-1 u-flex">
+            <u-icon name="map"></u-icon>
+            <text class="distance">{{ distanceFmt(data.distance) }}</text>
+          </view>
+        </view>
         <view class="difficult desc u-flex u-margin-top-16 u-flex-nowrap">
           <view class="label">难度</view>
           <view class="star">
@@ -126,6 +132,20 @@ export default {
         },
       });
     },
+    distanceFmt(distance) {
+      if (distance < 10) {
+        return '＜10m';
+      }
+      if (distance >= 10 && distance < 1000) {
+        return distance + 'm';
+      }
+      if (distance >= 1000 && distance < 100000) {
+        return (distance / 1000).toFixed(0) + 'km';
+      }
+      if (distance >= 10000) {
+        return '＞100km';
+      }
+    },
   },
 };
 </script>
@@ -152,6 +172,10 @@ export default {
             font-weight: 700;
 
             color: #111;
+        }
+        .distance {
+          font-size: 24rpx;
+          color: #ff4101d1;
         }
         .difficult {
             height: 30rpx;
