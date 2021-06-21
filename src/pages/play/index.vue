@@ -126,6 +126,7 @@ export default {
         this.pageNum = 1;
       }
       const params = this.handleParams();
+      uni.setStorageSync('filter_data', params);
       this.$u.api
         .getCardList(params)
         .then(res => {

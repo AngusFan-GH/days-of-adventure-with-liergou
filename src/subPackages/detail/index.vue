@@ -279,7 +279,7 @@
                     class="info-joint"
                     v-show="dataFromList.blockBooking === 1 && !session.timeout"
                   >
-                    可包场/拼场
+                    可包场
                   </text>
                   <text
                     class="info-joint"
@@ -294,7 +294,8 @@
                   v-show="
                     !session.disabled &&
                     session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople > 0
+                    data.advicePeopleMin - session.currentPeople > 0 &&
+                    dataFromList.blockBooking === 0
                   "
                 >
                   已加入{{ session.currentPeople }}人，差
@@ -308,7 +309,8 @@
                   v-show="
                     !session.disabled &&
                     session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople <= 0
+                    data.advicePeopleMin - session.currentPeople <= 0 &&
+                    dataFromList.blockBooking === 0
                   "
                 >
                   已开场，最多再加入
@@ -334,7 +336,7 @@
               预订场次：
               <text class="choosed-msg">{{ chosenSession.date }} {{ chosenSession.time }}</text>
             </view>
-            <view v-show="chosenSession.currentPeople">
+            <view v-show="dataFromList.blockBooking === 0 && chosenSession.currentPeople">
               已加入玩家：
               <text>{{ chosenSession.currentPeople }}人</text>
             </view>
@@ -507,7 +509,6 @@ export default {
         duration,
         shopName: shopInfo.shopName,
         blockBooking,
-        orderMode: blockBooking === 1 ? 0 : 1,
       };
       console.log(data);
       uni.navigateTo({

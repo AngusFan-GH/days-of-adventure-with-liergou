@@ -4,23 +4,23 @@
       <view
         class="bar-image"
         :class="{
-          left: mode === 1,
-          right: mode === 0,
+          left: mode === 0,
+          right: mode === 1,
         }"
       >
         <view
-          class="mode-choose-btn right-btn"
-          :class="{ selected: mode === 1 }"
-          @click="changeMode(1)"
+          class="mode-choose-btn left-btn"
+          :class="{ selected: mode === 0 }"
+          @click="changeMode(0)"
         >
           <text class="btn-icon"></text>
           <text>拼场预订</text>
         </view>
         <view
           v-if="blockBooking"
-          class="mode-choose-btn left-btn"
-          :class="{ selected: mode === 0 }"
-          @click="changeMode(0)"
+          class="mode-choose-btn right-btn"
+          :class="{ selected: mode === 1 }"
+          @click="changeMode(1)"
         >
           <text class="btn-icon"></text>
           <text>
@@ -30,7 +30,7 @@
         </view>
       </view>
     </view>
-    <view class="info-item" v-show="mode === 1">
+    <view class="info-item" v-show="mode === 0">
       <view class="ping-tips-wrapper">
         <view class="tip-item">
           <view class="dot"></view>
@@ -74,7 +74,7 @@
     </view>
     <view class="info-item">
       <view class="pack-counter-wrapper">
-        <view class="counter-wrapper u-flex" v-if="mode === 0">
+        <view class="counter-wrapper u-flex" v-if="mode === 1">
           <view class="info-block u-flex-1">
             <view class="title u-line-1">到店人数</view>
           </view>
@@ -84,19 +84,19 @@
             :max="screening.advicePeopleMax"
           ></u-number-box>
         </view>
-        <view class="counter-wrapper u-flex" v-if="mode === 1">
+        <view class="counter-wrapper u-flex" v-if="mode === 0">
           <view class="info-block u-flex-1">
             <view class="title u-line-1">拼场人数</view>
           </view>
           <u-number-box v-model="count" :min="1" :max="screening.morePeople"></u-number-box>
         </view>
-        <view class="desc u-padding-right-20" v-show="mode === 1 && count >= screening.restPeople">
+        <view class="desc u-padding-right-20" v-show="mode === 0 && count >= screening.restPeople">
           <text class="high-light">已达可开场人数，</text>
           <text>订单</text>
           <text class="high-light">不可退款，</text>
           <text>其他玩家不可加入。</text>
         </view>
-        <view class="desc u-padding-right-20" v-show="mode === 0">
+        <view class="desc u-padding-right-20" v-show="mode === 1">
           <text>{{ screening.advicePeopleMin }}人起订，</text>
           <text>订单</text>
           <text class="high-light">不可退款，</text>
@@ -151,7 +151,7 @@
         <view class="title">预订须知:</view>
         <view class="text-wraper u-margin-bottom-12">开场前凭手机号码入场</view>
         <view class="title refund-rule u-margin-top-32">退款规则:</view>
-        <view class="text-wraper" v-show="mode === 0">
+        <view class="text-wraper" v-show="mode === 1">
           <view class="tip-item u-flex">
             <view class="dot"></view>
             <view class="content">
@@ -160,7 +160,7 @@
             </view>
           </view>
         </view>
-        <view class="text-wraper" v-show="mode === 1">
+        <view class="text-wraper" v-show="mode === 0">
           <view class="tip-item u-flex">
             <view class="dot"></view>
             <view class="content">
@@ -199,6 +199,7 @@ export default {
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
+      console.log('data from submitOrder', data);
       this.price = data.price;
       this.screening = {
         morePeople: data.advicePeopleMax - data.currentPeople,
@@ -206,14 +207,18 @@ export default {
         ...data,
       };
       this.blockBooking = data.blockBooking === 1;
-      this.changeMode(data.orderMode);
-      console.log(data);
+      const filterData = uni.getStorageSync('filter_data');
+      console.log('filterData', filterData);
+      this.filterData = filterData;
+      const { blockBooking } = this.filterData || {};
+      const mode = this.blockBooking ? (blockBooking == null ? 1 : blockBooking) : 0;
+      this.changeMode(mode);
     });
   },
   data() {
     return {
-      mode: 1, // 0包场，1拼场
-      blockBooking: true,
+      mode: null, // 1包场，0拼场
+      blockBooking: false,
       phone: uni.getStorageSync('phone'),
       name: uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName,
       screening: {},
@@ -231,15 +236,21 @@ export default {
         width: '240rpx',
         borderRadius: '100rpx',
       },
+      filterData: null,
     };
   },
   watch: {
     mode(val) {
+      const { peopleFrom } = this.filterData || {};
+      if (peopleFrom != null) {
+        this.count = peopleFrom;
+        return;
+      }
       switch (val) {
-        case 0:
+        case 1:
           this.count = this.screening.advicePeopleMin;
           break;
-        case 1:
+        case 0:
           this.count = 1;
           break;
       }
@@ -255,7 +266,7 @@ export default {
   },
   methods: {
     changeMode(mode) {
-      this.mode = mode == null ? 1 : mode;
+      this.mode = mode;
     },
     createPay() {
       if (!/\d{11}/.test(this.phone)) {
@@ -283,7 +294,7 @@ export default {
     },
     pay(orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      console.log({
+      console.log('requestPayment', {
         appId,
         timeStamp,
         nonceStr,

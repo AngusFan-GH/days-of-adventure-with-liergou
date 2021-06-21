@@ -132,6 +132,7 @@ export default {
       if (this.keyword) {
         params.name = this.keyword;
       }
+      uni.setStorageSync('filter_data', params);
       this.$u.api
         .getCardList(params)
         .then(res => {
