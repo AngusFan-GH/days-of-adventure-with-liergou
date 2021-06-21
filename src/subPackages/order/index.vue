@@ -98,6 +98,9 @@
         </view>
         <view class="desc u-padding-right-20" v-show="mode === 1">
           <text>{{ screening.advicePeopleMin }}人起订，</text>
+          <text v-show="screening.advicePeopleMax > screening.advicePeopleMin">
+            最多可订{{ screening.advicePeopleMax }}人，
+          </text>
           <text>订单</text>
           <text class="high-light">不可退款，</text>
           <text>其他玩家不可加入。</text>
@@ -207,12 +210,25 @@ export default {
         ...data,
       };
       this.blockBooking = data.blockBooking === 1;
-      const filterData = uni.getStorageSync('filter_data');
-      console.log('filterData', filterData);
+      const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
+      const filterData = uni.getStorageSync(currentTabPage + '_filter_data');
       this.filterData = filterData;
-      const { blockBooking } = this.filterData || {};
-      const mode = this.blockBooking ? (blockBooking == null ? 1 : blockBooking) : 0;
-      this.changeMode(mode);
+      console.log('filterData', this.filterData);
+      // 不可以包场，只能拼场
+      if (!this.blockBooking) {
+        return this.changeMode(0);
+      }
+      const { blockBooking, peopleFrom } = this.filterData || {};
+      // 选择了优先包场或拼场
+      if (blockBooking != null) {
+        return this.changeMode(blockBooking);
+      }
+      // 根据人数是否达到包场最小人数
+      if ((peopleFrom || 1) >= data.advicePeopleMin) {
+        return this.changeMode(1);
+      }
+      // 拼场
+      this.changeMode(0);
     });
   },
   data() {

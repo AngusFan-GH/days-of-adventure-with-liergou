@@ -53,8 +53,12 @@ export default {
     filter,
     dateSlideSelection,
   },
+  onShow() {
+    uni.setStorageSync('current_tab_page', this.tabPageName);
+  },
   data() {
     return {
+      tabPageName: 'play',
       tabBarIndex: 1,
       loading: true,
       status: 'loadmore',
@@ -126,7 +130,7 @@ export default {
         this.pageNum = 1;
       }
       const params = this.handleParams();
-      uni.setStorageSync('filter_data', params);
+      uni.setStorageSync(this.tabPageName + '_filter_data', params);
       this.$u.api
         .getCardList(params)
         .then(res => {

@@ -57,8 +57,12 @@ export default {
     loading,
     openSetting,
   },
+  onShow() {
+    uni.setStorageSync('current_tab_page', this.tabPageName);
+  },
   data() {
     return {
+      tabPageName: 'index',
       tabBarIndex: 0,
       loading: true,
       status: 'loadmore',
@@ -132,7 +136,7 @@ export default {
       if (this.keyword) {
         params.name = this.keyword;
       }
-      uni.setStorageSync('filter_data', params);
+      uni.setStorageSync(this.tabPageName + '_filter_data', params);
       this.$u.api
         .getCardList(params)
         .then(res => {

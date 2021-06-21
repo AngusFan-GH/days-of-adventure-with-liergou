@@ -279,7 +279,7 @@
                     class="info-joint"
                     v-show="dataFromList.blockBooking === 1 && !session.timeout"
                   >
-                    可包场
+                    可包场/拼场
                   </text>
                   <text
                     class="info-joint"
@@ -294,8 +294,7 @@
                   v-show="
                     !session.disabled &&
                     session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople > 0 &&
-                    dataFromList.blockBooking === 0
+                    data.advicePeopleMin - session.currentPeople > 0
                   "
                 >
                   已加入{{ session.currentPeople }}人，差
@@ -309,8 +308,7 @@
                   v-show="
                     !session.disabled &&
                     session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople <= 0 &&
-                    dataFromList.blockBooking === 0
+                    data.advicePeopleMin - session.currentPeople <= 0
                   "
                 >
                   已开场，最多再加入
@@ -348,7 +346,8 @@
               :disabled="!chosenSession"
               @click="goToOrder()"
             >
-              下一步，选择人数
+              下一步
+              <text v-show="!chosenPeople">，选择人数</text>
             </u-button>
           </view>
         </view>
@@ -368,6 +367,9 @@ export default {
       console.log('dataFromList', data);
       this.productId = +data.productId;
       this.getDetail();
+      const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
+      const { peopleFrom } = uni.getStorageSync(currentTabPage + '_filter_data') || {};
+      this.chosenPeople = !!peopleFrom;
     });
   },
   data() {
@@ -389,6 +391,7 @@ export default {
       date: null,
       displaySession: [],
       chosenSession: null,
+      chosenPeople: true,
     };
   },
   methods: {
