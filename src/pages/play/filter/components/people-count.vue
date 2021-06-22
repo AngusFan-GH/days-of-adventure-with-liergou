@@ -74,6 +74,7 @@ export default {
 <style lang="scss">
 .filter-people-count {
     width: 100%;
+    padding: 40rpx 50rpx;
 
     flex-wrap: wrap;
 }
