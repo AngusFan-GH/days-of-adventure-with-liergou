@@ -1,5 +1,6 @@
 <template>
   <view class="filter-time">
+    <view class="label">开场日期</view>
     <calendar
       v-model="date"
       :collapsible="false"
@@ -7,6 +8,7 @@
       :max="maxDate"
       @onDayClick="changeDay"
     ></calendar>
+    <view class="label">开场时间区间</view>
     <view class="u-flex u-row-between u-margin-top-10">
       <view class="u-flex-1">
         <time-picker
@@ -27,8 +29,11 @@
         ></time-picker>
       </view>
     </view>
-    <view class="u-flex u-row-center u-margin-top-60">
-      <u-icon name="reload" color="#ccc" size="42" @click="reset()"></u-icon>
+    <view class="u-flex u-row-center u-margin-top-20">
+      <view class="u-flex" @click="reset()">
+        <u-icon name="reload" color="#ccc" size="42"></u-icon>
+        <text class="u-margin-left-4 u-margin-right-20 btn">重置</text>
+      </view>
     </view>
   </view>
 </template>
@@ -120,6 +125,45 @@ export default {
     display: block;
 
     width: 100%;
+    .label {
+        position: relative;
+
+        display: inline-block;
+
+        margin-left: 10rpx;
+        &:before {
+            position: absolute;
+            right: -8rpx;
+            bottom: -4rpx;
+
+            display: block;
+
+            width: 4rpx;
+            height: 20rpx;
+
+            content: '';
+
+            background-color: #f63;
+        }
+        &:after {
+            position: absolute;
+            right: -8rpx;
+            bottom: -4rpx;
+
+            display: block;
+
+            width: 20rpx;
+            height: 4rpx;
+
+            content: '';
+
+            background-color: #f63;
+        }
+    }
+    .btn {
+        color: #ccc;
+    }
 }
+
 
 </style>
