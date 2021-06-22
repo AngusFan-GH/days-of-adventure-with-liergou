@@ -70,7 +70,7 @@ export default {
 <style lang="scss">
 .filter-feature {
     width: 100%;
-    padding: 40rpx 50rpx;
+    padding: 30rpx 40rpx;
 
     flex-wrap: wrap;
 }
