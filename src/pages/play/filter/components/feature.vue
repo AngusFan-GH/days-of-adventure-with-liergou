@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import feature from '../../modal/feature';
 export default {
   name: 'filter-feature',
   model: {
@@ -40,20 +41,10 @@ export default {
   },
   data() {
     return {
-      btnList: [
-        { label: '恐怖', value: '恐怖', active: false },
-        { label: '真人NPC', value: '真人NPC', active: false },
-        { label: '机械', value: '机械', active: false },
-        { label: '小朋友可玩', value: '小朋友可玩', active: false },
-        { label: '单人任务', value: '单人任务', active: false },
-        { label: '悬疑', value: '悬疑', active: false },
-        { label: '古风', value: '古风', active: false },
-        { label: '对抗', value: '对抗', active: false },
-        { label: '角色扮演', value: '角色扮演', active: false },
-        { label: '有剧情', value: '有剧情', active: false },
-        { label: '多种支线', value: '多种支线', active: false },
-        { label: '情感', value: '情感', active: false },
-      ],
+      btnList: feature.map(v => {
+        v.active = false;
+        return v;
+      }),
     };
   },
   methods: {
