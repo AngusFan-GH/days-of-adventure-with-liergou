@@ -9,7 +9,7 @@
       <view class="txt attributes u-line-1">
         <view class="u-flex u-row-between">
           <view class="u-flex-1 u-line-1 title">{{ data.productName }}</view>
-          <view class="u-line-1 u-flex">
+          <view class="u-line-1 u-flex" v-show="showDistance">
             <u-icon name="map"></u-icon>
             <text class="distance">{{ distanceFmt(data.distance) }}</text>
           </view>
@@ -54,7 +54,7 @@
             <text>{{ data.duration }}分钟</text>
           </view>
           <view class="space u-flex-1"></view>
-          <view class="book u-margin-top-16">{{ data.sales }}人订过</view>
+          <view class="book u-margin-top-16">{{ salesFmt(data.sales) }}人订过</view>
         </view>
       </view>
     </view>
@@ -96,6 +96,10 @@ export default {
     data: {
       type: Object,
       default: {},
+    },
+    showDistance: {
+      type: Boolean,
+      default: true,
     },
   },
   watch: {
@@ -146,6 +150,15 @@ export default {
         return '＞100km';
       }
     },
+    salesFmt(sales) {
+      if (sales >= 10000 && sales < 10000 * 10000) {
+        return parseFloat((sales / 10000).toFixed(1)) + '万';
+      }
+      if (sales >= 10000 * 10000) {
+        return parseFloat((sales / (10000 * 10000)).toFixed(1)) + '亿';
+      }
+      return sales;
+    },
   },
 };
 </script>
@@ -174,8 +187,9 @@ export default {
             color: #111;
         }
         .distance {
-          font-size: 24rpx;
-          color: #ff4101d1;
+            font-size: 24rpx;
+
+            color: #ff4101d1;
         }
         .difficult {
             height: 30rpx;

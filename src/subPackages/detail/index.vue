@@ -48,7 +48,7 @@
                   <text class="price-num">¥{{ data.price || '--' }}</text>
                   <text class="u-margin-left-6 price-desc">起</text>
                 </view>
-                <view class="book-num">{{ data.sales }}人订过</view>
+                <view class="book-num">{{ salesFmt(data.sales) }}人订过</view>
               </view>
             </view>
           </view>
@@ -520,6 +520,15 @@ export default {
           res.eventChannel.emit('submitOrder', data);
         },
       });
+    },
+    salesFmt(sales) {
+      if (sales >= 10000 && sales < 10000 * 10000) {
+        return parseFloat((sales / 10000).toFixed(1)) + '万';
+      }
+      if (sales >= 10000 * 10000) {
+        return parseFloat((sales / (10000 * 10000)).toFixed(1)) + '亿';
+      }
+      return sales;
     },
   },
 };

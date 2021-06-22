@@ -9,7 +9,12 @@
         ></date-slide-selection>
       </u-sticky>
       <view class="list">
-        <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
+        <list-card
+          v-for="(card, index) in list"
+          :key="index"
+          :data="card"
+          :showDistance="showDistance"
+        ></list-card>
       </view>
       <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
       <view class="empty-display" v-if="!loading && !list.length">
@@ -107,6 +112,10 @@ export default {
             filter: 'blur(20px)',
           };
     },
+    showDistance() {
+      const { position } = this.filterData || {};
+      return !''.startsWith.call(position, 'r');
+    },
   },
   methods: {
     getPositon() {
@@ -153,9 +162,17 @@ export default {
       };
       const { position, blockBooking, price, styles, features, people, time } =
         this.filterData || {};
-      if (position != null) {
+      if (position) {
+        if (''.startsWith.call(position, 'r')) {
+          params.region = position;
+        } else {
+          const { longitude, latitude } = uni.getStorageSync('position');
+          params.longitude = longitude;
+          params.latitude = latitude;
+          params.distanceTo = position;
+        }
+      } else {
         const { longitude, latitude } = uni.getStorageSync('position');
-        params.distance = position;
         params.longitude = longitude;
         params.latitude = latitude;
       }

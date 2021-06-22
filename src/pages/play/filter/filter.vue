@@ -58,11 +58,7 @@
         <view class="preview-item" v-for="(item, index) in displayFilterTabs" :key="index">
           <view class="preview-item-label">{{ item.label }}</view>
           <view class="preview-item-value" v-if="item.value === 'position'">
-            <text>
-              {{
-                filterData[item.value] ? '附近' + filterData[item.value] / 1000 + '公里' : '附近'
-              }}
-            </text>
+            <text>{{ displayPosition }}</text>
           </view>
           <view class="preview-item-value" v-if="item.value === 'styles'">
             <text class="u-padding-right-10" v-for="(style, i) in filterData[item.value]" :key="i">
@@ -135,6 +131,7 @@ import filterFeature from './components/feature.vue';
 import filterBlockBooking from './components/block-booking.vue';
 import filterPeopleCount from './components/people-count.vue';
 import { timeFmt, isToday } from '@/common/js/time-fmt';
+import areaList from '../modal/area';
 export default {
   name: 'filter',
   components: {
@@ -174,7 +171,7 @@ export default {
           value: 'people',
         },
         {
-          label: '位置',
+          label: '商区',
           value: 'position',
         },
         {
@@ -213,6 +210,18 @@ export default {
         startTime,
         'HH:mm'
       )}-${timeFmt(endTime, 'HH:mm')}`;
+    },
+    displayPosition() {
+      const { position } = this.filterData || {};
+      if (''.startsWith.call(position, 'r')) {
+        let label = '商圈';
+        const area = areaList.find(area => {
+          const res = area.children.find(v => v.value === position);
+          return res && (label = res.label);
+        });
+        return area ? area.label + ' ' + label : label;
+      }
+      return position ? '附近' + position / 1000 + '公里' : '附近';
     },
   },
   methods: {
@@ -369,7 +378,10 @@ export default {
         }
         .form {
             box-sizing: border-box;
-            padding: 50rpx 40rpx;
+            padding: 20rpx 10rpx;
+            .tab-content {
+                height: 100%;
+            }
         }
     }
     .btn-container {

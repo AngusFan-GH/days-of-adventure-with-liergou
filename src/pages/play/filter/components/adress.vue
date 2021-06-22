@@ -1,19 +1,34 @@
 <template>
-  <view class="filter-adress">
-    <u-button
-      class="btn"
-      v-for="(btn, index) in btnList"
-      :key="index"
-      :throttle-time="0"
-      :type="current === index ? 'primary ' : 'default'"
-      @click="handleClick(index)"
-    >
-      {{ btn.label }}
-    </u-button>
+  <view class="u-flex u-col-top filter-adress">
+    <view class="u-flex-1 tabs">
+      <view
+        class="tab"
+        v-for="(btn, index) in btnList"
+        :key="index"
+        :class="{ selected: tabIndex === index }"
+        @click="handleClickTab(index)"
+      >
+        {{ btn.label }}
+      </view>
+    </view>
+    <view class="u-flex-1 btns">
+      <scroll-view :scroll-y="true" style="height: 100%">
+        <view
+          class="btn"
+          v-for="(btn, i) in btnList[tabIndex].children"
+          :key="i"
+          :class="{ selected: current === i }"
+          @click="handleClickBtn(i)"
+        >
+          {{ btn.label }}
+        </view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
 <script>
+import areaList from '../../modal/area';
 export default {
   name: 'filter-adress',
   model: {
@@ -28,10 +43,17 @@ export default {
       immediate: true,
       handler(newVal) {
         if (newVal == null) {
-          return this.handleClick(0);
+          return this.handleClickTab(0);
         }
-        const index = this.btnList.findIndex(v => v.value === newVal);
-        this.current = index >= 0 ? index : null;
+        const index = this.btnList.findIndex(value => {
+          const i = value.children.findIndex(v => v.value === newVal);
+          if (i >= 0) {
+            this.current = i;
+            return true;
+          }
+          return false;
+        });
+        this.tabIndex = index >= 0 ? index : null;
       },
     },
   },
@@ -41,32 +63,43 @@ export default {
         {
           label: '附近',
           value: 0,
+          children: [
+            {
+              label: '附近',
+              value: 0,
+            },
+            {
+              label: '附近10公里',
+              value: 10000,
+            },
+            {
+              label: '附近20公里',
+              value: 20000,
+            },
+            {
+              label: '附近30公里',
+              value: 30000,
+            },
+            {
+              label: '附近50公里',
+              value: 50000,
+            },
+          ],
         },
-        // {
-        //   label: '附近1公里',
-        //   value: 1000,
-        // },
-        // {
-        //   label: '附近3公里',
-        //   value: 2000,
-        // },
-        // {
-        //   label: '附近5公里',
-        //   value: 5000,
-        // },
-      ],
-      current: null,
+      ].concat(areaList),
+      tabIndex: 0,
+      current: 0,
     };
   },
   methods: {
-    handleClick(index) {
-      if (this.current === index) {
-        this.current = null;
-        this.$emit('input', null);
-        return;
-      }
+    handleClickTab(index) {
+      this.tabIndex = index;
+      this.handleClickBtn(0);
+    },
+    handleClickBtn(index) {
       this.current = index;
-      this.$emit('input', this.btnList[index].value);
+      const res = this.btnList[this.tabIndex].children[this.current];
+      this.$emit('input', res.value);
     },
   },
 };
@@ -74,15 +107,52 @@ export default {
 
 <style lang="scss">
 .filter-adress {
-    display: block;
-
     width: 100%;
-    padding: 40rpx;
+    height: 100%;
 }
-.btn {
-    display: block;
+.tabs,
+.btns {
+    overflow: auto;
 
-    margin: 20rpx;
+    height: 100%;
+}
+.tabs {
+    width: 20%;
+
+    background-color: #fff;
+    .tab {
+        box-sizing: border-box;
+        padding: 20rpx;
+        &.selected {
+            position: relative;
+
+            color: #f63;
+            background-color: #f0f0f0;
+            &:before {
+                position: absolute;
+                top: 0;
+                left: 0;
+
+                display: block;
+
+                width: 4rpx;
+                height: 100%;
+
+                content: '';
+
+                background-color: #f63;
+            }
+        }
+    }
+}
+.btns {
+    background-color: #f0f0f0;
+    .btn {
+        padding: 20rpx;
+        &.selected {
+            color: #f63;
+        }
+    }
 }
 
 </style>
