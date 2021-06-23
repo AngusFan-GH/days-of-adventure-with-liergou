@@ -9,7 +9,7 @@
       <view class="txt attributes u-line-1">
         <view class="u-flex u-row-between">
           <view class="u-flex-1 u-line-1 title">{{ data.productName }}</view>
-          <view class="u-line-1 u-flex" v-show="showDistance">
+          <view class="u-line-1 u-flex">
             <u-icon name="map"></u-icon>
             <text class="distance">{{ distanceFmt(data.distance) }}</text>
           </view>
@@ -96,10 +96,6 @@ export default {
     data: {
       type: Object,
       default: {},
-    },
-    showDistance: {
-      type: Boolean,
-      default: true,
     },
   },
   watch: {
