@@ -93,6 +93,7 @@ export default {
           this.m = new Date().getMonth() + 1;
         }
         this.choose = date && timeFmt(date, 'YYYY/MM/DD');
+        this.dates = this.monthDay(this.y, this.m);
       },
     },
   },
