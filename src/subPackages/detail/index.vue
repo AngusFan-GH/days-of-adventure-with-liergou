@@ -138,13 +138,64 @@
       </view>
     </view>
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
-    <view class="u-padding-30 theme-ugc" v-if="data.commit">
-      <view class="u-flex u-row-between title common u-skeleton-fillet">
-        当前主题评价(3)
+    <view class="u-padding-30 theme-ugc" v-if="data.commits.length">
+      <view class="u-flex u-row-between title common u-skeleton-fillet" @click="goToCommitList()">
+        当前主题评价({{ data.commits.length }})
+        <text class="arrow-right"></text>
+      </view>
+      <view class="u-margin-top-20 ugc-content">
+        <view
+          class="u-flex u-col-top ugc-review"
+          v-for="(commit, index) in displayCommits"
+          :key="index"
+        >
+          <view class="u-margin-right-20 review-avatar">
+            <u-avatar :src="commit.avatar"></u-avatar>
+          </view>
+          <view class="review-content">
+            <view class="u-flex u-row-between user-info">
+              <view class="u-flex info-left">
+                <text class="username">{{ commit.username }}</text>
+                <image class="u-margin-left-2 user-lv" :src="commit.lv" mode="scaleToFill" />
+              </view>
+            </view>
+            <view class="review-time">{{ commit.time }}</view>
+            <view class="u-flex u-margin-top-8 review-star">
+              <text class="u-margin-right-6 star-txt">打分：</text>
+              <u-rate
+                :count="5"
+                v-model="commit.star"
+                disabled
+                active-color="#ea120e"
+                active-icon="star-fill"
+                inactive-icon="star"
+                gutter="0"
+              ></u-rate>
+            </view>
+            <view class="u-line-2 u-margin-top-14 recommend">{{ commit.recommend }}</view>
+            <view class="review-pics">
+              <view
+                class="pic"
+                v-for="(pic, i) in commit.pics"
+                :key="i"
+                @click="previewImage(pic, commit.pics)"
+              >
+                <image :src="pic" mode="scaleToFill" />
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="ugc-line"></view>
+      </view>
+      <view
+        class="u-flex u-row-between u-margin-top-30 ugc-more u-skeleton-fillet"
+        @click="goToCommitList()"
+      >
+        查看全部网友点评
         <text class="arrow-right"></text>
       </view>
     </view>
-    <u-gap height="20" bg-color="#f6f6f6" v-if="data.commit"></u-gap>
+    <u-gap height="20" bg-color="#f6f6f6" v-if="data.commits.length"></u-gap>
     <view class="theme-detail">
       <view class="u-padding-30 detail">
         <view class="u-margin-bottom-20 title common u-skeleton-fillet">主题描述</view>
@@ -394,6 +445,20 @@ export default {
       chosenPeople: true,
     };
   },
+  computed: {
+    displayCommits() {
+      let commits = this.data.commits || [];
+      commits = commits.length >= 2 ? commits.slice(0, 2) : commits;
+      const res = JSON.parse(JSON.stringify(commits)).map(c => {
+        if (c.pics.length > 3) {
+          c.pics.length = 3;
+        }
+        return c;
+      });
+      console.log(res, this.data.commits);
+      return res;
+    },
+  },
   methods: {
     getDetail() {
       if (this.productId == null) {
@@ -425,6 +490,55 @@ export default {
               value: data.poolRuleDescMap[rule],
             };
           });
+          data.commits = [
+            {
+              username: 'docbean',
+              lv: 'https://p0.meituan.net/gpa/roundlv5.png',
+              time: '2月6日',
+              star: 50 / 10,
+              recommend:
+                ' 先去附近的张胖子吃了烤串，非常不错！就是椒麻小串始终没上，还有我姐迟到了半小时，导致我们来店也晚了 ',
+              avatar:
+                'https://p0.meituan.net/userheadpicbackend/bbc148350b7572bdbb0e7e63d160a6cb162169.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
+              pics: [
+                'https://qcloud.dpfile.com/pc/C9JOrCKInllF_D--751iUpkaCXB-TiG9lJLUTb7XF_eDrHx3403SEg5dUJI6XFidt-CE6jG6-CX4b-2MzJHHr8tp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/zGfHKu8I5j3a1QvCs17dlHjMhYitat45GSTAWSdSLVN5tn8kypBcqNwHnjg96EvTBWqNhmeZG8Cpz4Jy_PWQT8tp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/92eiWjoGQETEd0kA7hFwVeLXqlJzKi5gRYnvLACBLt0wusUejJgMErZYEqdaX3Mft-CE6jG6-CX4b-2MzJHHr8tp2KEV4QICbci43MOjOA4.jpg',
+              ],
+            },
+            {
+              username: '麻酱',
+              lv: 'https://p0.meituan.net/gpa/roundlv4.png',
+              time: '1月4日',
+              star: 5 / 10,
+              recommend:
+                '  所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的  ',
+              avatar:
+                'https://p1.meituan.net/userheadpicbackend/c31b77e4966f38e97f54c9bf94e7586593132.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
+              pics: [
+                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/ADUQrvlNDrsp1sgVKBZBR4ZKHs88cIaKcUTRw52i9csNdtNylZX1pkGuwDqPCzmhQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+              ],
+            },
+            {
+              username: '麻酱2',
+              lv: 'https://p0.meituan.net/gpa/roundlv1.png',
+              time: '7月9日',
+              star: 5 / 10,
+              recommend:
+                '  所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的  ',
+              avatar:
+                'https://p1.meituan.net/userheadpicbackend/c31b77e4966f38e97f54c9bf94e7586593132.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
+              pics: [
+                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+                'https://qcloud.dpfile.com/pc/ADUQrvlNDrsp1sgVKBZBR4ZKHs88cIaKcUTRw52i9csNdtNylZX1pkGuwDqPCzmhQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
+              ],
+            },
+          ];
           this.data = data;
           this.loading = false;
           this.setDescTextBtn();
@@ -529,6 +643,20 @@ export default {
         return parseFloat((sales / (10000 * 10000)).toFixed(1)) + '亿';
       }
       return sales;
+    },
+    previewImage(index, pics) {
+      uni.previewImage({
+        current: index,
+        urls: pics,
+      });
+    },
+    goToCommitList() {
+      uni.navigateTo({
+        url: '/subPackages/commit/index',
+        success: res => {
+          res.eventChannel.emit('submitCommits', JSON.parse(JSON.stringify(this.data.commits)));
+        },
+      });
     },
   },
 };
@@ -774,6 +902,76 @@ export default {
         font-size: 26rpx;
 
         width: 500rpx;
+    }
+}
+.theme-ugc {
+    .ugc-content {
+        .review-avatar {
+            height: 90rpx;
+        }
+        .user-info {
+            .username {
+                font-size: 26rpx;
+                font-weight: 500;
+
+                color: #222;
+            }
+            .user-lv {
+                width: 54rpx;
+                height: 28rpx;
+            }
+        }
+        .review-time {
+            font-size: 22rpx;
+            font-weight: 400;
+
+            color: #777;
+        }
+        .review-star {
+            .star-txt {
+                font-size: 26rpx;
+
+                color: #111;
+            }
+        }
+        .recommend {
+            font-size: 26rpx;
+            font-weight: 400;
+        }
+        .review-pics {
+            display: inline-flex;
+            overflow: hidden;
+
+            margin: 14rpx 0 20rpx;
+
+            border-radius: 20rpx;
+            .pic {
+                image {
+                    display: block;
+
+                    width: 192rpx;
+                    height: 192rpx;
+                }
+            }
+            .pic + .pic {
+                margin-left: 7rpx;
+            }
+        }
+        .ugc-line {
+            width: 100%;
+            height: 2rpx;
+
+            transform: scaleY(.5);
+
+            opacity: .5;
+            background: #e1e1e1;
+        }
+    }
+    .ugc-more {
+        font-size: 26rpx;
+        font-weight: 400;
+
+        color: #111;
     }
 }
 .theme-detail {

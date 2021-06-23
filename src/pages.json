@@ -45,6 +45,12 @@
 					"style": {
 						"navigationBarTitleText": "详情"
 					}
+				},
+				{
+					"path": "commit/index",
+					"style": {
+						"navigationBarTitleText": "全部评价"
+					}
 				}
 			]
 		}
