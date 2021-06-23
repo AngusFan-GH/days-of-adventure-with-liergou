@@ -1,15 +1,17 @@
 <template>
   <view class="u-flex u-col-top filter-adress">
     <view class="u-flex-1 tabs">
-      <view
-        class="tab"
-        v-for="(btn, index) in btnList"
-        :key="index"
-        :class="{ selected: tabIndex === index }"
-        @click="handleClickTab(index)"
-      >
-        {{ btn.label }}
-      </view>
+      <scroll-view :scroll-y="true" style="height: 100%">
+        <view
+          class="tab"
+          v-for="(btn, index) in btnList"
+          :key="index"
+          :class="{ selected: tabIndex === index }"
+          @click="handleClickTab(index)"
+        >
+          {{ btn.label }}
+        </view>
+      </scroll-view>
     </view>
     <view class="u-flex-1 btns">
       <scroll-view :scroll-y="true" style="height: 100%">
