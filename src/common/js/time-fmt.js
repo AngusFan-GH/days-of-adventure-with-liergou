@@ -96,15 +96,20 @@ export function defaultStartTimeMaker(date) {
     let time = date ? isToday(date) ? Date.now() : date : Date.now();
     const timeArr = $moment(time).toArray();
     timeArr.length = 5;
+    const hour = timeArr[3];
     const seconds = timeArr.pop();
     if (seconds === 0) {
         return new Date(...timeArr);
     }
     if (seconds > 30) {
-        timeArr[3] += 1;
-        timeArr.push(0);
+        if (hour === 23) {
+            timeArr.push(59);
+        } else {
+            timeArr[3] += 1;
+            timeArr.push(0);
+        }
     } else {
-        timeArr[4] = 30;
+        timeArr.push(30);
     }
     return new Date(...timeArr).getTime();
 }

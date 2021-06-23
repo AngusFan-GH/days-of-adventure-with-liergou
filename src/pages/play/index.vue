@@ -205,11 +205,11 @@ export default {
           startTime ? timeFmt(startTime, 'HH:mm:ss') : '00:00:00'
         }`;
         params.roomBeginTimeTo = `${timeFmt(date, 'YYYY-MM-DD')} ${
-          endTime ? timeFmt(endTime, 'HH:mm:ss') : '23:30:00'
+          endTime ? timeFmt(endTime, 'HH:mm:ss') : '23:59:59'
         }`;
       } else {
         params.roomBeginTimeFrom = timeFmt(defaultStartTimeMaker(), 'YYYY-MM-DD HH:mm:ss');
-        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:30:00';
+        params.roomBeginTimeTo = timeFmt(Date.now(), 'YYYY-MM-DD') + ' 23:59:59';
       }
       return params;
     },
@@ -272,7 +272,7 @@ export default {
       this.filterData.time = {
         date: e,
         startTime: defaultStartTimeMaker(e),
-        endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:30:00`).getTime(),
+        endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
       };
       this.getCardList(true);
     },

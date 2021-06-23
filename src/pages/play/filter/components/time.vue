@@ -24,7 +24,7 @@
           v-model="endTime"
           :min="endTimeMin"
           :date="date"
-          :default="[23, 30]"
+          :default="[23, 59]"
           @change="endTimeChange"
         ></time-picker>
       </view>
@@ -94,7 +94,7 @@ export default {
       this.$emit('input', {
         date: this.date,
         startTime: defaultStartTimeMaker(this.date),
-        endTime: new Date(`${$moment(this.date).format('YYYY/MM/DD')} 23:30`).getTime(),
+        endTime: new Date(`${$moment(this.date).format('YYYY/MM/DD')} 23:59:59`).getTime(),
       });
     },
     startTimeChange(e) {
@@ -111,7 +111,10 @@ export default {
     },
     timestamp2timeArr(time) {
       if (!time) return null;
-      return $moment(time).format('HH:mm').split(':');
+      return $moment(time)
+        .format('HH:mm')
+        .split(':')
+        .map(v => +v);
     },
     reset() {
       this.$emit('input', null);

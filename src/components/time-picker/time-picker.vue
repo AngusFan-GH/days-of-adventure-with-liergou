@@ -2,14 +2,14 @@
   <picker-view
     class="time-picker"
     indicator-class="time-picker-item"
-    :value="timeValue"
+    :value="timeIndexValue"
     @change="change"
   >
     <picker-view-column>
       <view v-for="(v, i) in 24" :key="i">{{ formatNum(i) }}时</view>
     </picker-view-column>
     <picker-view-column>
-      <view v-for="(v, i) in [0, 30]" :key="i">{{ formatNum(v) }}分</view>
+      <view v-for="(v, i) in seconds" :key="i">{{ formatNum(v) }}分</view>
     </picker-view-column>
   </picker-view>
 </template>
@@ -40,19 +40,40 @@ export default {
               .split(':')
               .map(v => +v)
           : this.default;
-        this.$nextTick(() => (this.timeValue = timeValue));
+        const [hour, minute] = timeValue;
+        this.seconds.length = 2;
+        if (hour === 23) {
+          this.seconds.push(59);
+        }
+        let minuteIndex = this.seconds.findIndex(s => s === minute);
+        if (minuteIndex === -1) {
+          minuteIndex = 0;
+        }
+        this.$nextTick(() => this.$set(this, 'timeIndexValue', [hour, minuteIndex]));
       },
     },
   },
   data() {
     return {
-      timeValue: [0, 0], //时间选择器的值
+      seconds: [0, 30],
+      timeIndexValue: [0, 0], //时间选择器的索引值
     };
   },
   methods: {
     //时间选择变更
     change(e) {
-      let timeArr = e.detail.value;
+      let [hour, minuteIndex] = e.detail.value;
+      if (hour === 23) {
+        this.seconds.length = 2;
+        this.seconds.push(59);
+      } else {
+        this.seconds.length = 2;
+        if (minuteIndex === 2) {
+          minuteIndex--;
+        }
+      }
+      const minute = this.seconds[minuteIndex] || 0;
+      let timeArr = [hour, minute];
       if (this.min && this.compareEarlierTimeArray(timeArr, this.min)) {
         timeArr = this.min;
       } else if (this.max && this.compareEarlierTimeArray(this.max, timeArr)) {
@@ -63,8 +84,9 @@ export default {
       if (this.value !== time) {
         this.emitTime(time);
       } else {
-        this.$set(this, 'timeValue', null);
-        this.$nextTick(() => (this.timeValue = timeArr));
+        this.$set(this, 'timeIndexValue', null);
+        minuteIndex = this.seconds.findIndex(s => s === timeArr[1]);
+        this.$nextTick(() => (this.timeIndexValue = [timeArr[0], minuteIndex]));
       }
     },
     formatNum(e) {
