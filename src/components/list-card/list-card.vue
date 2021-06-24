@@ -126,10 +126,7 @@ export default {
   methods: {
     goToDetail() {
       uni.navigateTo({
-        url: `/subPackages/detail/index`,
-        success: res => {
-          res.eventChannel.emit('submitDetail', JSON.parse(JSON.stringify(this.data)));
-        },
+        url: '/subPackages/detail/index?productId=' + this.data.productId,
       });
     },
     distanceFmt(distance) {

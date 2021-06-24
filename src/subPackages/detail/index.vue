@@ -326,16 +326,10 @@
               <view class="u-flex-1 info">
                 <view class="u-flex info-content">
                   <text class="u-margin-right-12 info-time">{{ session.time }}</text>
-                  <text
-                    class="info-joint"
-                    v-show="dataFromList.blockBooking === 1 && !session.timeout"
-                  >
+                  <text class="info-joint" v-show="data.blockBooking === 1 && !session.timeout">
                     可包场/拼场
                   </text>
-                  <text
-                    class="info-joint"
-                    v-show="dataFromList.blockBooking === 0 && !session.timeout"
-                  >
+                  <text class="info-joint" v-show="data.blockBooking === 0 && !session.timeout">
                     可拼场
                   </text>
                   <text class="info-joint" v-show="session.timeout">已结束</text>
@@ -385,7 +379,7 @@
               预订场次：
               <text class="choosed-msg">{{ chosenSession.date }} {{ chosenSession.time }}</text>
             </view>
-            <view v-show="dataFromList.blockBooking === 0 && chosenSession.currentPeople">
+            <view v-show="data.blockBooking === 0 && chosenSession.currentPeople">
               已加入玩家：
               <text>{{ chosenSession.currentPeople }}人</text>
             </view>
@@ -411,21 +405,24 @@
 import defaultThumb from '@/static/image/bg_login.png';
 import { timeFmt } from '@/common/js/time-fmt';
 export default {
-  onLoad() {
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('submitDetail', data => {
-      this.dataFromList = data;
-      console.log('dataFromList', data);
-      this.productId = +data.productId;
-      this.getDetail();
-      const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
-      const { peopleFrom } = uni.getStorageSync(currentTabPage + '_filter_data') || {};
-      this.chosenPeople = !!peopleFrom;
-    });
+  onLoad(options) {
+    this.productId = +options.productId;
+    const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
+    const { peopleFrom } = uni.getStorageSync(currentTabPage + '_filter_data') || {};
+    this.chosenPeople = !!peopleFrom;
+    this.getDetail();
+    uni.showShareMenu();
+  },
+  onShareAppMessage(res) {
+    console.log(res.target);
+    return {
+      title: this.data.productName,
+      path: `/subPackages/detail/index?productId=${this.productId}`,
+      imageUrl: this.data.headPicUrl,
+    };
   },
   data() {
     return {
-      dataFromList: null,
       productId: null,
       loading: true,
       data: {
@@ -455,7 +452,6 @@ export default {
         }
         return c;
       });
-      console.log(res, this.data.commits);
       return res;
     },
   },
@@ -469,9 +465,12 @@ export default {
         .then(data => {
           data.difficultLevel = data.difficultLevel / 10;
           data.shopInfo.star = data.shopInfo.star / 10;
-          // 获取人数上下限
-          data.advicePeopleMin = this.dataFromList.advicePeopleMin;
-          data.advicePeopleMax = this.dataFromList.advicePeopleMax;
+          // 临时获取人数上下限
+          const people = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
+          data.advicePeopleMin = people[0];
+          data.advicePeopleMax = people[1] || people[0];
+          // 临时获取时长
+          data.duration = /时长(\d+)分钟/.exec(data.tipList[2])[1];
           // 遍历所有场次取价格最小值
           data.price = Math.min.apply(
             Math,
@@ -615,8 +614,7 @@ export default {
       this.chosenSession = session;
     },
     goToOrder() {
-      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName } =
-        this.dataFromList;
+      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName } = this.data;
       const shopInfo = this.data.shopInfo || {};
       const data = {
         ...this.chosenSession,
