@@ -169,7 +169,9 @@ export default {
       if (price != null) {
         const [priceFrom, priceTo] = price;
         params.priceFrom = priceFrom;
-        params.priceTo = priceTo;
+        if (priceTo) {
+          params.priceTo = priceTo;
+        }
       }
       if (styles && styles.length) {
         params.styles = styles;
