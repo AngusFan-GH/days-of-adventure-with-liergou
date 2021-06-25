@@ -20,10 +20,6 @@ const install = (Vue, vm) => {
 		const token = uni.getStorageSync('token');
 		if (token) {
 			config.data.token = token;
-		} else if (!config.url.includes('code2session')) {
-			uni.redirectTo({
-				url: '/pages/login/index'
-			});
 		}
 		return config;
 	};
@@ -36,7 +32,7 @@ const install = (Vue, vm) => {
 			let pages = getCurrentPages();
 			let current = pages[pages.length - 1];
 			if (current.route !== 'pages/login/index') {
-				uni.redirectTo({
+				uni.navigateTo({
 					url: '/pages/login/index'
 				});
 				uni.showToast({

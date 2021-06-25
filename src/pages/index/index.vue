@@ -47,9 +47,7 @@ export default {
     uni.setStorageSync('current_tab_page', this.tabPageName);
   },
   mounted() {
-    if (this.authToken()) {
-      this.getCardList(true);
-    }
+    this.getCardList(true);
   },
   data() {
     return {
@@ -79,15 +77,6 @@ export default {
     this.getCardList(true);
   },
   methods: {
-    authToken() {
-      const token = uni.getStorageSync('token');
-      if (!token) {
-        uni.redirectTo({
-          url: '/pages/login/index',
-        });
-      }
-      return token;
-    },
     search(e) {
       this.keyword = e.trim();
       this.getCardList(true);
@@ -134,7 +123,7 @@ export default {
     },
     handleResult(res) {
       const { records, pages } = res;
-      console.table(records);
+      // console.table(records);
       this.pages = pages;
       this.list.push(
         ...records.map(v => {

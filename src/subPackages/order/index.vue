@@ -199,6 +199,9 @@
 <script>
 import { timeRangeFmt } from '@/common/js/time-fmt';
 export default {
+  onShow() {
+    this.init();
+  },
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
@@ -235,8 +238,8 @@ export default {
     return {
       mode: null, // 1包场，0拼场
       blockBooking: false,
-      phone: uni.getStorageSync('phone'),
-      name: uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName,
+      phone: null,
+      name: null,
       screening: {},
       price: 0,
       count: 1,
@@ -281,6 +284,16 @@ export default {
     },
   },
   methods: {
+    init() {
+      const token = uni.getStorageSync('token');
+      const userInfo = uni.getStorageSync('userInfo');
+      const phone = uni.getStorageSync('phone');
+      if (!token || !userInfo || !phone) {
+        return this.goToLogin();
+      }
+      this.name = userInfo.nickName;
+      this.phone = phone;
+    },
     changeMode(mode) {
       this.mode = mode;
     },
@@ -339,6 +352,11 @@ export default {
             icon: 'none',
           });
         },
+      });
+    },
+    goToLogin() {
+      uni.navigateTo({
+        url: '/pages/login/index',
       });
     },
   },

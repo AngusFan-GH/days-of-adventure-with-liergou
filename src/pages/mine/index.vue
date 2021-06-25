@@ -26,27 +26,13 @@ export default {
     loading,
   },
   onShow() {
-    this.current = 0;
-    if (this.first) {
-      this.labels.unshift((this.user.gender == 1 ? '少侠' : '女侠') + '，你好');
-      this.first = false;
-    }
-    this.timer = setInterval(() => {
-      if (this.current === this.labels.length - 1) {
-        this.labels.splice(
-          2,
-          1,
-          Math.ceil(Math.random() * 5) === 5 ? '又见面了' : '我们是不是见过'
-        );
-        return (this.current = 0);
-      }
-      this.current++;
-    }, 2 * 1000);
+    this.getUserInfo();
+    this.user && this.resetLabels();
   },
   data() {
     return {
       tabBarIndex: 2,
-      user: uni.getStorageSync('userInfo'),
+      user: null,
       loading: true,
       labels: [
         '欢迎来到这里',
@@ -77,7 +63,35 @@ export default {
       first: true,
     };
   },
-  methods: {},
+  methods: {
+    getUserInfo() {
+      const user = uni.getStorageSync('userInfo');
+      if (!user) {
+        return uni.navigateTo({
+          url: '/pages/login/index',
+        });
+      }
+      this.user = user;
+    },
+    resetLabels() {
+      this.current = 0;
+      if (this.first) {
+        this.labels.unshift((this.user.gender == 1 ? '少侠' : '女侠') + '，你好');
+        this.first = false;
+      }
+      this.timer = setInterval(() => {
+        if (this.current === this.labels.length - 1) {
+          this.labels.splice(
+            2,
+            1,
+            Math.ceil(Math.random() * 5) === 5 ? '又见面了' : '我们是不是见过'
+          );
+          return (this.current = 0);
+        }
+        this.current++;
+      }, 2 * 1000);
+    },
+  },
   onHide() {
     clearInterval(this.timer);
     this.timer = null;
