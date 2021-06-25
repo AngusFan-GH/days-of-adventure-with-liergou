@@ -35,6 +35,7 @@
     </u-popup>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
+    <position-popup v-model="gettingPosition" @gotPosition="handleGotPosition"></position-popup>
   </view>
 </template>
 
@@ -45,6 +46,7 @@ import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
 import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
 import { timeFmt, defaultStartTimeMaker } from '@/common/js/time-fmt';
+import positionPopup from '@/components/position-popup/position-popup.vue';
 export default {
   components: {
     listCard,
@@ -52,6 +54,7 @@ export default {
     loading,
     filter,
     dateSlideSelection,
+    positionPopup,
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
@@ -83,13 +86,18 @@ export default {
         time: null,
       },
       dateLength: 15,
+      gettingPosition: false,
+      isRefrash: true,
     };
   },
   mounted() {
+    this.getCardList(true);
     this.showFilter = true;
-    this.getPositon();
   },
   onPullDownRefresh() {
+    if (this.gettingPosition) {
+      return;
+    }
     this.getCardList(true);
   },
   computed: {
@@ -109,20 +117,8 @@ export default {
     },
   },
   methods: {
-    getPositon() {
-      uni.getLocation({
-        type: 'gcj02',
-        success: res => {
-          const position = {
-            longitude: res.longitude,
-            latitude: res.latitude,
-          };
-          uni.setStorageSync('position', position);
-          this.getCardList(true);
-        },
-      });
-    },
     getCardList(isRefrash = false) {
+      this.isRefrash = isRefrash;
       uni.showNavigationBarLoading();
       this.loading = true;
       this.status = 'loading';
@@ -151,6 +147,12 @@ export default {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
       };
+      const { longitude, latitude } = uni.getStorageSync('position');
+      if (latitude == null && longitude == null) {
+        return (this.gettingPosition = true);
+      }
+      params.longitude = longitude;
+      params.latitude = latitude;
       const { position, blockBooking, price, styles, features, people, time } =
         this.filterData || {};
       if (position) {
@@ -160,9 +162,6 @@ export default {
           params.distanceTo = position;
         }
       }
-      const { longitude, latitude } = uni.getStorageSync('position');
-      params.longitude = longitude;
-      params.latitude = latitude;
       if (blockBooking != null) {
         params.blockBooking = blockBooking;
       }
@@ -228,6 +227,9 @@ export default {
       this.pageNum--;
       this.handleReadBottomStatus();
       console.error(err);
+    },
+    handleGotPosition() {
+      this.getCardList(this.isRefrash);
     },
     handleReadBottomStatus() {
       if (this.pageNum >= this.pages) {

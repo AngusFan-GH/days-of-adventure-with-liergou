@@ -27,21 +27,7 @@
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
-    <u-popup
-      class="position-setting-popup"
-      v-model="showPositionPopup"
-      mode="bottom"
-      border-radius="14"
-      :mask-close-able="false"
-      :safe-area-inset-bottom="true"
-    >
-      <open-setting
-        title="地理位置授权"
-        desc="地理位置授权后方可使用"
-        authSetting="scope.userLocation"
-        @afterSetting="handleAfterSetting"
-      ></open-setting>
-    </u-popup>
+    <position-popup v-model="gettingPosition" @gotPosition="handleGotPosition"></position-popup>
   </view>
 </template>
 
@@ -49,16 +35,21 @@
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
-import openSetting from '@/components/open-setting/open-setting.vue';
+import positionPopup from '@/components/position-popup/position-popup.vue';
 export default {
   components: {
     listCard,
     customTabBar,
     loading,
-    openSetting,
+    positionPopup,
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
+  },
+  mounted() {
+    if (this.authToken()) {
+      this.getCardList(true);
+    }
   },
   data() {
     return {
@@ -76,40 +67,26 @@ export default {
       pageNum: 1,
       pageSize: 10,
       pages: 1,
-      showPositionPopup: false,
       keyword: null,
+      gettingPosition: false,
+      isRefrash: true,
     };
   },
-  mounted() {
-    this.getPositon();
-  },
   onPullDownRefresh() {
-    if (this.showPositionPopup) {
-      uni.stopPullDownRefresh();
+    if (this.gettingPosition) {
       return;
     }
     this.getCardList(true);
   },
   methods: {
-    getPositon() {
-      uni.getLocation({
-        type: 'gcj02',
-        success: res => {
-          const position = {
-            longitude: res.longitude,
-            latitude: res.latitude,
-          };
-          console.log('position', position);
-          uni.setStorageSync('position', position);
-          this.getCardList(true);
-        },
-        fail: err => {
-          console.log(err);
-          if (err.errMsg === 'getLocation:fail auth deny') {
-            this.showPositionPopup = true;
-          }
-        },
-      });
+    authToken() {
+      const token = uni.getStorageSync('token');
+      if (!token) {
+        uni.redirectTo({
+          url: '/pages/login/index',
+        });
+      }
+      return token;
     },
     search(e) {
       this.keyword = e.trim();
@@ -120,6 +97,7 @@ export default {
       this.getCardList(true);
     },
     getCardList(isRefrash = false) {
+      this.isRefrash = isRefrash;
       uni.showNavigationBarLoading();
       this.loading = true;
       this.status = 'loading';
@@ -127,6 +105,9 @@ export default {
         this.pageNum = 1;
       }
       const { latitude, longitude } = uni.getStorageSync('position');
+      if (latitude == null && longitude == null) {
+        return (this.gettingPosition = true);
+      }
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
@@ -147,6 +128,9 @@ export default {
           this.handleResult(res);
         })
         .catch(err => this.handleErr(err));
+    },
+    handleGotPosition() {
+      this.getCardList(this.isRefrash);
     },
     handleResult(res) {
       const { records, pages } = res;
@@ -193,10 +177,6 @@ export default {
     },
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
-    },
-    handleAfterSetting() {
-      this.showPositionPopup = false;
-      this.getPositon();
     },
   },
 };
