@@ -27,7 +27,11 @@
     </view>
     <u-back-top :scroll-top="scrollTop"></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
-    <position-popup v-model="gettingPosition" @gotPosition="handleGotPosition"></position-popup>
+    <position-popup
+      ref="positionRef"
+      v-model="gettingPosition"
+      @gotPosition="handleGotPosition"
+    ></position-popup>
   </view>
 </template>
 
@@ -45,6 +49,7 @@ export default {
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
+    this.$refs.positionRef.startLocationUpdate();
   },
   mounted() {
     this.getCardList(true);
@@ -167,6 +172,9 @@ export default {
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
     },
+  },
+  onHide() {
+    this.$refs.positionRef.stopLocationUpdate();
   },
 };
 </script>

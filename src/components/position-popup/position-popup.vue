@@ -34,13 +34,10 @@ export default {
     },
   },
   watch: {
-    value: {
-      immediate: true,
-      handler(isShow) {
-        if (isShow) {
-          this.getPositon();
-        }
-      },
+    value(isShow) {
+      if (isShow) {
+        this.getPositon();
+      }
     },
   },
   data() {
@@ -49,9 +46,40 @@ export default {
     };
   },
   methods: {
+    startLocationUpdate() {
+      wx.startLocationUpdate({
+        success: () => {
+          console.log('startLocationUpdate');
+          wx.onLocationChange(this.handlerLocationChange);
+        },
+        fail: err => {
+          console.log(err);
+          if (err.errMsg === 'startLocationUpdate:fail auth deny') {
+            this.showSettingPopup = true;
+          }
+        },
+      });
+    },
+    stopLocationUpdate() {
+      wx.stopLocationUpdate({
+        success: () => {
+          console.log('stopLocationUpdate');
+          wx.offLocationChange(this.handlerLocationChange);
+        },
+        fail: err => {
+          console.log(err);
+        },
+      });
+    },
+    handlerLocationChange(res) {
+      const { latitude, longitude } = res;
+      console.log('onLocationChange', { latitude, longitude });
+      uni.setStorageSync('position', { latitude, longitude });
+    },
     handleAfterSetting() {
       this.showSettingPopup = false;
       this.getPositon();
+      this.startLocationUpdate();
     },
     getPositon() {
       uni.getLocation({
@@ -74,6 +102,10 @@ export default {
         },
       });
     },
+  },
+  destroyed() {
+    console.log('destroyed');
+    this.stopLocationUpdate();
   },
 };
 </script>
