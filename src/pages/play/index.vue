@@ -8,15 +8,30 @@
           @change="dateChange"
         ></date-slide-selection>
       </u-sticky>
+      <view
+        class="u-flex u-row-between empty-tip"
+        v-if="!loading && !list.length && !recommends.length"
+        @click="showFilter = true"
+      >
+        <text>搜索结果太少，请尝试调整筛选条件</text>
+        <text class="arrow-right"></text>
+      </view>
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
+        <view class="tip" v-if="recommends.length">没有更多匹配结果，为您智能推荐更多结果</view>
+        <list-card v-for="(card, index) in recommends" :key="index" :data="card"></list-card>
       </view>
-      <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
-      <view class="empty-display" v-if="!loading && !list.length">
+      <u-loadmore
+        v-if="list.length || recommends.length"
+        :status="status"
+        @loadmore="loadmore"
+        :loadText="loadText"
+      />
+      <view class="empty-display" v-if="!loading && !list.length && !recommends.length">
         <image src="/static/image/empty.png"></image>
         <text>暂无数据</text>
       </view>
-      <loading class="loading" v-if="loading && !list.length"></loading>
+      <loading class="loading" v-if="loading && !list.length && !recommends.length"></loading>
     </view>
     <u-popup
       v-if="showFilter"
@@ -80,6 +95,9 @@ export default {
       pageNum: 1,
       pageSize: 10,
       pages: 1,
+      recommends: [],
+      recommendPageNum: 1,
+      recommendPages: 1,
       showFilter: true,
       filterData: {
         position: 0,
@@ -129,6 +147,8 @@ export default {
       this.status = 'loading';
       if (isRefrash) {
         this.pageNum = 1;
+        this.recommendPageNum = 1;
+        this.recommendPages = 1;
       }
       const params = this.handleParams();
       uni.setStorageSync(this.tabPageName + '_filter_data', params);
@@ -137,6 +157,7 @@ export default {
         .then(res => {
           if (isRefrash) {
             this.list = [];
+            this.recommends = [];
             uni.pageScrollTo({
               duration: 0,
               scrollTop: 0,
@@ -207,7 +228,7 @@ export default {
       return params;
     },
     handleResult(res) {
-      const { records, pages } = res;
+      const { records, pages, total } = res;
       this.pages = pages;
       this.list.push(
         ...records.map(v => {
@@ -227,6 +248,9 @@ export default {
       uni.hideNavigationBarLoading();
       this.handleReadBottomStatus();
       this.loading = false;
+      if (total <= this.list.length) {
+        this.getRecommendList(true);
+      }
     },
     handleErr(err) {
       this.pageNum--;
@@ -237,19 +261,34 @@ export default {
       this.getCardList(this.isRefrash);
     },
     handleReadBottomStatus() {
-      if (this.pageNum >= this.pages) {
+      if (
+        !this.recommends.length
+          ? this.pageNum >= this.pages
+          : this.recommendPageNum >= this.recommendPages
+      ) {
         this.status = 'nomore';
       } else {
         this.status = 'loadmore';
       }
     },
     onReachBottom() {
-      if (this.pageNum >= this.pages) return;
+      if (
+        !this.recommends.length
+          ? this.pageNum >= this.pages
+          : this.recommendPageNum >= this.recommendPages
+      ) {
+        return;
+      }
       this.loadmore();
     },
     loadmore() {
-      this.pageNum++;
-      this.getCardList();
+      if (!this.recommends.length) {
+        this.pageNum++;
+        this.getCardList();
+      } else {
+        this.recommendPageNum++;
+        this.getRecommendList();
+      }
     },
     onPageScroll(e) {
       this.scrollTop = e.scrollTop;
@@ -272,6 +311,62 @@ export default {
       };
       this.getCardList(true);
     },
+    getRecommendList() {
+      uni.showNavigationBarLoading();
+      this.loading = true;
+      this.status = 'loading';
+      const params = this.handleRecommendParams();
+      this.$u.api
+        .getCardList(params)
+        .then(res => {
+          const { records, pages } = res;
+          this.recommendPages = pages;
+          this.recommends.push(
+            ...records.map(v => {
+              v.tags = v.tags.split(',');
+              v.difficultLevel = v.difficultLevel / 10;
+              v.screenings = v.rooms.map(room => {
+                return {
+                  morePeople: v.advicePeopleMax - room.currentPeople,
+                  restPeople: v.advicePeopleMin - room.currentPeople,
+                  ...room,
+                  ...v,
+                };
+              });
+              return v;
+            })
+          );
+          uni.hideNavigationBarLoading();
+          this.handleReadBottomStatus();
+          this.loading = false;
+          console.log('recommends', this.recommends);
+        })
+        .catch(err => this.handleErr(err));
+    },
+    handleRecommendParams() {
+      let params = this.handleParams();
+      params = Object.assign({}, params, {
+        pageNum: this.recommendPageNum,
+      });
+      switch (params.blockBooking) {
+        case 1:
+          params.blockBooking = 0;
+          break;
+        case 0:
+          params.peopleFrom++;
+          if (params.peopleFrom) {
+            params.peopleTo++;
+          }
+          break;
+        default:
+          params.peopleFrom++;
+          if (params.peopleFrom) {
+            params.peopleTo++;
+          }
+          break;
+      }
+      return params;
+    },
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
@@ -290,6 +385,30 @@ export default {
     overflow: hidden;
 
     margin: 0 24rpx 10rpx;
+    .tip {
+        display: block;
+
+        padding: 20rpx 20rpx 0;
+
+        color: #aaa;
+    }
+}
+.empty-tip {
+    font-size: 24rpx;
+
+    margin-bottom: 10rpx;
+    padding: 20rpx;
+
+    color: #111;
+    background-color: #fff;
+    .arrow-right {
+        width: 22rpx;
+        height: 22rpx;
+
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAsCAYAAAAacYo8AAACwUlEQVRoQ+3ZPYgTQRQA4De7QfODQmYISAJWAQvFFFqKBM7zRBtTBE4RtBK1SOFPq3u2pxYpVKwURKw8C0XPHwhiqUXCCYIBo5KgLDMrFkkUd58M5HDZw8tls7uXAdNuGL7Mvrz35g0BRT9EUTeMBS+Xy3qtVtuZSqU+tlqt71Fugm84IhLG2CIiTgOAiMViJdM0X0WF9w1Pp9NbAeDTMpQQ0gOAkhBiMQq8b3ixWIw1Go0lRNzmgv7SNO0I5/xB2HjfcAkb7PpLAMi7oLamaSc453fDxI8Fl7BMJrPFtu3niLjDBUUAOGNZ1s2w8GPDJSyXy7Fer/cUEXe7oYSQC0KIK2HgA4FLGKV0MyI+BoA9HvycEMIIGh8YXMKy2Wyy3+8vIOJ+D/6aEOJckPhA4RKWz+c3cs7vA8BhD/5WpVI5bRiGE8QPCBwuUTJV1uv1OwBw1IO8VygUjtdqtd/j4kOBS5RhGFq1Wr2BiCc9yIeMsdlms/lzHHxo8GUUpfQqIp71hM2zeDxe6nQ6Xb/40OGDjDOHiBc9yNeEkENCiB9+8JHAB/jziDjvQb5NJpMz7Xabj4qPDC5h6XT6FABcB/jbThNC3um6vs80za+j4COFSxhj7JjjOLcBQHdBmwAwZVnW57XiI4cP8CXHcWSu37AMJYR80XV9yjTND2vBrwt8EPMzACCrbMKF/0YIKXLO3w/DrxtcwjKZzF7bth8h4iYX/okQ4uB/+LAdGPU5pVS9UGGMqffnVDId/qMALem6Pj2xBYhSuqLkE0LeJBKJAxNb8imlBiJeUqrJUq6tVfIgoeTRTcnDspLjiVUGQpeFEN6MMmqHsOL7gXSHcgTX7XbleHmX51A8uSO4wdDzBSJud6Ene+ip5Jh5lcH+LOd8YewgHrKA7xhX9ipF2csr+SaVvC4MO4aHre87xoctHPbzP8hhczwaPeppAAAAAElFTkSuQmCC);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
 }
 .empty-display {
     position: absolute;
