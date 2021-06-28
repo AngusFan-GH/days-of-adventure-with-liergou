@@ -38,14 +38,7 @@ export default {
     };
   },
   mounted() {
-    const token = uni.getStorageSync('token');
-    if (!token) {
-      this.weChatLogin();
-    } else {
-      uni.switchTab({
-        url: '/pages/index/index',
-      });
-    }
+    this.weChatLogin();
   },
   methods: {
     weChatLogin() {
