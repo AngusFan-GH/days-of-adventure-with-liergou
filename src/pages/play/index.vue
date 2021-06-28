@@ -468,7 +468,7 @@ export default {
 
     background-color: #fff;
     .label {
-        margin-right: 20rpx;
+        margin: 0 20rpx;
         padding: 0 10rpx;
 
         border-right: 2px solid #f63;

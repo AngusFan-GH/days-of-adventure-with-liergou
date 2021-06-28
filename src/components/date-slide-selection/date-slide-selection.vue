@@ -76,12 +76,6 @@ export default {
 
         width: 136rpx;
         padding: 0 15rpx;
-        &:nth-child(1) {
-            padding-left: 30rpx;
-        }
-        &:nth-last-child(1) {
-            padding-right: 30rpx;
-        }
         &.active {
             color: #f63;
             border-bottom: 2px solid #f63;
