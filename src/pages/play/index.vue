@@ -7,6 +7,22 @@
           :length="dateLength"
           @change="dateChange"
         ></date-slide-selection>
+        <view class="u-flex sort">
+          <view class="label">排序规则</view>
+          <view class="u-flex u-row-around">
+            <u-button
+              class="btn"
+              size="mini"
+              type="primary"
+              v-for="(btn, index) in sortList"
+              :key="index"
+              :plain="btn.value !== sort"
+              @click="changeSort(btn.value)"
+            >
+              {{ btn.label }}
+            </u-button>
+          </view>
+        </view>
       </u-sticky>
       <view
         class="u-flex u-row-between empty-tip"
@@ -119,6 +135,26 @@ export default {
       },
       dateLength: 15,
       gettingPosition: false,
+      // 排序
+      sortList: [
+        {
+          label: '智能排序',
+          value: null,
+        },
+        {
+          label: '距离',
+          value: 2,
+        },
+        {
+          label: '评分',
+          value: 3,
+        },
+        {
+          label: '购买数量',
+          value: 1,
+        },
+      ],
+      sort: null,
     };
   },
   mounted() {
@@ -180,6 +216,7 @@ export default {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
+        sort: this.sort,
       };
       const { longitude, latitude } = uni.getStorageSync('position');
       if (latitude == null && longitude == null) {
@@ -406,6 +443,10 @@ export default {
       };
       this.getCardList(true);
     },
+    changeSort(value) {
+      this.sort = this.sort === value ? null : value;
+      this.getCardList(true);
+    },
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
@@ -419,6 +460,21 @@ export default {
     min-height: 100%;
 
     background-color: $background-color;
+}
+.sort {
+    margin-bottom: 2rpx;
+    padding: 4rpx;
+
+    background-color: #fff;
+    .label {
+        margin-right: 20rpx;
+        padding: 0 10rpx;
+    }
+    .btn {
+        &:not(:nth-child(1)) {
+            margin-left: 10rpx;
+        };
+    }
 }
 .list {
     overflow: hidden;
@@ -451,7 +507,7 @@ export default {
 }
 .empty-display {
     position: absolute;
-    top: 375rpx;
+    top: 475rpx;
     left: 50%;
 
     transform: translate(-50%, -50%);
