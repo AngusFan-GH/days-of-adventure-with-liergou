@@ -180,7 +180,7 @@ export default {
 
 <style lang="scss">
 .list-card {
-    margin-bottom: 24rpx;
+    margin-top: 24rpx;
     padding: 24rpx 24rpx 22rpx;
 
     border-radius: 14rpx;

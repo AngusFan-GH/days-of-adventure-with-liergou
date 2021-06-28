@@ -463,7 +463,7 @@ export default {
     background-color: $background-color;
 }
 .sort {
-    margin: 2rpx 0 10rpx;
+    margin-top: 2rpx;
     padding: 8rpx;
 
     background-color: #fff;
