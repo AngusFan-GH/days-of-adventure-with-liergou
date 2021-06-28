@@ -19,7 +19,7 @@
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
         <view class="tip" v-if="recommends.length">没有更多匹配结果，为您智能推荐更多结果</view>
-        <list-card v-for="(card, index) in recommends" :key="index" :data="card"></list-card>
+        <list-card v-for="(card, index) in displayRecommends" :key="index" :data="card"></list-card>
       </view>
       <u-loadmore
         v-if="list.length || recommends.length"
@@ -77,6 +77,7 @@ export default {
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
+    // 开始实时监控位置
     this.$refs.positionRef.startLocationUpdate();
   },
   data() {
@@ -84,20 +85,28 @@ export default {
       tabPageName: 'play',
       tabBarIndex: 1,
       loading: true,
+      // 加载更多
       status: 'loadmore',
       loadText: {
         loadmore: '轻轻上拉',
         loading: '努力加载中',
         nomore: '暂时没有了',
       },
+      // 返回顶部
       scrollTop: 0,
+      // 列表
       list: [],
       pageNum: 1,
       pageSize: 10,
       pages: 1,
+      isRefrash: true,
+      // 推荐列表
       recommends: [],
+      recommendDisplayPageNum: 1,
       recommendPageNum: 1,
+      recommendPageSize: 10,
       recommendPages: 1,
+      // 筛选
       showFilter: true,
       filterData: {
         position: 0,
@@ -110,7 +119,6 @@ export default {
       },
       dateLength: 15,
       gettingPosition: false,
-      isRefrash: true,
     };
   },
   mounted() {
@@ -138,17 +146,20 @@ export default {
             filter: 'blur(20px)',
           };
     },
+    displayRecommends() {
+      return this.recommends.slice(0, this.recommendDisplayPageNum * this.pageSize);
+    },
   },
   methods: {
+    // 列表
     getCardList(isRefrash = false) {
       this.isRefrash = isRefrash;
-      uni.showNavigationBarLoading();
       this.loading = true;
+      uni.showNavigationBarLoading();
+      this.loadText.loading = '努力加载中';
       this.status = 'loading';
       if (isRefrash) {
         this.pageNum = 1;
-        this.recommendPageNum = 1;
-        this.recommendPages = 1;
       }
       const params = this.handleParams();
       uni.setStorageSync(this.tabPageName + '_filter_data', params);
@@ -157,11 +168,8 @@ export default {
         .then(res => {
           if (isRefrash) {
             this.list = [];
-            this.recommends = [];
-            uni.pageScrollTo({
-              duration: 0,
-              scrollTop: 0,
-            });
+            this.backToTop();
+            this.resetRecommendsParams();
             uni.stopPullDownRefresh();
           }
           this.handleResult(res);
@@ -175,6 +183,7 @@ export default {
       };
       const { longitude, latitude } = uni.getStorageSync('position');
       if (latitude == null && longitude == null) {
+        // 获取经纬度，终止本次请求，在handleGotPosition中重新发起请求
         return (this.gettingPosition = true);
       }
       params.longitude = longitude;
@@ -227,38 +236,124 @@ export default {
       }
       return params;
     },
+    backToTop() {
+      uni.pageScrollTo({
+        duration: 0,
+        scrollTop: 0,
+      });
+    },
+    resetRecommendsParams() {
+      this.recommendPageNum = 1;
+      this.recommendDisplayPageNum = 1;
+      this.recommendPages = 1;
+      this.recommends = [];
+    },
+    handleRecord(v) {
+      v.tags = v.tags.split(',');
+      v.difficultLevel = v.difficultLevel / 10;
+      v.screenings = v.rooms.map(room => {
+        return {
+          morePeople: v.advicePeopleMax - room.currentPeople,
+          restPeople: v.advicePeopleMin - room.currentPeople,
+          ...room,
+          ...v,
+        };
+      });
+      return v;
+    },
     handleResult(res) {
       const { records, pages, total } = res;
       this.pages = pages;
-      this.list.push(
-        ...records.map(v => {
-          v.tags = v.tags.split(',');
-          v.difficultLevel = v.difficultLevel / 10;
-          v.screenings = v.rooms.map(room => {
-            return {
-              morePeople: v.advicePeopleMax - room.currentPeople,
-              restPeople: v.advicePeopleMin - room.currentPeople,
-              ...room,
-              ...v,
-            };
-          });
-          return v;
-        })
-      );
-      uni.hideNavigationBarLoading();
-      this.handleReadBottomStatus();
-      this.loading = false;
+      this.list.push(...records.map(v => this.handleRecord(v)));
+      this.stopLoading();
+      // 列表最后一页，请求推荐列表
       if (total <= this.list.length) {
-        this.getRecommendList(true);
+        this.recommendPageSize = this.list.length + this.pageSize;
+        this.getRecommendList();
       }
     },
     handleErr(err) {
-      this.pageNum--;
+      if (!this.recommends.length) {
+        this.pageNum--;
+      } else {
+        this.recommendPageNum--;
+        this.recommendDisplayPageNum--;
+      }
       this.handleReadBottomStatus();
       console.error(err);
     },
+    getRecommendList(displayPageNum = this.recommendDisplayPageNum) {
+      uni.showNavigationBarLoading();
+      this.loading = true;
+      if (displayPageNum > 1) {
+        this.loadText.loading = '努力加载中';
+      } else {
+        this.loadText.loading = '没有更多匹配结果，正在为您智能推荐';
+      }
+      this.status = 'loading';
+      if (this.recommends.length < displayPageNum * this.pageSize) {
+        if (displayPageNum > 1) {
+          this.recommendPageNum++;
+        }
+        const params = this.handleRecommendParams();
+        this.$u.api
+          .getCardList(params)
+          .then(res => {
+            const { records, pages } = res;
+            this.recommendPages = pages;
+            this.recommends.push(
+              ...records
+                .filter(record => this.list.findIndex(v => v.productId === record.productId) === -1)
+                .map(v => this.handleRecord(v))
+            );
+            if (
+              this.recommends.length < displayPageNum * this.pageSize &&
+              this.recommendPageNum < pages
+            ) {
+              this.recommendPageNum++;
+              this.getRecommendList();
+            } else {
+              this.stopLoading();
+              console.log('recommends', this.recommends);
+            }
+          })
+          .catch(err => this.handleErr(err));
+      } else {
+        this.stopLoading();
+      }
+    },
+    stopLoading() {
+      uni.hideNavigationBarLoading();
+      this.handleReadBottomStatus();
+      this.loading = false;
+    },
+    handleRecommendParams() {
+      let params = this.handleParams();
+      params = Object.assign({}, params, {
+        pageNum: this.recommendPageNum,
+        pageSize: this.recommendPageSize,
+      });
+      switch (params.blockBooking) {
+        case 1:
+          params.blockBooking = 0;
+          break;
+        case 0:
+          params.peopleFrom++;
+          if (params.peopleFrom) {
+            params.peopleTo++;
+          }
+          break;
+        default:
+          params.peopleFrom++;
+          if (params.peopleFrom) {
+            params.peopleTo++;
+          }
+          break;
+      }
+      return params;
+    },
     handleGotPosition() {
-      this.getCardList(this.isRefrash);
+      !this.recommends.length ? this.getCardList(this.isRefrash) : this.getRecommendList();
     },
     handleReadBottomStatus() {
       if (
@@ -286,7 +381,7 @@ export default {
         this.pageNum++;
         this.getCardList();
       } else {
-        this.recommendPageNum++;
+        this.recommendDisplayPageNum++;
         this.getRecommendList();
       }
     },
@@ -310,62 +405,6 @@ export default {
         endTime: new Date(`${timeFmt(e, 'YYYY/MM/DD')} 23:59:59`).getTime(),
       };
       this.getCardList(true);
-    },
-    getRecommendList() {
-      uni.showNavigationBarLoading();
-      this.loading = true;
-      this.status = 'loading';
-      const params = this.handleRecommendParams();
-      this.$u.api
-        .getCardList(params)
-        .then(res => {
-          const { records, pages } = res;
-          this.recommendPages = pages;
-          this.recommends.push(
-            ...records.map(v => {
-              v.tags = v.tags.split(',');
-              v.difficultLevel = v.difficultLevel / 10;
-              v.screenings = v.rooms.map(room => {
-                return {
-                  morePeople: v.advicePeopleMax - room.currentPeople,
-                  restPeople: v.advicePeopleMin - room.currentPeople,
-                  ...room,
-                  ...v,
-                };
-              });
-              return v;
-            })
-          );
-          uni.hideNavigationBarLoading();
-          this.handleReadBottomStatus();
-          this.loading = false;
-          console.log('recommends', this.recommends);
-        })
-        .catch(err => this.handleErr(err));
-    },
-    handleRecommendParams() {
-      let params = this.handleParams();
-      params = Object.assign({}, params, {
-        pageNum: this.recommendPageNum,
-      });
-      switch (params.blockBooking) {
-        case 1:
-          params.blockBooking = 0;
-          break;
-        case 0:
-          params.peopleFrom++;
-          if (params.peopleFrom) {
-            params.peopleTo++;
-          }
-          break;
-        default:
-          params.peopleFrom++;
-          if (params.peopleFrom) {
-            params.peopleTo++;
-          }
-          break;
-      }
-      return params;
     },
   },
   onHide() {
