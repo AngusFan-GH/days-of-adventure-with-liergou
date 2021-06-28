@@ -59,27 +59,22 @@
       </view>
     </view>
     <view class="togather u-margin-top-20">
-      <view v-if="data.screenings.length === 1">
+      <view v-for="(screening, index) in data.screenings" :key="index">
         <card-screening
           class="screening"
-          :screening="data.screenings && data.screenings[0]"
+          :screening="screening"
+          v-show="index < displayCount"
         ></card-screening>
       </view>
-      <u-read-more
-        v-if="data.screenings.length > 1"
-        ref="uReadMore"
-        :toggle="true"
-        :show-height="122"
-        :shadow-style="shadowStyle"
-        :close-text="closeText"
-        :text-indent="0"
-        color="#aaa"
+      <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view>
+      <view
+        class="u-flex u-row-center read-more"
+        v-show="data.screenings.length > 1"
+        @click="switchReadMoreStatus()"
       >
-        <view v-for="(screening, index) in data.screenings" :key="index">
-          <card-screening class="screening" :screening="screening"></card-screening>
-        </view>
-        <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view>
-      </u-read-more>
+        <text class="u-margin-right-6">{{ closeText }}</text>
+        <u-icon :name="step === 2 ? 'arrow-up' : 'arrow-down'" color="#777" size="26"></u-icon>
+      </view>
     </view>
   </view>
 </template>
@@ -101,26 +96,39 @@ export default {
   watch: {
     data: {
       immediate: true,
-      handler() {
-        this.$nextTick(() => {
-          this.$refs.uReadMore && this.$refs.uReadMore.init();
-        });
+      handler(data) {
+        const len = data.screenings.length;
+        this.step = len > 4 ? 0 : 1;
       },
     },
   },
   data() {
     return {
       defaultThumb,
-      shadowStyle: {
-        backgroundImage: 'none',
-        paddingTop: '0',
-        marginTop: '20rpx',
-      },
+      step: this.data.screenings.length > 1,
     };
   },
   computed: {
     closeText() {
-      return `查看全部${this.data.screenings.length}个场次`;
+      switch (this.step) {
+        case 0:
+          return '再看3场';
+        case 1:
+          return `查看全部${this.data.screenings.length}个场次`;
+        case 2:
+          return '收起';
+      }
+    },
+    displayCount() {
+      const len = this.data.screenings.length;
+      switch (this.step) {
+        case 0:
+          return 1;
+        case 1:
+          return len > 4 ? 4 : 1;
+        case 2:
+          return len;
+      }
     },
   },
   methods: {
@@ -151,6 +159,20 @@ export default {
         return parseFloat((sales / (10000 * 10000)).toFixed(1)) + '亿';
       }
       return sales;
+    },
+    switchReadMoreStatus() {
+      const len = this.data.screenings.length;
+      switch (this.step) {
+        case 0:
+          this.step = 1;
+          break;
+        case 1:
+          this.step = 2;
+          break;
+        case 2:
+          this.step = len > 4 ? 0 : 1;
+          break;
+      }
     },
   },
 };
@@ -218,6 +240,11 @@ export default {
 
             color: #999;
         }
+    }
+    .read-more {
+        font-size: 26rpx;
+
+        color: #777;
     }
 }
 
