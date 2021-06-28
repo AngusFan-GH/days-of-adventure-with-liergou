@@ -139,7 +139,7 @@ export default {
       // 排序
       sortList: [
         {
-          label: '智能排序',
+          label: '智能推荐',
           value: null,
         },
         {
