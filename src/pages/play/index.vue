@@ -17,6 +17,7 @@
               v-for="(btn, index) in sortList"
               :key="index"
               :plain="btn.value !== sort"
+              :throttle-time="300"
               @click="changeSort(btn.value)"
             >
               {{ btn.label }}
@@ -462,17 +463,20 @@ export default {
     background-color: $background-color;
 }
 .sort {
-    margin-bottom: 2rpx;
-    padding: 4rpx;
+    margin: 2rpx 0 10rpx;
+    padding: 8rpx;
 
     background-color: #fff;
     .label {
         margin-right: 20rpx;
         padding: 0 10rpx;
+
+        border-right: 2px solid #f63;
+        border-left: 2px solid #f63;
     }
     .btn {
         &:not(:nth-child(1)) {
-            margin-left: 10rpx;
+            margin-left: 20rpx;
         };
     }
 }
