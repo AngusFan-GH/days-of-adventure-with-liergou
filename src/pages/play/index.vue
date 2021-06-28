@@ -463,7 +463,7 @@ export default {
     background-color: $background-color;
 }
 .sort {
-    margin-top: 2rpx;
+    margin: 2rpx 0 10rpx;
     padding: 8rpx;
 
     background-color: #fff;
@@ -487,7 +487,7 @@ export default {
     .tip {
         display: block;
 
-        padding: 20rpx 20rpx 0;
+        padding: 0 20rpx 24rpx;
 
         color: #aaa;
     }
