@@ -66,7 +66,7 @@
           v-show="index < displayCount"
         ></card-screening>
       </view>
-      <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view>
+      <!-- <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view> -->
       <view
         class="u-flex u-row-center read-more"
         v-show="data.screenings.length > 1"
