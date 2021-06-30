@@ -8,7 +8,7 @@
           @change="dateChange"
         ></date-slide-selection>
         <view class="u-flex sort">
-          <view class="label">排序规则</view>
+          <view class="label">排序</view>
           <view class="u-flex u-row-around">
             <u-button
               class="btn"
@@ -147,8 +147,12 @@ export default {
           value: 2,
         },
         {
-          label: '评分',
+          label: '难度',
           value: 3,
+        },
+        {
+          label: '价格',
+          value: 4,
         },
         {
           label: '购买数量',
