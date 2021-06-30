@@ -364,7 +364,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../common/style/variable.scss';
+@import '../../../common/style/variable.scss';
 .container {
     min-height: 100%;
     padding-bottom: 120rpx;

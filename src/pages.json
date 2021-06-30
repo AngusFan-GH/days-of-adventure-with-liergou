@@ -35,9 +35,21 @@
 			"root": "subPackages",
 			"pages": [
 				{
-					"path": "order/index",
+					"path": "order/pay/index",
 					"style": {
 						"navigationBarTitleText": "提交订单"
+					}
+				},
+				{
+					"path": "order/list/index",
+					"style": {
+						"navigationBarTitleText": "订单列表"
+					}
+				},
+				{
+					"path": "order/detail/index",
+					"style": {
+						"navigationBarTitleText": "订单详情"
 					}
 				},
 				{

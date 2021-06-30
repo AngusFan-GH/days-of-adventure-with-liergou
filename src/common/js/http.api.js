@@ -50,6 +50,12 @@ const install = (Vue, vm) => {
 	 */
 	let queryPay = (params = {}) => vm.$u.post('/market-boot/app/order/queryPay', params);
 
+	/**
+	 * 订单-获取待处理订单
+	 * http://182.92.107.174/market-boot/doc.html#/app/API/getPaidOrderUsingPOST
+	 */
+	let getPaidOrder = (params = {}) => vm.$u.post('/market-boot/app/api/getPaidOrder', params);
+
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = {
 		weChatLogin,

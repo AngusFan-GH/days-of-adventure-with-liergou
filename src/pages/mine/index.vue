@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <view class="u-flex user-info">
+    <view class="u-flex user-info" @click="goToOrderList()">
       <u-avatar
         :src="user.avatarUrl"
         size="large"
@@ -90,6 +90,12 @@ export default {
         }
         this.current++;
       }, 2 * 1000);
+    },
+    goToOrderList() {
+      console.log('/subPackages/order/list/index');
+      uni.navigateTo({
+        url: '/subPackages/order/list/index',
+      });
     },
   },
   onHide() {
