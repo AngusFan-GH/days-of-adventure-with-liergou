@@ -74,7 +74,6 @@ export default {
 .play {
     position: relative;
 
-    margin-bottom: 22rpx;
     padding: 14rpx 16rpx;
 
     border-radius: 8rpx;

@@ -56,11 +56,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/style/variable.scss';
 .container {
     width: 100%;
 
-    border-bottom: 1px solid #eeeef0;
-    background-color: #fff;
+    color: $text-common-color;
+    border-bottom: 1px solid $background-color;
+    background-color: $background-color;
 }
 .date-slide-selection {
     &::-webkit-scrollbar {

@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
-      <u-sticky bg-color="#f0f0f0">
+      <u-sticky :bg-color="styleVariable.backgroundColor">
         <date-slide-selection
           :date="filterData.time && filterData.time.date"
           :length="dateLength"
@@ -83,6 +83,7 @@ import filter from './filter/filter.vue';
 import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
 import { timeFmt, defaultStartTimeMaker } from '@/common/js/time-fmt';
 import positionPopup from '@/components/position-popup/position-popup.vue';
+import style from '../../common/style/variable.scss';
 export default {
   components: {
     listCard,
@@ -160,6 +161,7 @@ export default {
         },
       ],
       sort: null,
+      styleVariable: style,
     };
   },
   mounted() {
@@ -470,13 +472,14 @@ export default {
     margin: 2rpx 0 10rpx;
     padding: 8rpx;
 
-    background-color: #fff;
+    background-color: $background-color;
     .label {
         margin: 0 20rpx;
         padding: 0 10rpx;
 
-        border-right: 2px solid #f63;
-        border-left: 2px solid #f63;
+        color: $text-common-color;
+        border-right: 2px solid $theme-color;
+        border-left: 2px solid $theme-color;
     }
     .btn {
         &:not(:nth-child(1)) {
@@ -493,7 +496,7 @@ export default {
 
         padding: 0 20rpx 24rpx;
 
-        color: #aaa;
+        color: $text-light-gray-color;
     }
 }
 .empty-tip {
@@ -503,7 +506,7 @@ export default {
     padding: 20rpx;
 
     color: #111;
-    background-color: #fff;
+    background-color: $text-common-color;
     .arrow-right {
         width: 22rpx;
         height: 22rpx;

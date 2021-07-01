@@ -62,12 +62,8 @@
       </view>
     </view>
     <view class="togather u-margin-top-18">
-      <view v-for="(screening, index) in data.screenings" :key="index">
-        <card-screening
-          class="screening"
-          :screening="screening"
-          v-show="index < displayCount"
-        ></card-screening>
+      <view v-for="(screening, index) in data.screenings" :key="index" class="screening">
+        <card-screening :screening="screening" v-show="index < displayCount"></card-screening>
       </view>
       <!-- <view class="screening" v-if="!data.screenings || !data.screenings.length">暂无场次</view> -->
       <view
@@ -76,7 +72,11 @@
         @click="switchReadMoreStatus()"
       >
         <text class="u-margin-right-6 close-text">{{ closeText }}</text>
-        <u-icon :name="step === 2 ? 'arrow-up' : 'arrow-down'" color="#777" size="26"></u-icon>
+        <u-icon
+          :name="step === 2 ? 'arrow-up' : 'arrow-down'"
+          :color="style.textGrayColor"
+          size="26"
+        ></u-icon>
       </view>
     </view>
   </view>
@@ -289,8 +289,13 @@ export default {
 
         border-radius: 21rpx;
         background: #fff;
+        .screening {
+            margin-top: 22rpx;
+        }
         .read-more {
             font-size: 26rpx;
+
+            margin-top: 22rpx;
 
             color: #777;
         }
