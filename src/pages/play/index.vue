@@ -65,7 +65,11 @@
     >
       <filter :data="filterData" :dateLength="dateLength" @confirm="handleFilterConfirm"></filter>
     </u-popup>
-    <u-back-top :scroll-top="scrollTop"></u-back-top>
+    <u-back-top
+      :scroll-top="scrollTop"
+      :icon-style="backTopIconStyle"
+      :custom-style="backTopCustomStyle"
+    ></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
     <position-popup
       ref="positionRef"
@@ -112,6 +116,14 @@ export default {
       },
       // 返回顶部
       scrollTop: 0,
+      backTopIconStyle: {
+        fontSize: '32rpx',
+        color: style.themeColor,
+      },
+      backTopCustomStyle: {
+        background: '#fff',
+        border: '2rpx solid ' + style.titleColor,
+      },
       // 列表
       list: [],
       pageNum: 1,
@@ -293,7 +305,7 @@ export default {
       this.recommends = [];
     },
     handleRecord(v) {
-      v.tags = v.tags.split(',');
+      v.tags = v.tags.split(',').filter(v => v);
       v.difficultLevel = v.difficultLevel / 10;
       v.screenings = v.rooms.map(room => {
         return {

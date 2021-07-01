@@ -1,6 +1,6 @@
 const tabBarList = [
     {
-        iconPath: "/static/image/tabbar/mine.png",
+        iconPath: "/static/image/tabbar/home.png",
         selectedIconPath: "/static/image/tabbar/home_selected.png",
         text: "首页",
         pagePath: "/pages/index/index",

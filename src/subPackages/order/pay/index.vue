@@ -198,6 +198,7 @@
 
 <script>
 import { timeRangeFmt } from '@/common/js/time-fmt';
+import style from '../../../common/style/variable.scss';
 export default {
   onShow() {
     this.init();
@@ -245,8 +246,8 @@ export default {
       count: 1,
       remark: '',
       customStyle: {
-        backgroundColor: '#f63',
-        color: '#fff',
+        backgroundColor: style.themeColor,
+        color: style.textCommonColor,
         height: '80rpx',
         lineHeight: '80rpx',
         fontSize: '32rpx',
@@ -593,7 +594,7 @@ export default {
         font-size: 60rpx;
         font-weight: bolder;
 
-        color: #f63;
+        color: $theme-color;
         &-logo {
             font-size: 32rpx;
 

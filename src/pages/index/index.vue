@@ -71,14 +71,6 @@ export default {
         nomore: '暂时没有了',
       },
       scrollTop: 0,
-      list: [],
-      pageNum: 1,
-      pageSize: 10,
-      pages: 1,
-      keyword: null,
-      gettingPosition: false,
-      isRefrash: true,
-      styleVariable: style,
       backTopIconStyle: {
         fontSize: '32rpx',
         color: style.themeColor,
@@ -87,6 +79,14 @@ export default {
         background: '#fff',
         border: '2rpx solid ' + style.titleColor,
       },
+      list: [],
+      pageNum: 1,
+      pageSize: 10,
+      pages: 1,
+      keyword: null,
+      gettingPosition: false,
+      isRefrash: true,
+      styleVariable: style,
     };
   },
   onPullDownRefresh() {
@@ -146,7 +146,7 @@ export default {
       this.pages = pages;
       this.list.push(
         ...records.map(v => {
-          v.tags = v.tags.split(',');
+          v.tags = v.tags.split(',').filter(v => v);
           v.difficultLevel = v.difficultLevel / 10;
           v.screenings = v.rooms.map(room => {
             return {

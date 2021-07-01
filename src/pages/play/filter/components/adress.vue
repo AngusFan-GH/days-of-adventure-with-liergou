@@ -108,6 +108,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../../common/style/variable.scss';
 .filter-adress {
     width: 100%;
     height: 100%;
@@ -128,7 +129,7 @@ export default {
         &.selected {
             position: relative;
 
-            color: #f63;
+            color: $theme-color;
             background-color: #f0f0f0;
             &:before {
                 position: absolute;
@@ -142,7 +143,7 @@ export default {
 
                 content: '';
 
-                background-color: #f63;
+                background-color: $theme-color;
             }
         }
     }
@@ -152,7 +153,7 @@ export default {
     .btn {
         padding: 20rpx;
         &.selected {
-            color: #f63;
+            color: $theme-color;
         }
     }
 }

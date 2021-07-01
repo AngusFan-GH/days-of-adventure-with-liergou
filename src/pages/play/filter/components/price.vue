@@ -181,6 +181,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../../common/style/variable.scss';
 .filter-price {
     display: block;
 
@@ -205,7 +206,7 @@ export default {
 
             content: '';
 
-            background-color: #f63;
+            background-color: $theme-color;
         }
         &:after {
             position: absolute;
@@ -219,7 +220,7 @@ export default {
 
             content: '';
 
-            background-color: #f63;
+            background-color: $theme-color;
         }
     }
 }

@@ -306,8 +306,10 @@
         </view>
         <view class="week">
           <date-slide-selection
+            v-if="showChooseSession"
             :date="date"
             :length="15"
+            inactiveColor="#000"
             @change="dateChange"
           ></date-slide-selection>
         </view>
@@ -404,6 +406,7 @@
 <script>
 import defaultThumb from '@/static/image/bg_login.png';
 import { timeFmt } from '@/common/js/time-fmt';
+import style from '../../common/style/variable.scss';
 export default {
   onLoad(options) {
     this.productId = +options.productId;
@@ -431,8 +434,8 @@ export default {
       showExpandDescBtn: false,
       hasExpandDesc: false,
       customStyle: {
-        backgroundColor: '#f63',
-        color: '#fff',
+        backgroundColor: style.themeColor,
+        color: style.textCommonColor,
       },
       showPoolRuleDesc: false,
       showChooseSession: false,
@@ -627,7 +630,7 @@ export default {
       };
       console.log(data);
       uni.navigateTo({
-        url: '/subPackages/order/index',
+        url: '/subPackages/order/pay/index',
         success: res => {
           res.eventChannel.emit('submitOrder', data);
         },
@@ -661,6 +664,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/style/variable.scss';
 .container {
     min-height: 100%;
 }
@@ -678,6 +682,7 @@ export default {
         transform: scale(1.2);
 
         opacity: 1;
+        background-color: $background-color;
         background-size: 100% 100%;
 
         filter: blur(40rpx);
@@ -760,7 +765,7 @@ export default {
                         font-size: 38rpx;
                         font-weight: 500;
 
-                        color: #ff7445;
+                        color: $theme-color;
                     }
                     &-desc {
                         font-size: 26rpx;
@@ -1039,7 +1044,7 @@ export default {
             color: #777;
         }
         .high-light {
-            color: #f63;
+            color: $theme-color;
         }
         .join {
             font-size: 22rpx;
@@ -1121,7 +1126,7 @@ export default {
             border: 1px solid #eeeef0;
             border-radius: 4rpx;
             &.selected {
-                border: 1px solid #f63;
+                border: 1px solid $theme-color;
                 background-color: #fff5f2;
             }
             &.disabled {
@@ -1156,7 +1161,7 @@ export default {
 
                 white-space: nowrap;
 
-                color: #f63;
+                color: $theme-color;
 
                 flex-shrink: 0;
             }
@@ -1200,7 +1205,7 @@ export default {
         }
     }
     .high-light {
-        color: #f63;
+        color: $theme-color;
     }
 }
 

@@ -279,6 +279,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../common/style/variable.scss';
 .calendar-wrapper {
     font-size: 28rpx;
 
@@ -387,7 +388,7 @@ export default {
                     &.choose {
                         color: #333;
                         border-radius: 4rpx;
-                        background-color: #ffdd84;
+                        background-color: $theme-color;
                     }
 
                     &.nolm {

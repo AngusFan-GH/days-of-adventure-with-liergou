@@ -261,7 +261,7 @@ export default {
 </script>
 
 <style lang="scss">
-
+@import '../../../common/style/variable.scss';
 .filter {
     width: 100%;
     height: 100%;
@@ -348,7 +348,7 @@ export default {
                     border-bottom: 1px solid #999;
                 }
                 &.selected {
-                    color: #f63;
+                    color: $theme-color;
                     border-right: 0 none;
                 }
                 &.actived:after {
