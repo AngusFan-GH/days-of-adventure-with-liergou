@@ -61,8 +61,8 @@ export default {
     width: 100%;
 
     color: $text-common-color;
-    border-bottom: 1px solid $background-color;
-    background-color: $background-color;
+    // border-bottom: 1px solid $background-color;
+    // background-color: $background-color;
 }
 .date-slide-selection {
     &::-webkit-scrollbar {
@@ -79,8 +79,8 @@ export default {
         width: 136rpx;
         padding: 0 15rpx;
         &.active {
-            color: #f63;
-            border-bottom: 2px solid #f63;
+            color: $theme-color;
+            // border-bottom: 2px solid $theme-color;
         }
         .date {
             display: inline-block;
