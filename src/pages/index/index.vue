@@ -1,7 +1,7 @@
 <template>
   <view class="container">
     <view class="u-page list-container">
-      <u-sticky bg-color="#f0f0f0">
+      <u-sticky :bg-color="styleVariable.backgroundColor">
         <u-search
           class="search"
           placeholder="输入剧本名，快速找到哈"
@@ -9,7 +9,7 @@
           :clearabled="true"
           :show-action="false"
           shape="square"
-          border-color="#fff"
+          :border-color="styleVariable.textCommonColor"
           margin="10rpx 24rpx"
           @search="search"
           @clear="clear"
@@ -25,7 +25,11 @@
       </view>
       <loading class="loading" v-if="loading && !list.length"></loading>
     </view>
-    <u-back-top :scroll-top="scrollTop"></u-back-top>
+    <u-back-top
+      :scroll-top="scrollTop"
+      :icon-style="backTopIconStyle"
+      :custom-style="backTopCustomStyle"
+    ></u-back-top>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
     <position-popup
       ref="positionRef"
@@ -40,6 +44,7 @@ import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
+import style from '../../common/style/variable.scss';
 export default {
   components: {
     listCard,
@@ -73,6 +78,15 @@ export default {
       keyword: null,
       gettingPosition: false,
       isRefrash: true,
+      styleVariable: style,
+      backTopIconStyle: {
+        fontSize: '32rpx',
+        color: style.themeColor,
+      },
+      backTopCustomStyle: {
+        background: '#fff',
+        border: '2rpx solid ' + style.titleColor,
+      },
     };
   },
   onPullDownRefresh() {

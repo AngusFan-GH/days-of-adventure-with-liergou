@@ -106,16 +106,18 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/style/variable.scss';
 .container {
     overflow: hidden;
 
     min-height: 100%;
+
+    background-color: $background-color;
 }
 .user-info {
     padding: 30rpx 40rpx;
 
-    background-color: #ff5000;
-    background-image: linear-gradient(to right, #fd9126, #ff5000);
+    background-image: linear-gradient(to right, $theme-color, $difficult-icon-color);
     .main {
         overflow: hidden;
     }
@@ -123,7 +125,7 @@ export default {
         font-size: 40rpx;
         font-weight: bold;
 
-        color: #fff;
+        color: $title-color;
     }
 }
 .loading {

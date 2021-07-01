@@ -11,6 +11,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import style from '../../common/style/variable.scss';
 export default {
   name: 'custom-tab-bar',
   props: {
@@ -22,8 +23,8 @@ export default {
   data() {
     return {
       borderTop: false,
-      inactiveColor: '#909399',
-      activeColor: '#f63',
+      inactiveColor: style.tabbarInactiveColor,
+      activeColor: style.tabbarActiveColor,
     };
   },
   computed: {

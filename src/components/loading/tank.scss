@@ -1,6 +1,7 @@
-$tank-color: #909399;
-$bullet-color: #f63;
-
+@import '../../common/style/variable.scss';
+$tank-color: $text-light-gray-color;
+$bullet-color: $theme-color;
+$text-color: $text-common-color;
 .loading.tank {
     font-family: monospace;
     font-size: 17px;
@@ -10,7 +11,8 @@ $bullet-color: #f63;
 
     animation: loading-0 2s infinite;
 
-    background: linear-gradient($bullet-color 0 0) left ,
+    color: $text-color;
+    background: linear-gradient($bullet-color 0 0) left,
     linear-gradient($bullet-color 0 0) right;
     background-repeat: no-repeat;
     background-origin: border-box;
@@ -25,21 +27,33 @@ $bullet-color: #f63;
         content: '';
         animation: loading-1 2s infinite;
 
-        background: linear-gradient(90deg,$tank-color 4px,#0000 0 calc(100% - 4px),$tank-color 0) bottom            /22px 20px,
-        linear-gradient(90deg,$bullet-color  4px,#0000 0 calc(100% - 4px),$bullet-color  0) bottom 10px left 0/22px 6px,
-        linear-gradient($tank-color 0 0) bottom 3px left 0  /22px 8px,
-        linear-gradient($tank-color 0 0) bottom 0   left 50%/8px  16px;
+        background: linear-gradient(
+        90deg,
+        $tank-color 4px,
+        #0000 0 calc(100% - 4px),
+        $tank-color 0
+        )
+        bottom / 22px 20px,
+        linear-gradient(
+        90deg,
+        $bullet-color 4px,
+        #0000 0 calc(100% - 4px),
+        $bullet-color 0
+        )
+        bottom 10px left 0/22px 6px,
+        linear-gradient($tank-color 0 0) bottom 3px left 0 /22px 8px,
+        linear-gradient($tank-color 0 0) bottom 0 left 50%/8px 16px;
         background-repeat: no-repeat;
     }
 }
 @keyframes loading-0 {
     0%,
     25% {
-        background-size: 0 0,0 0;
+        background-size: 0 0, 0 0;
     }
     25.1%,
     75% {
-        background-size: 50% 100%,0 0;
+        background-size: 50% 100%, 0 0;
     }
     75.1%,
     100% {
@@ -50,31 +64,31 @@ $bullet-color: #f63;
     25% {
         left: 0;
 
-        background-position: bottom, bottom 54px left 0,bottom 3px left 0,bottom 0 left 50%;
-        ;
+        background-position: bottom, bottom 54px left 0, bottom 3px left 0,
+        bottom 0 left 50%;
     }
     25.1% {
         left: 0;
 
-        background-position: bottom, bottom 10px left 0,bottom 3px left 0,bottom 0 left 50%;
-        ;
+        background-position: bottom, bottom 10px left 0, bottom 3px left 0,
+        bottom 0 left 50%;
     }
     50% {
         left: calc(100% - 22px);
 
-        background-position: bottom, bottom 10px left 0,bottom 3px left 0,bottom 0 left 50%;
-        ;
+        background-position: bottom, bottom 10px left 0, bottom 3px left 0,
+        bottom 0 left 50%;
     }
     75% {
         left: calc(100% - 22px);
 
-        background-position: bottom, bottom 54px left 0,bottom 3px left 0,bottom 0 left 50%;
-        ;
+        background-position: bottom, bottom 54px left 0, bottom 3px left 0,
+        bottom 0 left 50%;
     }
     75.1% {
         left: calc(100% - 22px);
 
-        background-position: bottom, bottom 10px left 0,bottom 3px left 0,bottom 0 left 50%;
-        ;
+        background-position: bottom, bottom 10px left 0, bottom 3px left 0,
+        bottom 0 left 50%;
     }
 }

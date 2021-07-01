@@ -73,14 +73,14 @@
 		}
 	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "#fff",
 		"navigationBarTitleText": "与李二狗一起探险的日子",
-		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#F5F5F5"
+		"navigationBarBackgroundColor": "#0e050a",
+		"backgroundColor": "#0e050a"
 	},
 	"tabBar": {
-		"color": "#666666",
-		"selectedColor": "#333333",
+		"color": "#000",
+		"selectedColor": "#f0ba43",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"list": [

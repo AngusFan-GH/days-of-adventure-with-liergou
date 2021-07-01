@@ -1,7 +1,7 @@
 <template>
   <view class="login">
     <image class="bg" src="/static/image/bg_login.png" mode="widthFix"></image>
-    <view class="u-font-26 u-text-center u-margin-top-50" v-if="step == 0">
+    <view class="u-font-26 u-text-center u-margin-top-50 bg-text" v-if="step == 0">
       正在获取授权信息...
     </view>
     <view class="btn-box">
@@ -144,6 +144,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '../../common/style/variable.scss';
 .login {
     position: fixed;
     top: 0;
@@ -151,7 +152,7 @@ export default {
     width: 100%;
     height: 100%;
 
-    background-color: #fff;
+    background-color: $background-color;
     background-size: 100% auto;
 
     .bg {
@@ -159,6 +160,9 @@ export default {
         margin: 0 auto;
         margin-top: 190rpx;
         margin-left: 130rpx;
+        &-text {
+            color: $text-common-color;
+        }
     }
 
     .btn-box {
