@@ -43,7 +43,8 @@
 				{
 					"path": "order/list/index",
 					"style": {
-						"navigationBarTitleText": "订单列表"
+						"navigationBarTitleText": "订单列表",
+						"enablePullDownRefresh": true
 					}
 				},
 				{
@@ -61,7 +62,8 @@
 				{
 					"path": "commit/index",
 					"style": {
-						"navigationBarTitleText": "全部评价"
+						"navigationBarTitleText": "全部评价",
+						"enablePullDownRefresh": true
 					}
 				}
 			]
@@ -76,7 +78,8 @@
 		"navigationBarTextStyle": "#fff",
 		"navigationBarTitleText": "与李二狗一起探险的日子",
 		"navigationBarBackgroundColor": "#0e050a",
-		"backgroundColor": "#0e050a"
+		"backgroundColor": "#0e050a",
+		"backgroundTextStyle": "light"
 	},
 	"tabBar": {
 		"color": "#000",

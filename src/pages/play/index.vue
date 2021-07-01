@@ -186,6 +186,19 @@ export default {
     }
     this.getCardList(true);
   },
+  onReachBottom() {
+    if (
+      !this.recommends.length
+        ? this.pageNum >= this.pages
+        : this.recommendPageNum >= this.recommendPages
+    ) {
+      return;
+    }
+    this.loadmore();
+  },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop;
+  },
   computed: {
     filterMaskStyle() {
       const imgUrl =
@@ -335,7 +348,7 @@ export default {
         this.recommendPageNum--;
         this.recommendDisplayPageNum--;
       }
-      this.handleReadBottomStatus();
+      this.stopLoading();
       console.error(err);
     },
     getRecommendList(displayPageNum = this.recommendDisplayPageNum) {
@@ -422,16 +435,6 @@ export default {
         this.status = 'loadmore';
       }
     },
-    onReachBottom() {
-      if (
-        !this.recommends.length
-          ? this.pageNum >= this.pages
-          : this.recommendPageNum >= this.recommendPages
-      ) {
-        return;
-      }
-      this.loadmore();
-    },
     loadmore() {
       if (!this.recommends.length) {
         this.pageNum++;
@@ -440,9 +443,6 @@ export default {
         this.recommendDisplayPageNum++;
         this.getRecommendList();
       }
-    },
-    onPageScroll(e) {
-      this.scrollTop = e.scrollTop;
     },
     handleFilterConfirm(e) {
       this.filterData = e;

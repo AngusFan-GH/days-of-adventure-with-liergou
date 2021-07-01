@@ -95,6 +95,13 @@ export default {
     }
     this.getCardList(true);
   },
+  onReachBottom() {
+    if (this.pageNum >= this.pages) return;
+    this.loadmore();
+  },
+  onPageScroll(e) {
+    this.scrollTop = e.scrollTop;
+  },
   methods: {
     search(e) {
       this.keyword = e.trim();
@@ -175,16 +182,9 @@ export default {
         this.status = 'loadmore';
       }
     },
-    onReachBottom() {
-      if (this.pageNum >= this.pages) return;
-      this.loadmore();
-    },
     loadmore() {
       this.pageNum++;
       this.getCardList();
-    },
-    onPageScroll(e) {
-      this.scrollTop = e.scrollTop;
     },
   },
   onHide() {

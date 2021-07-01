@@ -1,6 +1,6 @@
 <template>
-  <view class="commit-list u-padding-top-30 safe-area-inset-bottom">
-    <view class="list">
+  <view class="commit-list safe-area-inset-bottom">
+    <view class="u-margin-top-30 list">
       <view class="u-padding-top-20 item" v-for="(commit, index) in commits" :key="index">
         <view class="ugc-review">
           <view class="u-flex review-avatar">
@@ -37,7 +37,11 @@
               open-text="收起"
               close-text="全文"
             >
-              <rich-text :nodes="commit.recommend"></rich-text>
+              <rich-text
+                v-for="(content, index) in commit.contents"
+                :key="index"
+                :nodes="content"
+              ></rich-text>
             </u-read-more>
             <view class="u-flex review-pics">
               <view
@@ -54,25 +58,117 @@
         <u-gap height="14" bg-color="#f6f6f6" v-show="index !== commits.length - 1"></u-gap>
       </view>
     </view>
+    <u-loadmore v-if="commits.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
+    <view class="empty-display" v-if="!loading && !commits.length">
+      <image src="/static/image/empty.png"></image>
+      <text>暂无数据</text>
+    </view>
+    <loading class="loading" v-if="loading && !commits.length"></loading>
   </view>
 </template>
 
 <script>
+import { timeFmt } from '@/common/js/time-fmt';
 export default {
   name: 'commit-list',
-  onLoad() {
-    const eventChannel = this.getOpenerEventChannel();
-    eventChannel.on('submitCommits', data => {
-      console.log('submitCommits', data);
-      this.commits = data || [];
-    });
+  onLoad(options) {
+    this.productId = options.productId;
+    this.getCommits();
   },
   data() {
     return {
+      productId: null,
+      pageNum: 1,
+      pageSize: 10,
+      pages: 1,
       commits: [],
+      loading: true,
+      status: 'loadmore',
+      loadText: {
+        loadmore: '轻轻上拉',
+        loading: '努力加载中',
+        nomore: '暂时没有了',
+      },
     };
   },
+  onPullDownRefresh() {
+    this.getCommits(true);
+  },
+  onReachBottom() {
+    if (this.pageNum >= this.pages) {
+      return;
+    }
+    this.loadmore();
+  },
   methods: {
+    getCommits(isRefrash = false) {
+      if (this.productId == null) {
+        return console.warn('There is no productId');
+      }
+      this.loading = true;
+      uni.showNavigationBarLoading();
+      this.status = 'loading';
+      if (isRefrash) {
+        this.pageNum = 1;
+      }
+      this.$u.api
+        .getProductCommits({
+          productId: this.productId,
+          pageNum: this.pageNum,
+          pageSize: this.pageSize,
+        })
+        .then(data => {
+          if (isRefrash) {
+            console.log(111);
+            this.commits = [];
+            this.backToTop();
+            uni.stopPullDownRefresh();
+          }
+          this.pages = data.pages;
+          const commits = data.records || [];
+          this.commits.push(
+            ...commits.map(({ content, reviewTime }) => {
+              return {
+                username: content.userNickName,
+                lv: content.userLevel,
+                time: timeFmt(reviewTime, 'YYYY年MM月DD日'),
+                avatar: content.userHeadPic,
+                pics: content.pics.map(pic => pic.picUrl),
+                contents: content.contentDesc,
+                star: content.accurateStarValue,
+              };
+            })
+          );
+          this.stopLoading();
+        })
+        .catch(err => {
+          this.pageNum--;
+          this.stopLoading();
+          console.error(err);
+        });
+    },
+    backToTop() {
+      uni.pageScrollTo({
+        duration: 0,
+        scrollTop: 0,
+      });
+    },
+    stopLoading() {
+      uni.hideNavigationBarLoading();
+      this.handleReadBottomStatus();
+      this.loading = false;
+    },
+    handleReadBottomStatus() {
+      if (this.pageNum >= this.pages) {
+        this.status = 'nomore';
+      } else {
+        this.status = 'loadmore';
+      }
+    },
+    loadmore() {
+      this.pageNum++;
+      this.getCommits();
+    },
     previewImage(index, pics) {
       uni.previewImage({
         current: index,
@@ -154,6 +250,13 @@ export default {
             }
         }
     }
+}
+.loading {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+
+    transform: translate(-50%,-50%);
 }
 
 </style>

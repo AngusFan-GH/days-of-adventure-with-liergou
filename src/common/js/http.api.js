@@ -33,6 +33,12 @@ const install = (Vue, vm) => {
 	let getDetail = (productId) => vm.$u.get(`/market-boot/app/productitem/view/${productId}`);
 
 	/**
+	 * 获取产品评论
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/reviewUsingGET
+	 */
+	let getProductCommits = (params) => vm.$u.get(`/market-boot/app/productitem/review/${params.productId}`, params);
+
+	/**
 	 * 创建支付
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/createPayUsingPOST
 	 */
@@ -65,7 +71,8 @@ const install = (Vue, vm) => {
 		handleWeChatNotice,
 		queryPay,
 		updateUserInfo,
-		getDetail
+		getDetail,
+		getProductCommits
 	};
 };
 

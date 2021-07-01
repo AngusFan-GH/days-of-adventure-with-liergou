@@ -140,7 +140,7 @@
     <u-gap height="20" bg-color="#f6f6f6"></u-gap>
     <view class="u-padding-30 theme-ugc" v-if="data.commits.length">
       <view class="u-flex u-row-between title common u-skeleton-fillet" @click="goToCommitList()">
-        当前主题评价({{ data.commits.length }})
+        当前主题评价({{ data.commitCount }})
         <text class="arrow-right"></text>
       </view>
       <view class="u-margin-top-20 ugc-content">
@@ -414,6 +414,7 @@ export default {
     const { peopleFrom } = uni.getStorageSync(currentTabPage + '_filter_data') || {};
     this.chosenPeople = !!peopleFrom;
     this.getDetail();
+    this.getCommits();
     uni.showShareMenu();
   },
   onShareAppMessage(res) {
@@ -475,75 +476,58 @@ export default {
           // 临时获取时长
           data.duration = /时长(\d+)分钟/.exec(data.tipList[2])[1];
           // 遍历所有场次取价格最小值
-          data.price = Math.min.apply(
-            Math,
-            Array.from(
-              new Set(
-                Object.values(data.rooms || {}).reduce(
-                  (set, room) => set.concat(room.map(v => v.price)),
-                  []
-                )
-              )
-            )
-          );
+          data.price =
+            data.basicPrice != null
+              ? data.basicPrice
+              : Math.min.apply(
+                  Math,
+                  Array.from(
+                    new Set(
+                      Object.values(data.rooms || {}).reduce(
+                        (set, room) => set.concat(room.map(v => v.price)),
+                        []
+                      )
+                    )
+                  )
+                );
           data.poolRuleDescMap = ['拼场方式', '详细规则'].map(rule => {
             return {
               label: rule,
               value: data.poolRuleDescMap[rule],
             };
           });
-          data.commits = [
-            {
-              username: 'docbean',
-              lv: 'https://p0.meituan.net/gpa/roundlv5.png',
-              time: '2月6日',
-              star: 50 / 10,
-              recommend:
-                ' 先去附近的张胖子吃了烤串，非常不错！就是椒麻小串始终没上，还有我姐迟到了半小时，导致我们来店也晚了 ',
-              avatar:
-                'https://p0.meituan.net/userheadpicbackend/bbc148350b7572bdbb0e7e63d160a6cb162169.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
-              pics: [
-                'https://qcloud.dpfile.com/pc/C9JOrCKInllF_D--751iUpkaCXB-TiG9lJLUTb7XF_eDrHx3403SEg5dUJI6XFidt-CE6jG6-CX4b-2MzJHHr8tp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/zGfHKu8I5j3a1QvCs17dlHjMhYitat45GSTAWSdSLVN5tn8kypBcqNwHnjg96EvTBWqNhmeZG8Cpz4Jy_PWQT8tp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/92eiWjoGQETEd0kA7hFwVeLXqlJzKi5gRYnvLACBLt0wusUejJgMErZYEqdaX3Mft-CE6jG6-CX4b-2MzJHHr8tp2KEV4QICbci43MOjOA4.jpg',
-              ],
-            },
-            {
-              username: '麻酱',
-              lv: 'https://p0.meituan.net/gpa/roundlv4.png',
-              time: '1月4日',
-              star: 5 / 10,
-              recommend:
-                '  所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的  ',
-              avatar:
-                'https://p1.meituan.net/userheadpicbackend/c31b77e4966f38e97f54c9bf94e7586593132.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
-              pics: [
-                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/ADUQrvlNDrsp1sgVKBZBR4ZKHs88cIaKcUTRw52i9csNdtNylZX1pkGuwDqPCzmhQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-              ],
-            },
-            {
-              username: '麻酱2',
-              lv: 'https://p0.meituan.net/gpa/roundlv1.png',
-              time: '7月9日',
-              star: 5 / 10,
-              recommend:
-                '  所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的所以惠子，羽生，良辰和爱幼还要不要来空白玩呢？我再考虑考虑，张胖子那个串确实还是挺好吃的  ',
-              avatar:
-                'https://p1.meituan.net/userheadpicbackend/c31b77e4966f38e97f54c9bf94e7586593132.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0',
-              pics: [
-                'https://qcloud.dpfile.com/pc/7JhGixq3vNz9awrqKcogIG7RgK7F2qUCw_w_84Oos0v1Q-aWE0d_NZqedSY-mW2EQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/cqexqQ_fc9czCCxdUli7PyebKskP7Wn5Lka4_hCdPOSIC3_Lu4-EVeO-cwJ48dAxQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-                'https://qcloud.dpfile.com/pc/ADUQrvlNDrsp1sgVKBZBR4ZKHs88cIaKcUTRw52i9csNdtNylZX1pkGuwDqPCzmhQMBCzjVIueRhbVstb6dgGMtp2KEV4QICbci43MOjOA4.jpg',
-              ],
-            },
-          ];
+          data.commits = [];
           this.data = data;
           this.loading = false;
           this.setDescTextBtn();
+        })
+        .catch(err => console.error(err));
+    },
+    getCommits() {
+      if (this.productId == null) {
+        return console.warn('There is no productId');
+      }
+      this.$u.api
+        .getProductCommits({
+          productId: this.productId,
+          pageNum: 1,
+          pageSize: 2,
+        })
+        .then(data => {
+          const commits = data.records || [];
+          this.data.commits = commits.map(({ content, reviewTime }) => {
+            return {
+              username: content.userNickName,
+              lv: content.userLevel,
+              time: timeFmt(reviewTime, 'YYYY年MM月DD日'),
+              avatar: content.userHeadPic,
+              pics: content.pics.map(pic => pic.picUrl),
+              recommend: content.title,
+              star: content.accurateStarValue,
+            };
+          });
+          this.data.commitCount = data.total;
+          console.log('commits', this.data.commits);
         })
         .catch(err => console.error(err));
     },
@@ -628,7 +612,6 @@ export default {
         shopName: shopInfo.shopName,
         blockBooking,
       };
-      console.log(data);
       uni.navigateTo({
         url: '/subPackages/order/pay/index',
         success: res => {
@@ -653,10 +636,7 @@ export default {
     },
     goToCommitList() {
       uni.navigateTo({
-        url: '/subPackages/commit/index',
-        success: res => {
-          res.eventChannel.emit('submitCommits', JSON.parse(JSON.stringify(this.data.commits)));
-        },
+        url: '/subPackages/commit/index?productId=' + this.productId,
       });
     },
   },
@@ -945,6 +925,7 @@ export default {
             display: inline-flex;
             overflow: hidden;
 
+            width: 100%;
             margin: 14rpx 0 20rpx;
 
             border-radius: 20rpx;
