@@ -1,7 +1,7 @@
 <template>
   <view class="login">
     <image class="bg" src="/static/image/bg_login.png" mode="widthFix"></image>
-    <view class="u-font-26 u-text-center u-margin-top-50 bg-text" v-if="step == 0">
+    <view class="u-font-30 u-text-center u-margin-top-50 bg-text" v-if="step == 0">
       正在获取授权信息...
     </view>
     <view class="btn-box">

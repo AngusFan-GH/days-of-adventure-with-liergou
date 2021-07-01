@@ -2,8 +2,8 @@
   <view class="play toggle-play u-flex">
     <view class="play-left">
       <view class="left-top u-flex-1 u-line-1">
-        <text class="time u-margin-right-8">{{ time }}</text>
-        <text class="current-count">{{ screening.currentPeople }}人已加入</text>
+        <text class="u-margin-right-18 time">{{ time }}</text>
+        <text class="u-padding-left-18 current-count">{{ screening.currentPeople }}人已加入</text>
       </view>
       <view class="left-bottom">
         <text v-if="screening.restPeople > 0">
@@ -23,7 +23,7 @@
       <view class="rmb dpcolor">
         <text class="price u-margin-right-14">¥{{ screening.price }}/人</text>
       </view>
-      <view data-view-bid="b_play_r20lxsmk_mv" data-extend="sku_id=720575953" class="btn dpbg">
+      <view class="btn">
         <u-button shape="circle" size="mini" :custom-style="customStyle" @click="joinGroup()">
           立即预定
         </u-button>
@@ -34,6 +34,7 @@
 
 <script>
 import { timeRangeFmt } from '@/common/js/time-fmt';
+import style from '../../common/style/variable.scss';
 export default {
   props: {
     screening: {
@@ -44,8 +45,8 @@ export default {
   data() {
     return {
       customStyle: {
-        backgroundColor: '#f63',
-        color: '#fff',
+        backgroundColor: style.themeColor,
+        color: style.textCommonColor,
       },
     };
   },
@@ -58,7 +59,7 @@ export default {
     joinGroup() {
       console.log(this.screening);
       uni.navigateTo({
-        url: '/subPackages/order/index',
+        url: '/subPackages/order/pay/index',
         success: res => {
           res.eventChannel.emit('submitOrder', JSON.parse(JSON.stringify(this.screening)));
         },
@@ -69,6 +70,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/style/variable.scss';
 .play {
     position: relative;
 
@@ -86,23 +88,12 @@ export default {
             height: 30rpx;
 
             color: #111;
+            .time {
+                color: $text-dark-color ;
+            }
             .current-count {
-                margin-left: 16rpx;
-
-                color: #777;
-                &:before {
-                    position: absolute;
-
-                    display: inline-block;
-
-                    width: 2rpx;
-                    height: 20rpx;
-                    margin: 2rpx 0 0 -12rpx;
-
-                    content: '';
-
-                    background: #e1e1e1;
-                }
+                color: $text-light-gray-color;
+                border-left: 1px solid $line-color;
             }
         }
         .left-bottom {
@@ -112,9 +103,9 @@ export default {
             height: 30rpx;
             margin-top: 12rpx;
 
-            color: #999;
+            color: $text-gray-color;
             .people-count {
-                color: red;
+                color: $theme-color;
             }
         }
     }
@@ -125,7 +116,7 @@ export default {
 
             white-space: nowrap;
 
-            color: #f63;
+            color: $theme-color;
         }
     }
 }

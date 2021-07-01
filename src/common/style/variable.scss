@@ -10,6 +10,8 @@ $text-background: #b3b3b3;
 $difficult-icon-color: #ffba00;
 $tabbar-active-color: $theme-color;
 $tabbar-inactive-color: #000;
+$tag-background-color: #b3b3b3;
+$line-color: #b5b5b5;
 
 :export {
     backgroundColor: $background-color;
@@ -24,4 +26,6 @@ $tabbar-inactive-color: #000;
     difficultIconColor: $difficult-icon-color;
     tabbarActiveColor: $tabbar-active-color;
     tabbarInactiveColor: $tabbar-inactive-color;
+    tagBackgroundColor: $tag-background-color;
+    lineColor: $line-color;
 }
