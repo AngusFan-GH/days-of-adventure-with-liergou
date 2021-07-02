@@ -2,6 +2,7 @@
   <view class="list-card">
     <view
       class="u-flex shop"
+      :style="{ '--background': backgroundImage ? 'url(' + backgroundImage + ')' : 'none' }"
       :class="{ hasScreening: data.screenings.length }"
       @click="goToDetail()"
     >
@@ -90,6 +91,8 @@
 import defaultThumb from '@/static/image/bg_login.png';
 import cardScreening from '@/components/card-screening/card-screening.vue';
 import style from '../../common/style/variable.scss';
+import { fileUrl } from '../../common/js/config';
+import getBackgroundImage from '../../common/model/bg-image';
 export default {
   name: 'list-card',
   components: {
@@ -138,6 +141,9 @@ export default {
         case 2:
           return len;
       }
+    },
+    backgroundImage() {
+      return fileUrl + getBackgroundImage(this.data.tags);
     },
   },
   methods: {
@@ -199,6 +205,9 @@ export default {
 
         border-radius: 21rpx;
         background: linear-gradient(to right, rgba(44,42,43,1) 0%, rgba(105,105,105,1) 51%, rgba(100,100,100,1) 55%, rgba(44,42,43,1) 100%);
+        background-image: var(--background);
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
         &.hasScreening {
             &:before,
             &:after {
