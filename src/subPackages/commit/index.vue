@@ -133,8 +133,8 @@ export default {
                 lv: content.userLevel,
                 time: timeFmt(reviewTime, 'YYYY年MM月DD日'),
                 avatar: content.userHeadPic,
-                pics: content.pics.map(pic => pic.picUrl),
-                contents: content.contentDesc,
+                pics: (content.pics || []).map(pic => pic.picUrl),
+                contents: content.contentDesc || [],
                 star: content.accurateStarValue,
               };
             })
@@ -250,6 +250,16 @@ export default {
             }
         }
     }
+}
+.empty-display {
+    position: absolute;
+    top: 375rpx;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+    text-align: center;
+
+    color: $text-common-color;
 }
 .loading {
     position: fixed;

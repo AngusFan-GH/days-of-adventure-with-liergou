@@ -521,7 +521,7 @@ export default {
               lv: content.userLevel,
               time: timeFmt(reviewTime, 'YYYY年MM月DD日'),
               avatar: content.userHeadPic,
-              pics: content.pics.map(pic => pic.picUrl),
+              pics: (content.pics || []).map(pic => pic.picUrl),
               recommend: content.title,
               star: content.accurateStarValue,
             };

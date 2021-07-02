@@ -535,6 +535,8 @@ export default {
 
     transform: translate(-50%, -50%);
     text-align: center;
+
+    color: $text-common-color;
 }
 .loading {
     position: fixed;
