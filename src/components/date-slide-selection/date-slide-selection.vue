@@ -141,10 +141,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../common/style/variable.scss';
 .container {
     width: 100%;
+
+    background: $background-color;
 }
 .date-slide-selection {
     &::-webkit-scrollbar {

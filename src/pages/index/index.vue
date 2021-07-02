@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
     <view class="u-page list-container">
       <u-sticky :bg-color="styleVariable.backgroundColor">
         <u-search
@@ -45,6 +45,7 @@ import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
+import { fileUrl } from '../../common/js/config';
 export default {
   components: {
     listCard,
@@ -87,6 +88,7 @@ export default {
       gettingPosition: false,
       isRefrash: true,
       styleVariable: style,
+      backgroundImage: fileUrl + 'background_image.png',
     };
   },
   onPullDownRefresh() {
@@ -200,7 +202,7 @@ export default {
 
     min-height: 100%;
 
-    background-color: $background-color;
+    background: $background-color var(--background) no-repeat bottom / 100%;
 }
 .list {
     overflow: hidden;

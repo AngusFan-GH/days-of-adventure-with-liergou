@@ -1,5 +1,5 @@
 <template>
-  <view class="container">
+  <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
     <view class="u-page list-container">
       <u-sticky :bg-color="styleVariable.backgroundColor">
         <date-slide-selection
@@ -88,6 +88,7 @@ import dateSlideSelection from '@/components/date-slide-selection/date-slide-sel
 import { timeFmt, defaultStartTimeMaker } from '@/common/js/time-fmt';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
+import { fileUrl } from '../../common/js/config';
 export default {
   components: {
     listCard,
@@ -174,6 +175,7 @@ export default {
       ],
       sort: null,
       styleVariable: style,
+      backgroundImage: fileUrl + 'background_image.png',
     };
   },
   mounted() {
@@ -473,12 +475,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../common/style/variable.scss';
 .container {
     min-height: 100%;
 
-    background-color: $background-color;
+    background: $background-color var(--background) no-repeat bottom / 100%;
 }
 .sort {
     margin: 2rpx 0 10rpx;
@@ -545,5 +547,6 @@ export default {
 
     transform: translate(-50%,-50%);
 }
+
 
 </style>
