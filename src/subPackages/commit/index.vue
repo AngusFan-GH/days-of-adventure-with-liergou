@@ -180,6 +180,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../common/style/variable.scss';
 .commit-list {
     overflow: auto;
 
