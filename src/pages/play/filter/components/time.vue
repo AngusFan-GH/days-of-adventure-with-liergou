@@ -129,6 +129,7 @@ export default {
     display: block;
 
     width: 100%;
+    padding-left: $filter-tab-width;
     .label {
         position: relative;
 

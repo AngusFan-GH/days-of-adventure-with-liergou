@@ -32,8 +32,10 @@
       class="btn"
       v-for="(btn, index) in btnList"
       :key="index"
+      shape="circle"
+      :ripple="true"
       :throttle-time="0"
-      :type="current === index ? 'primary ' : 'default'"
+      :custom-style="current === index ? activeBtnStyle : btnStyle"
       @click="handleClick(index)"
     >
       {{ btn.label }}
@@ -43,6 +45,7 @@
 
 <script>
 import RangeSlider from '@/components/range-slider/range-slider.vue';
+import style from '../../../../common/style/variable.scss';
 export default {
   name: 'filter-price',
   components: {
@@ -112,6 +115,20 @@ export default {
       slideMax: 1050,
       isLiveMode: true,
       step: 50,
+      btnStyle: {
+        backgroundColor: style.filterBtnBgColor,
+        color: style.filterBtnTextColor,
+        width: '388rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+      },
+      activeBtnStyle: {
+        backgroundColor: style.filterBtnActiveBgColor,
+        color: style.filterBtnActiveTextColor,
+        width: '388rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+      },
     };
   },
   computed: {
@@ -187,6 +204,7 @@ export default {
 
     width: 100%;
     padding: 40rpx 20rpx;
+    padding-left: $filter-tab-width;
     .label {
         position: relative;
 
@@ -227,7 +245,9 @@ export default {
 .btn {
     display: block;
 
-    margin: 20rpx;
+    &:not(:nth-last-child(1)) {
+        margin-bottom: 26rpx;
+    }
 }
 
 </style>

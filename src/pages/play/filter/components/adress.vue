@@ -112,6 +112,7 @@ export default {
 .filter-adress {
     width: 100%;
     height: 100%;
+    padding-left: $filter-tab-width;
 }
 .tabs,
 .btns {

@@ -1,6 +1,6 @@
 <template>
-  <view class="u-relative filter">
-    <view class="u-flex main" :class="{ reverse: revertFilter }">
+  <view class="u-relative filter" :style="{ '--background': background }">
+    <view class="u-flex main">
       <view class="tabs">
         <!-- <scroll-view :scroll-y="true" style="height: 100%"> -->
         <view class="u-flex-col" style="height: 100%">
@@ -14,7 +14,7 @@
             }"
             @click="handleClickFilterTab(index)"
           >
-            {{ tab.label }}
+            <text class="tab-text">{{ tab.label }}</text>
           </view>
         </view>
         <!-- </scroll-view> -->
@@ -100,12 +100,7 @@
 
         <view v-if="!displayFilterTabs.length" class="empty">这里还什么配置都没有呢</view>
       </view>
-      <view
-        class="preview-btn"
-        :class="{ reverse: revertFilter }"
-        @touchstart="touchStart()"
-        @touchend="touchEnd()"
-      >
+      <view class="preview-btn" @touchstart="touchStart()" @touchend="touchEnd()">
         <u-icon
           class="preview-btn-icon"
           :name="showPreview ? 'eye-fill' : 'eye'"
@@ -114,10 +109,25 @@
         ></u-icon>
       </view>
     </view>
-    <view class="u-absolute u-flex u-row-around btn-container" :class="{ reverse: revertFilter }">
-      <u-button :ripple="true" @click="reset()" size="medium">重置</u-button>
-      <u-icon name="fingerprint" size="36" @longpress="handleRevertFilter()"></u-icon>
-      <u-button :ripple="true" @click="confirm()" type="primary" size="medium">确定</u-button>
+    <view class="u-absolute u-flex u-row-center btn-container">
+      <u-button
+        :ripple="true"
+        @click="reset()"
+        size="medium"
+        shape="circle"
+        :custom-style="cancelBtnStyle"
+      >
+        重置
+      </u-button>
+      <u-button
+        :ripple="true"
+        @click="confirm()"
+        size="medium"
+        shape="circle"
+        :custom-style="confirmBtnStyle"
+      >
+        确定
+      </u-button>
     </view>
   </view>
 </template>
@@ -132,6 +142,8 @@ import filterBlockBooking from './components/block-booking.vue';
 import filterPeopleCount from './components/people-count.vue';
 import { timeFmt, isToday } from '@/common/js/time-fmt';
 import areaList from '../modal/area';
+import style from '../../../common/style/variable.scss';
+import { fileUrl } from '../../../common/js/config';
 export default {
   name: 'filter',
   components: {
@@ -164,30 +176,29 @@ export default {
   },
   data() {
     return {
-      revertFilter: uni.getStorageSync('revert-filter'),
       filterTabs: [
         {
-          label: '人数',
+          label: '人 数',
           value: 'people',
         },
         {
-          label: '商区',
+          label: '商 圈',
           value: 'position',
         },
         {
-          label: '类型',
+          label: '类 型',
           value: 'styles',
         },
         {
-          label: '特色',
+          label: '特 色',
           value: 'features',
         },
         {
-          label: '时间',
+          label: '时 间',
           value: 'time',
         },
         {
-          label: '价格',
+          label: '价 格',
           value: 'price',
         },
         {
@@ -198,6 +209,23 @@ export default {
       currentFiltertab: null,
       filterData: {},
       showPreview: false,
+      background: [
+        `url(${fileUrl}filter_background_grass.png) bottom / 100% no-repeat`,
+        `url(${fileUrl}filter_background_hourse.png) 60% 75% / 110% 50% no-repeat`,
+        `url(${fileUrl}filter_background_image.png) bottom / 100% 100% no-repeat`,
+      ].join(','),
+      cancelBtnStyle: {
+        backgroundColor: style.filterCancelBtnColor,
+        color: style.filterCancelTextColor,
+        width: '196rpx',
+        height: '74rpx',
+      },
+      confirmBtnStyle: {
+        backgroundColor: style.filterConfirmBtnColor,
+        color: style.filterConfirmTextColor,
+        width: '196rpx',
+        height: '74rpx',
+      },
     };
   },
   computed: {
@@ -225,10 +253,6 @@ export default {
     },
   },
   methods: {
-    handleRevertFilter() {
-      this.revertFilter = !this.revertFilter;
-      uni.setStorageSync('revert-filter', this.revertFilter);
-    },
     handleClickFilterTab(index) {
       this.currentFiltertab = this.filterTabs[index].value;
     },
@@ -262,18 +286,74 @@ export default {
 
 <style lang="scss">
 @import '../../../common/style/variable.scss';
+$btn-container-height: 108rpx;
 .filter {
+    overflow: hidden;
+
     width: 100%;
     height: 100%;
-    padding-bottom: 100rpx;
+    padding-bottom: $btn-container-height;
+
+    background: var(--background);
+    background-color: #85817c;
     .main {
         position: relative;
 
         width: 100%;
         height: 100%;
-        .preview {
+        .tabs {
             position: absolute;
             z-index: 9;
+            top: 0;
+            left: 0;
+
+            width: $filter-tab-width;
+
+            box-shadow: 0 8rpx 16rpx #fff inset;
+            .tab {
+                font-size: 36rpx;
+                font-weight: 400;
+
+                position: relative;
+
+                padding: 40rpx 10rpx;
+
+                color: $filter-tab-text-color;
+                &-text {
+                    opacity: 1;
+                }
+                &.selected {
+                    background-color: $filter-active-color;
+                }
+                &.actived:after {
+                    font-size: 32rpx;
+
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+
+                    display: block;
+
+                    content: ' ';
+
+                    border-right: 20rpx solid $filter-tab-text-color;
+                    border-bottom: 20rpx solid transparent;
+                }
+            }
+        }
+        .tabs,
+        .form {
+            height: 100%;
+        }
+        .form {
+            .tab-content {
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .preview {
+            position: absolute;
+            z-index: 10;
             top: 0;
             left: 0;
 
@@ -322,66 +402,6 @@ export default {
 
                 transform: translate(-25%, -25%);
             }
-            &.reverse {
-                right: auto;
-                bottom: -100rpx;
-                left: -100rpx;
-
-                transform: rotate(90deg);
-                .preview-btn-icon {
-                    transform: rotate(-90deg);
-                }
-            }
-        }
-        .tabs,
-        .form {
-            height: 100%;
-        }
-        .tabs {
-            .tab {
-                position: relative;
-
-                padding: 40rpx 10rpx;
-
-                border-right: 1px solid #999;
-                &:not(:nth-last-child(1)) {
-                    border-bottom: 1px solid #999;
-                }
-                &.selected {
-                    color: $theme-color;
-                    border-right: 0 none;
-                }
-                &.actived:after {
-                    font-size: 32rpx;
-
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-
-                    display: block;
-
-                    content: ' ';
-
-                    border-right: 20rpx solid #2979ff;
-                    border-bottom: 20rpx solid transparent;
-                }
-            }
-        }
-        &.reverse {
-            .tab {
-                border-right: 0;
-                border-left: 1px solid #999;
-                &.selected {
-                    border-left: 0 none;
-                }
-            }
-        }
-        .form {
-            box-sizing: border-box;
-            padding: 20rpx 10rpx;
-            .tab-content {
-                height: 100%;
-            }
         }
     }
     .btn-container {
@@ -390,12 +410,13 @@ export default {
         left: 0;
 
         width: 100%;
-        height: 100rpx;
+        height: $btn-container-height;
 
-        border-top: 1px solid #999;
-    }
-    .reverse {
-        flex-direction: row-reverse;
+        opacity: .8;
+        background-color: $filter-btn-container-bg-color;
+        u-button:nth-child(1) {
+            margin-right: 95rpx;
+        }
     }
 }
 

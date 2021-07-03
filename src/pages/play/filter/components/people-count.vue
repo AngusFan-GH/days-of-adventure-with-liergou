@@ -4,10 +4,10 @@
       class="btn"
       v-for="(count, index) in btnList"
       :key="index"
-      size="medium"
-      :custom-style="customStyle"
+      shape="circle"
+      :ripple="true"
       :throttle-time="0"
-      :type="current === index ? 'primary ' : 'default'"
+      :custom-style="current === index ? activeBtnStyle : btnStyle"
       @click="handleClick(index)"
     >
       {{ count.label }}
@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import style from '../../../../common/style/variable.scss';
 export default {
   name: 'filter-people-count',
   model: {
@@ -52,8 +53,19 @@ export default {
           value: 11,
         }),
       current: null,
-      customStyle: {
-        width: '120rpx',
+      btnStyle: {
+        backgroundColor: style.filterBtnBgColor,
+        color: style.filterBtnTextColor,
+        width: '206rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+      },
+      activeBtnStyle: {
+        backgroundColor: style.filterBtnActiveBgColor,
+        color: style.filterBtnActiveTextColor,
+        width: '206rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
       },
     };
   },
@@ -72,16 +84,21 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../../common/style/variable.scss';
 .filter-people-count {
     width: 100%;
-    padding: 40rpx 50rpx;
+    padding: 50rpx 0 40rpx $filter-tab-width;
 
     flex-wrap: wrap;
 }
 .btn {
     display: block;
 
-    margin: 20rpx;
+    margin-bottom: 40rpx;
+    &:nth-child(2n+1) {
+        margin-right: 32rpx;
+        margin-left: 25rpx;
+    }
 }
 
 </style>

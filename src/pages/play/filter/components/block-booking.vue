@@ -4,8 +4,10 @@
       class="btn"
       v-for="(btn, index) in btnList"
       :key="index"
+      shape="circle"
+      :ripple="true"
       :throttle-time="0"
-      :type="current === index ? 'primary ' : 'default'"
+      :custom-style="current === index ? activeBtnStyle : btnStyle"
       @click="handleClick(index)"
     >
       {{ btn.label }}
@@ -14,6 +16,7 @@
 </template>
 
 <script>
+import style from '../../../../common/style/variable.scss';
 export default {
   name: 'filter-block-booking',
   model: {
@@ -45,6 +48,20 @@ export default {
         },
       ],
       current: null,
+      btnStyle: {
+        backgroundColor: style.filterBtnBgColor,
+        color: style.filterBtnTextColor,
+        width: '388rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+      },
+      activeBtnStyle: {
+        backgroundColor: style.filterBtnActiveBgColor,
+        color: style.filterBtnActiveTextColor,
+        width: '388rpx',
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+      },
     };
   },
   methods: {
@@ -62,16 +79,19 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../../common/style/variable.scss';
 .filter-block-booking {
     display: block;
 
     width: 100%;
-    padding: 40rpx;
+    padding: 50rpx 0 40rpx $filter-tab-width;
 }
 .btn {
     display: block;
-
-    margin: 20rpx;
+    &:not(:nth-last-child(1)) {
+        margin-bottom: 31rpx;
+    }
 }
+
 
 </style>

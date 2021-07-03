@@ -4,9 +4,10 @@
       class="btn"
       v-for="(btn, index) in btnList"
       :key="index"
-      size="mini"
+      shape="circle"
+      :ripple="true"
       :throttle-time="0"
-      :type="btn.active ? 'primary' : 'default'"
+      :custom-style="btn.active ? activeBtnStyle : btnStyle"
       @click="handleClick(btn, index)"
     >
       {{ btn.label }}
@@ -16,6 +17,7 @@
 
 <script>
 import feature from '../../modal/feature';
+import style from '../../../../common/style/variable.scss';
 export default {
   name: 'filter-feature',
   model: {
@@ -45,6 +47,20 @@ export default {
         v.active = false;
         return v;
       }),
+      btnStyle: {
+        backgroundColor: style.filterBtnBgColor,
+        color: style.filterBtnTextColor,
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+        padding: '0 29rpx',
+      },
+      activeBtnStyle: {
+        backgroundColor: style.filterBtnActiveBgColor,
+        color: style.filterBtnActiveTextColor,
+        height: '58rpx',
+        border: '4rpx solid ' + style.filterBtnBorderColor,
+        padding: '0 29rpx',
+      },
     };
   },
   methods: {
@@ -68,16 +84,18 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../../common/style/variable.scss';
 .filter-feature {
     width: 100%;
-    padding: 30rpx 40rpx;
+    padding: 50rpx 20rpx 50rpx $filter-tab-width;
 
     flex-wrap: wrap;
 }
 .btn {
     display: block;
 
-    margin: 20rpx;
+    margin-bottom: 31rpx;
+    margin-left: 25rpx;
 }
 
 </style>

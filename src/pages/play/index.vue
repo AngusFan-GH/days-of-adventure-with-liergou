@@ -27,7 +27,7 @@
       </u-sticky>
       <view
         class="u-flex u-row-between empty-tip"
-        v-if="!loading && !list.length && !recommends.length"
+        v-if="!loading && !list.length && !recommends.length && !showFilter"
         @click="showFilter = true"
       >
         <text>搜索结果太少，请尝试调整筛选条件</text>
@@ -59,10 +59,10 @@
       :safe-area-inset-bottom="true"
       :mask-close-able="false"
       z-index="997"
-      width="90%"
+      width="690"
       height="85%"
-      border-radius="8"
-      negative-top="100"
+      border-radius="10"
+      negative-top="120"
       :mask-custom-style="filterMaskStyle"
     >
       <filter :data="filterData" :dateLength="dateLength" @confirm="handleFilterConfirm"></filter>
@@ -152,6 +152,13 @@ export default {
       },
       dateLength: 15,
       gettingPosition: false,
+      backgroundImage: fileUrl + 'background_image.png',
+      filterMaskStyle: {
+        filter: 'blur(10px)',
+        backgroundImage: `url(${fileUrl}filter_background_image.png)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100% 100%',
+      },
       // 排序
       sortList: [
         {
@@ -177,7 +184,6 @@ export default {
       ],
       sort: null,
       styleVariable: style,
-      backgroundImage: fileUrl + 'background_image.png',
     };
   },
   mounted() {
@@ -204,20 +210,6 @@ export default {
     this.scrollTop = e.scrollTop;
   },
   computed: {
-    filterMaskStyle() {
-      const imgUrl =
-        this.list.length && this.list[Math.floor(Math.random() * this.list.length)].headPic;
-      return imgUrl
-        ? {
-            filter: 'blur(20px)',
-            backgroundImage: `url(${imgUrl})`,
-            backgroundSize: '200%',
-            transition: 'background-image 2s',
-          }
-        : {
-            filter: 'blur(20px)',
-          };
-    },
     displayRecommends() {
       return this.recommends.slice(0, this.recommendDisplayPageNum * this.pageSize);
     },
@@ -583,6 +575,5 @@ export default {
 
     transform: translate(-50%,-50%);
 }
-
 
 </style>

@@ -12,6 +12,19 @@ $tabbar-active-color: $theme-color;
 $tabbar-inactive-color: #000;
 $tag-background-color: #b3b3b3;
 $line-color: #b5b5b5;
+$filter-tab-width: 187rpx;
+$filter-btn-container-bg-color: #6e6e6e;
+$filter-confirm-btn-color: #dc782f;
+$filter-confirm-text-color: #fff;
+$filter-cancel-btn-color: #343434;
+$filter-cancel-text-color: #c1ac78;
+$filter-tab-text-color: #e5ce95;
+$filter-active-color: rgba(135, 84, 39, .5);
+$filter-btn-border-color: rgba(183, 160, 108, .8);
+$filter-btn-bg-color: rgba(208, 207, 206, .8);
+$filter-btn-text-color: #59503f;
+$filter-btn-active-bg-color: rgba(135, 84, 39, .8);
+$filter-btn-active-text-color: #fff;
 
 :export {
     backgroundColor: $background-color;
@@ -28,4 +41,13 @@ $line-color: #b5b5b5;
     tabbarInactiveColor: $tabbar-inactive-color;
     tagBackgroundColor: $tag-background-color;
     lineColor: $line-color;
+    filterConfirmBtnColor: $filter-confirm-btn-color;
+    filterCancelBtnColor: $filter-cancel-btn-color;
+    filterConfirmTextColor: $filter-confirm-text-color;
+    filterCancelTextColor: $filter-cancel-text-color;
+    filterBtnBorderColor: $filter-btn-border-color;
+    filterBtnBgColor: $filter-btn-bg-color;
+    filterBtnTextColor: $filter-btn-text-color;
+    filterBtnActiveBgColor: $filter-btn-active-bg-color;
+    filterBtnActiveTextColor: $filter-btn-active-text-color;
 }
