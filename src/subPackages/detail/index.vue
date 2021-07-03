@@ -309,7 +309,6 @@
             v-if="showChooseSession"
             :date="date"
             :length="15"
-            inactiveColor="#000"
             @change="dateChange"
           ></date-slide-selection>
         </view>
@@ -588,7 +587,7 @@ export default {
         return {
           time: `${timeFmt(room.roomBeginTime, 'HH:mm')}-${timeFmt(room.roomEndTime, 'HH:mm')}`,
           date: `${timeFmt(this.date, 'dddd')}(${timeFmt(this.date, 'MM-DD')})`,
-          disabled: room.currentPeople >= advicePeopleMax || timeout,
+          disabled: room.status === '2' || room.currentPeople >= advicePeopleMax || timeout,
           timeout,
           ...room,
         };
