@@ -35,7 +35,9 @@
       </view>
       <view class="list">
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
-        <view class="tip" v-if="recommends.length">没有更多匹配结果，为您智能推荐更多结果</view>
+        <view class="tip" v-if="recommends.length">
+          <text class="tip-text">没有更多匹配结果，以下是为您智能推荐的结果</text>
+        </view>
         <list-card v-for="(card, index) in displayRecommends" :key="index" :data="card"></list-card>
       </view>
       <u-loadmore
@@ -510,7 +512,41 @@ export default {
 
         padding: 0 20rpx 24rpx;
 
-        color: $text-light-gray-color;
+        &-text {
+            font-size: 28rpx;
+
+            position: relative;
+
+            color: $text-common-color;
+            &:before {
+                position: absolute;
+                right: -14rpx;
+                bottom: -6rpx;
+
+                display: block;
+
+                width: 4rpx;
+                height: 25rpx;
+
+                content: '';
+
+                background-color: $theme-color;
+            }
+            &:after {
+                position: absolute;
+                right: -10rpx;
+                bottom: -6rpx;
+
+                display: block;
+
+                width: 45rpx;
+                height: 4rpx;
+
+                content: '';
+
+                background-color: $theme-color;
+            }
+        }
     }
 }
 .empty-tip {
