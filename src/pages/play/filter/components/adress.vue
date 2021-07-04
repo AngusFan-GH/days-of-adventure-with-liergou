@@ -123,15 +123,20 @@ export default {
 .tabs {
     width: 20%;
 
-    background-color: #fff;
     .tab {
+        font-size: 32rpx;
+        font-weight: 400;
+
         box-sizing: border-box;
-        padding: 20rpx;
+        padding: 29rpx;
+
+        color: #000;
+        background-color: rgba(255, 255, 255, .6);
         &.selected {
             position: relative;
 
             color: $theme-color;
-            background-color: #f0f0f0;
+            background-color: transparent;
             &:before {
                 position: absolute;
                 top: 0;
@@ -139,20 +144,25 @@ export default {
 
                 display: block;
 
-                width: 4rpx;
+                width: 8rpx;
                 height: 100%;
 
                 content: '';
 
-                background-color: $theme-color;
+                background-color: $filter-tab-text-color;
             }
         }
     }
 }
 .btns {
-    background-color: #f0f0f0;
     .btn {
-        padding: 20rpx;
+        font-size: 32rpx;
+        font-weight: 400;
+
+        box-sizing: border-box;
+        padding: 29rpx;
+
+        color: $filter-tab-text-color;
         &.selected {
             color: $theme-color;
         }

@@ -330,14 +330,14 @@ $btn-container-height: 108rpx;
 
                     position: absolute;
                     top: 0;
-                    right: 0;
+                    left: 0;
 
                     display: block;
 
                     content: ' ';
 
-                    border-right: 20rpx solid $filter-tab-text-color;
                     border-bottom: 20rpx solid transparent;
+                    border-left: 20rpx solid $filter-tab-text-color;
                 }
             }
         }
