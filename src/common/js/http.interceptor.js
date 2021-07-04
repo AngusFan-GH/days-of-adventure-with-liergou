@@ -20,6 +20,7 @@ const install = (Vue, vm) => {
 		const token = uni.getStorageSync('token');
 		if (token) {
 			config.data.token = token;
+			config.header.token = token;
 		}
 		return config;
 	};
