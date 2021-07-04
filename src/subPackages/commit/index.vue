@@ -50,12 +50,17 @@
                 :key="i"
                 @click="previewImage(pic, commit.pics)"
               >
-                <image :src="pic" mode="scaleToFill" />
+                <u-lazy-load
+                  :image="pic"
+                  height="218"
+                  threshold="300"
+                  img-mode="scaleToFill"
+                ></u-lazy-load>
               </view>
             </view>
           </view>
         </view>
-        <u-gap height="14" bg-color="#f6f6f6" v-show="index !== commits.length - 1"></u-gap>
+        <u-gap height="14" bg-color="#f6f6f6"></u-gap>
       </view>
     </view>
     <u-loadmore
@@ -63,7 +68,8 @@
       :status="status"
       @loadmore="loadmore"
       :loadText="loadText"
-      margin-bottom="50"
+      margin-top="30"
+      margin-bottom="30"
     />
     <view class="empty-display" v-if="!loading && !commits.length">
       <image src="/static/image/empty.png"></image>
@@ -187,8 +193,8 @@ export default {
 <style lang="scss">
 @import '../../common/style/variable.scss';
 .commit-list {
-    overflow: auto;
     display: block;
+    overflow: auto;
 
     height: 100%;
     .list {
@@ -240,11 +246,13 @@ export default {
 
                 flex-wrap: wrap;
                 .pic {
-                    image {
+                    width: 218rpx;
+                    height: 218rpx;
+                    u-lazy-load {
                         display: block;
 
-                        width: 218rpx;
-                        height: 218rpx;
+                        width: 100%;
+                        height: 100%;
                     }
                     &:nth-of-type(3n),
                     &:nth-of-type(3n-1) {

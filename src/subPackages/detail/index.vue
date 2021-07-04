@@ -180,7 +180,12 @@
                 :key="i"
                 @click="previewImage(pic, commit.pics)"
               >
-                <image :src="pic" mode="scaleToFill" />
+                <u-lazy-load
+                  :image="pic"
+                  height="192"
+                  threshold="300"
+                  img-mode="scaleToFill"
+                ></u-lazy-load>
               </view>
             </view>
           </view>
