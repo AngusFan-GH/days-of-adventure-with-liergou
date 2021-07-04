@@ -1,15 +1,16 @@
 <template>
   <picker-view
     class="time-picker"
+    mask-class="time-picker-mask"
     indicator-class="time-picker-item"
     :value="timeIndexValue"
     @change="change"
   >
     <picker-view-column>
-      <view v-for="(v, i) in 24" :key="i">{{ formatNum(i) }}时</view>
+      <view class="item" v-for="(v, i) in 24" :key="i">{{ formatNum(i) }}时</view>
     </picker-view-column>
     <picker-view-column>
-      <view v-for="(v, i) in seconds" :key="i">{{ formatNum(v) }}分</view>
+      <view class="item" v-for="(v, i) in seconds" :key="i">{{ formatNum(v) }}分</view>
     </picker-view-column>
   </picker-view>
 </template>
@@ -122,7 +123,18 @@ export default {
     text-align: center;
 
     border-radius: 12rpx;
-    background: #fff;
+    .item {
+        display: flex;
+
+        color: #000;
+
+        justify-content: center;
+        align-items: center;
+    }
+}
+picker-view-column {
+    color: #000;
+    background-image: none;
 }
 
 </style>

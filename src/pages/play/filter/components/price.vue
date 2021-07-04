@@ -1,17 +1,17 @@
 <template>
   <view class="filter-price">
-    <view class="label">价格区间</view>
-    <view class="u-padding-left-10 u-padding-right-10 u-margin-bottom-40">
-      <view class="u-flex title">
+    <label class="label" label="价格区间" />
+    <view class="u-padding-left-16 u-padding-right-14 u-margin-top-48 u-margin-bottom-60">
+      <view class="u-flex u-margin-bottom-30 title">
         <text class="u-margin-right-6">¥</text>
         <text>{{ displayPrice }}</text>
       </view>
       <view class="u-flex">
-        <view class="u-margin-right-20">{{ slideMin }}</view>
+        <view class="u-margin-right-10 title">{{ slideMin }}</view>
         <view>
           <range-slider
             :width="slideStyle.width"
-            :height="slideStyle.height"
+            :barHeight="slideStyle.barHeight"
             :blockSize="slideStyle.blockSize"
             :min="slideMin"
             :max="slideMax"
@@ -24,10 +24,10 @@
             <view slot="maxBlock" class="range-slider-block"></view>
           </range-slider>
         </view>
-        <view class="u-margin-left-20">{{ slideMax - step }}+</view>
+        <view class="u-margin-left-10 title">{{ slideMax - step }}+</view>
       </view>
     </view>
-    <view class="label">快捷选择</view>
+    <label class="label" label="快捷选择" />
     <u-button
       class="btn"
       v-for="(btn, index) in btnList"
@@ -46,10 +46,12 @@
 <script>
 import RangeSlider from '@/components/range-slider/range-slider.vue';
 import style from '../../../../common/style/variable.scss';
+import label from '../common/label.vue';
 export default {
   name: 'filter-price',
   components: {
     RangeSlider,
+    label,
   },
   model: {
     prop: 'value',
@@ -107,9 +109,9 @@ export default {
       current: null,
       rangeValues: [0, 1050],
       slideStyle: {
-        width: 300,
-        height: 80,
-        blockSize: 30,
+        width: 355,
+        blockSize: 25,
+        barHeight: 17,
       },
       slideMin: 0,
       slideMax: 1050,
@@ -203,51 +205,23 @@ export default {
     display: block;
 
     width: 100%;
-    padding: 40rpx 20rpx;
+    padding: 50rpx 20rpx;
     padding-left: $filter-tab-width;
     .label {
-        position: relative;
-
         display: inline-block;
 
-        margin-bottom: 30rpx;
-        margin-left: 10rpx;
-        &:before {
-            position: absolute;
-            right: -8rpx;
-            bottom: -4rpx;
+        margin-left: 13rpx;
+    }
+    .title {
+        font-size: 26rpx;
 
-            display: block;
-
-            width: 4rpx;
-            height: 20rpx;
-
-            content: '';
-
-            background-color: $theme-color;
-        }
-        &:after {
-            position: absolute;
-            right: -8rpx;
-            bottom: -4rpx;
-
-            display: block;
-
-            width: 20rpx;
-            height: 4rpx;
-
-            content: '';
-
-            background-color: $theme-color;
-        }
+        color: $text-common-color;
     }
 }
 .btn {
     display: block;
 
-    &:not(:nth-last-child(1)) {
-        margin-bottom: 26rpx;
-    }
+    margin-top: 26rpx;
 }
 
 </style>

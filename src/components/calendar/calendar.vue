@@ -1,12 +1,12 @@
 <template>
-  <view class="calendar-wrapper">
+  <view class="calendar-wrapper" :style="{ backgroundColor: backgroundColor }">
     <view class="header" v-if="headerBar">
       <view class="pre" @click="changeMonth('pre')">
-        <u-icon name="arrow-left"></u-icon>
+        <u-icon name="arrow-left" size="24" color="#000"></u-icon>
       </view>
       <view>{{ y + '年' + formatNum(m) + '月' }}</view>
       <view class="next" @click="changeMonth('next')">
-        <u-icon name="arrow-right"></u-icon>
+        <u-icon name="arrow-right" size="24" color="#000"></u-icon>
       </view>
     </view>
     <view class="week">
@@ -78,6 +78,11 @@ export default {
       type: Boolean,
       default: true,
     },
+    // 背景色
+    backgroundColor: {
+      type: String,
+      default: 'transparent',
+    },
     min: null,
     max: null,
   },
@@ -114,7 +119,7 @@ export default {
       return this.weektext.slice(this.weekstart).concat(this.weektext.slice(0, this.weekstart));
     },
     height() {
-      return (this.dates.length / 7) * 80 + 'rpx';
+      return (this.dates.length / 7) * 68 + 'rpx';
     },
   },
   methods: {
@@ -159,8 +164,8 @@ export default {
         dates.push({
           date: this.formatNum(lastDayOfLastMonth - startDay + i),
           day: weekstart + i - 1 || 7,
-          month: m - 1 >= 0 ? this.formatNum(m - 1) : 12,
-          year: m - 1 >= 0 ? y : y - 1,
+          month: m - 1 > 0 ? this.formatNum(m - 1) : 12,
+          year: m - 1 > 0 ? y : y - 1,
           isPreM: true,
         });
       }
@@ -177,8 +182,8 @@ export default {
         dates.push({
           date: this.formatNum(k),
           day: (lastDateOfMonth + startDay + weekstart + k - 1) % 7 || 7,
-          month: m + 1 <= 11 ? this.formatNum(m + 1) : 0,
-          year: m + 1 <= 11 ? y : y + 1,
+          month: m + 1 <= 12 ? this.formatNum(m + 1) : 1,
+          year: m + 1 <= 12 ? y : y + 1,
           isNextM: true,
         });
       }
@@ -224,7 +229,7 @@ export default {
         this.dates.forEach((i, x) => {
           this.isToday(i.year, i.month, i.date) && (index = x);
         });
-        this.positionTop = -((Math.ceil((index + 1) / 7) || 1) - 1) * 80;
+        this.positionTop = -((Math.ceil((index + 1) / 7) || 1) - 1) * 68;
       }
     },
     // 点击回调
@@ -288,18 +293,14 @@ export default {
     text-align: center;
 
     color: #bbb7b7;
-    background-color: #fff;
 
     .header {
-        font-family: PingFang SC;
-        font-size: 30rpx;
+        font-size: 24rpx;
         font-weight: bold;
 
         display: flex;
 
-        height: 80rpx;
-
-        color: #333;
+        color: #000;
 
         align-items: center;
         justify-content: center;
@@ -324,21 +325,29 @@ export default {
     }
 
     .week {
-        font-family: PingFang SC;
-        font-size: 28rpx;
         font-weight: bold;
-        line-height: 80rpx;
 
         display: flex;
 
-        height: 80rpx;
+        margin-bottom: 31rpx;
+        padding-top: 17rpx;
 
-        color: #333;
+        border-top: 4rpx solid #aa6532;
 
         align-items: center;
+        &-day {
+            font-size: 19rpx;
 
-        view {
+            display: flex;
             flex: 1;
+
+            height: 35rpx;
+
+            color: #fff;
+            background-color: #dc782f;
+
+            align-items: center;
+            justify-content: center;
         }
     }
 
@@ -360,30 +369,33 @@ export default {
             flex-wrap: wrap;
 
             .item {
-                line-height: 80rpx;
+                line-height: 68rpx;
 
                 position: relative;
 
-                display: block;
+                display: flex;
 
                 width: calc(100% / 7);
-                height: 80rpx;
+                height: 68rpx;
+
+                align-items: center;
+                justify-content: center;
 
                 .day {
-                    font-size: 28rpx;
-                    font-weight: 600;
+                    font-size: 24rpx;
+                    font-weight: bold;
                     line-height: 40rpx;
 
-                    display: inline-block;
+                    display: flex;
                     overflow: hidden;
 
                     width: 40rpx;
                     height: 40rpx;
 
-                    vertical-align: middle;
+                    color: #aa2b25;
 
-                    color: #333;
-                    color: #f63;
+                    align-items: center;
+                    justify-content: center;
 
                     &.choose {
                         color: #333;
@@ -400,7 +412,7 @@ export default {
                 }
 
                 .isWorkDay {
-                    color: #2979ff;
+                    color: #000;
                 }
 
                 .notSigned {
@@ -419,29 +431,15 @@ export default {
 
                 .today {
                     color: #fff;
-                    border-radius: 4rpx;
-                    background-color: #4d7df9;
-                }
-
-                .workDay {
-                    position: absolute;
-                    bottom: 0;
-                    left: 50%;
-
-                    width: 8rpx;
-                    height: 8rpx;
-
-                    pointer-events: none;
-
-                    border-radius: 10rpx;
-                    background: #4d7df9;
+                    border-radius: 100%;
+                    background-color: #dc782f;
                 }
             }
         }
     }
 
     .hide {
-        height: 80rpx !important;
+        height: 68rpx !important;
     }
 }
 

@@ -100,7 +100,7 @@
 
         <view v-if="!displayFilterTabs.length" class="empty">这里还什么配置都没有呢</view>
       </view>
-      <view class="preview-btn" @touchstart="touchStart()" @touchend="touchEnd()">
+      <view v-show="false" class="preview-btn" @touchstart="touchStart()" @touchend="touchEnd()">
         <u-icon
           class="preview-btn-icon"
           :name="showPreview ? 'eye-fill' : 'eye'"
@@ -309,7 +309,7 @@ $btn-container-height: 108rpx;
 
             width: $filter-tab-width;
 
-            box-shadow: 0 8rpx 16rpx #fff inset;
+            box-shadow: 0 -2rpx 20rpx #f0f0f0 inset;
             .tab {
                 font-size: 36rpx;
                 font-weight: 400;

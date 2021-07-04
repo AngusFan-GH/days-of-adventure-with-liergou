@@ -91,7 +91,7 @@ export default {
     //组件高度
     height: {
       type: Number,
-      default: 100,
+      default: 0,
     },
     //滑块大小
     blockSize: {
@@ -106,12 +106,12 @@ export default {
     //背景条颜色
     backgroundColor: {
       type: String,
-      default: '#e9e9e9',
+      default: '#fff',
     },
     //已选择的颜色
     activeColor: {
       type: String,
-      default: '#1aad19',
+      default: '#ffe983',
     },
     //最小值
     min: {
@@ -376,6 +376,8 @@ export default {
     height: 100%;
 
     border-radius: 10000rpx;
+    background: #fff;
+    box-shadow: 0 0 6rpx 2rpx #ffe983 inset;
 }
 .range-bar-progress {
     position: absolute;
@@ -383,7 +385,8 @@ export default {
     width: 100%;
     height: 100%;
 
-    background-color: blueviolet;
+    background-color: #ffe983;
+    box-shadow: 0 0 6rpx 2rpx #ff7e00 inset;
 }
 .block {
     position: absolute;
@@ -393,7 +396,7 @@ export default {
 
     border-radius: 50%;
     background: #fff;
-    box-shadow: 0rpx 0rpx 6rpx #ccc;
+    box-shadow: 0 0 6rpx 2rpx #ff7e00 inset;
 }
 .block.active {
     transform: translate(0, -50%) scale(1.5);
