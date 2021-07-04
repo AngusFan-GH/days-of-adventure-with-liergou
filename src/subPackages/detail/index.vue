@@ -495,8 +495,9 @@ export default {
               value: data.poolRuleDescMap[rule],
             };
           });
-          data.commits = [];
-          this.data = { ...this.data, ...data };
+          data.commits = this.data.commits || [];
+          data.commitCount = this.data.commitCount || 0;
+          this.data = data;
           this.loading = false;
           this.setDescTextBtn();
         })
