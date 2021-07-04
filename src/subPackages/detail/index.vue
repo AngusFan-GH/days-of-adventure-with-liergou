@@ -496,7 +496,7 @@ export default {
             };
           });
           data.commits = [];
-          this.data = data;
+          this.data = { ...this.data, ...data };
           this.loading = false;
           this.setDescTextBtn();
         })
