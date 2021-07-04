@@ -58,7 +58,13 @@
         <u-gap height="14" bg-color="#f6f6f6" v-show="index !== commits.length - 1"></u-gap>
       </view>
     </view>
-    <u-loadmore v-if="commits.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
+    <u-loadmore
+      v-if="commits.length"
+      :status="status"
+      @loadmore="loadmore"
+      :loadText="loadText"
+      margin-bottom="50"
+    />
     <view class="empty-display" v-if="!loading && !commits.length">
       <image src="/static/image/empty.png"></image>
       <text>暂无数据</text>
@@ -85,7 +91,7 @@ export default {
       loading: true,
       status: 'loadmore',
       loadText: {
-        loadmore: '轻轻上拉',
+        loadmore: '点击加载更多',
         loading: '努力加载中',
         nomore: '暂时没有了',
       },
@@ -119,7 +125,6 @@ export default {
         })
         .then(data => {
           if (isRefrash) {
-            console.log(111);
             this.commits = [];
             this.backToTop();
             uni.stopPullDownRefresh();
@@ -183,6 +188,7 @@ export default {
 @import '../../common/style/variable.scss';
 .commit-list {
     overflow: auto;
+    display: block;
 
     height: 100%;
     .list {
