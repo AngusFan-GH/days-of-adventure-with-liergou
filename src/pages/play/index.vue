@@ -154,7 +154,7 @@ export default {
       gettingPosition: false,
       backgroundImage: fileUrl + 'background_image.png',
       filterMaskStyle: {
-        filter: 'blur(10px)',
+        filter: 'blur(5px)',
         backgroundImage: `url(${fileUrl}filter_background_image.png)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 100%',
