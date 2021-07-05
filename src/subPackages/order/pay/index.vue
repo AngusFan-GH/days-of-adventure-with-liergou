@@ -199,6 +199,7 @@
 <script>
 import { timeRangeFmt } from '@/common/js/time-fmt';
 import style from '../../../common/style/variable.scss';
+import BigNumber from 'bignumber.js';
 export default {
   onShow() {
     this.init();
@@ -278,7 +279,7 @@ export default {
   },
   computed: {
     totalPrice() {
-      return this.price * this.count;
+      return BigNumber(this.price).multipliedBy(this.count);
     },
     time() {
       return timeRangeFmt(this.screening.roomBeginTime, this.screening.roomEndTime, true);

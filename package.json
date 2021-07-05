@@ -58,6 +58,7 @@
     "@dcloudio/uni-quickapp-webview": "^2.0.0-31920210514002",
     "@dcloudio/uni-stat": "^2.0.0-31920210514002",
     "@vue/shared": "^3.0.0",
+    "bignumber.js": "^9.0.1",
     "core-js": "^3.6.5",
     "crypto": "^1.0.1",
     "flyio": "^0.6.2",
