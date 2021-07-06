@@ -25,6 +25,7 @@ $filter-btn-bg-color: rgba(208, 207, 206, .8);
 $filter-btn-text-color: #59503f;
 $filter-btn-active-bg-color: rgba(135, 84, 39, .8);
 $filter-btn-active-text-color: #fff;
+$pay-submit-btn-bg-color: #f0ba43;
 
 :export {
     backgroundColor: $background-color;
@@ -50,4 +51,5 @@ $filter-btn-active-text-color: #fff;
     filterBtnTextColor: $filter-btn-text-color;
     filterBtnActiveBgColor: $filter-btn-active-bg-color;
     filterBtnActiveTextColor: $filter-btn-active-text-color;
+    paySubmitBtnBgColor: $pay-submit-btn-bg-color;
 }

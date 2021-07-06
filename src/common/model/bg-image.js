@@ -13,8 +13,8 @@ const variable2Chinese = {
     ancientCustoms: ['古风'],
     scienceFinction: ['科幻'],
     modern: ['机械', '大型机械'],
-    magic: ['二次元', '角色扮演'],
     terror: ['微恐', '中恐', '重恐', '恐怖'],
+    magic: ['二次元', '角色扮演'],
 };
 
 function getBackgroundImage(tags = []) {

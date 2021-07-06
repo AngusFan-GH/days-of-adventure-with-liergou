@@ -24,7 +24,13 @@
         <text class="price u-margin-right-14">¥{{ screening.price }}/人</text>
       </view>
       <view class="btn">
-        <u-button shape="circle" size="mini" :custom-style="customStyle" @click="joinGroup()">
+        <u-button
+          shape="circle"
+          size="mini"
+          :custom-style="customStyle"
+          :ripple="true"
+          @click="joinGroup()"
+        >
           立即预定
         </u-button>
       </view>

@@ -240,7 +240,6 @@ export default {
             background-color: $tag-background-color;
 
             flex-shrink: 0;
-            ;
         }
         .txt {
             width: 100%;
