@@ -71,20 +71,16 @@ export default {
               value: 0,
             },
             {
+              label: '附近1公里',
+              value: 1000,
+            },
+            {
+              label: '附近5公里',
+              value: 5000,
+            },
+            {
               label: '附近10公里',
               value: 10000,
-            },
-            {
-              label: '附近20公里',
-              value: 20000,
-            },
-            {
-              label: '附近30公里',
-              value: 30000,
-            },
-            {
-              label: '附近50公里',
-              value: 50000,
             },
           ],
         },
