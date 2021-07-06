@@ -53,7 +53,6 @@
       <loading class="loading" v-if="loading && !list.length && !recommends.length"></loading>
     </view>
     <u-popup
-      v-if="showFilter"
       v-model="showFilter"
       mode="center"
       :safe-area-inset-bottom="true"
