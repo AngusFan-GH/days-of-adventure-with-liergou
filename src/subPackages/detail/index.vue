@@ -1016,7 +1016,7 @@ export default {
     border-radius: 20rpx;
     background: #fff;
     .detail {
-        padding: 30rpx 18rpx;
+        padding: 30rpx;
         .theme-description {
             font-size: 28rpx;
             font-weight: 400;
@@ -1073,7 +1073,6 @@ export default {
     &:before,
     &:after {
         position: absolute;
-        z-index: 9;
         bottom: -42rpx;
 
         display: block;
