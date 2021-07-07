@@ -9,18 +9,24 @@
         ></date-slide-selection>
         <view class="u-flex sort">
           <view class="label">排序</view>
-          <view class="u-flex u-row-around">
+          <view class="u-flex-1 u-flex u-row-around">
             <u-button
               class="btn"
               size="mini"
               type="primary"
               v-for="(btn, index) in sortList"
               :key="index"
-              :plain="btn.value !== sort"
+              :plain="btn.value !== sort.value"
               :throttle-time="300"
-              @click="changeSort(btn.value)"
+              @click="changeSort(btn)"
             >
-              {{ btn.label }}
+              <view class="u-flex">
+                <view>{{ btn.label }}</view>
+                <view v-show="btn.asc != null">
+                  <u-icon name="arrow-upward" v-show="btn.asc"></u-icon>
+                  <u-icon name="arrow-downward" v-show="!btn.asc"></u-icon>
+                </view>
+              </view>
             </u-button>
           </view>
         </view>
@@ -167,21 +173,25 @@ export default {
         {
           label: '距离',
           value: 2,
+          asc: true,
         },
         {
           label: '难度',
           value: 3,
+          asc: true,
         },
         {
           label: '价格',
           value: 4,
+          asc: true,
         },
         {
           label: '购买数量',
           value: 1,
+          asc: true,
         },
       ],
-      sort: null,
+      sort: { value: null },
       styleVariable: style,
     };
   },
@@ -240,11 +250,15 @@ export default {
         .catch(err => this.handleErr(err));
     },
     handleParams() {
+      const { value, asc } = this.sort || {};
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        sort: this.sort,
+        sort: value,
       };
+      if (asc != null) {
+        params.asc = asc;
+      }
       const { longitude, latitude } = uni.getStorageSync('position');
       if (latitude == null && longitude == null) {
         // 获取经纬度，终止本次请求，在handleGotPosition中重新发起请求
@@ -457,8 +471,18 @@ export default {
       };
       this.getCardList(true);
     },
-    changeSort(value) {
-      this.sort = this.sort === value ? null : value;
+    changeSort(btn) {
+      const { value } = this.sort || {};
+      if (value === btn.value && btn.asc != null) {
+        btn.asc = !btn.asc;
+      } else if (value !== btn.value) {
+        this.sortList.forEach(sort => {
+          if (sort.asc != null) {
+            sort.asc = true;
+          }
+        });
+      }
+      this.sort = btn;
       this.getCardList(true);
     },
   },
@@ -481,8 +505,11 @@ export default {
 
     background-color: $background-color;
     .label {
-        margin: 0 20rpx;
+        margin-right: 20rpx;
+        margin-left: 10rpx;
         padding: 0 10rpx;
+
+        white-space: nowrap;
 
         color: $text-common-color;
         border-right: 2px solid $theme-color;
@@ -490,7 +517,7 @@ export default {
     }
     .btn {
         &:not(:nth-child(1)) {
-            margin-left: 20rpx;
+            margin-left: 6rpx;
         };
     }
 }
