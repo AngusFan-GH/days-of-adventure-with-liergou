@@ -554,6 +554,9 @@ export default {
         background: #fff var(--product-info-bg-image) no-repeat center / 100% 100%;
         box-shadow: 0 0 24px 0 rgba(0, 0, 0, .88);
         .product-info {
+            .main-info {
+                overflow: hidden;
+            }
             .pic {
                 width: 158rpx;
                 height: 177rpx;

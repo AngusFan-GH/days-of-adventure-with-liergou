@@ -260,6 +260,7 @@ export default {
       this.$emit('confirm', this.filterData);
     },
     reset() {
+      this.currentFiltertab = this.filterTabs[0].value;
       Object.keys(this.filterData).forEach(key => {
         switch (key) {
           case 'position':

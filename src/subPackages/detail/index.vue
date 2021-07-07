@@ -606,7 +606,8 @@ export default {
       this.chosenSession = session;
     },
     goToOrder() {
-      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName } = this.data;
+      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName, headPicUrl } =
+        this.data;
       const shopInfo = this.data.shopInfo || {};
       const data = {
         ...this.chosenSession,
@@ -616,6 +617,7 @@ export default {
         duration,
         shopName: shopInfo.shopName,
         blockBooking,
+        headPic: headPicUrl,
       };
       uni.navigateTo({
         url: '/subPackages/order/pay/index',
