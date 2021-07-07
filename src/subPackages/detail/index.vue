@@ -236,7 +236,7 @@
         </view>
       </view>
     </view>
-    <u-gap height="104" bg-color="#f6f6f6"></u-gap>
+    <u-gap height="104"></u-gap>
     <view class="theme-submit safe-area-inset-bottom">
       <!-- <view class="u-relative u-flex u-row-between notice">
         <view class="txt-area">
