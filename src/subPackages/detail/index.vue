@@ -90,7 +90,7 @@
           <view class="tip">未拼成前随时退，拼成后不可退款</view>
         </view>
       </view>
-      <view class="arrow-right"></view>
+      <u-icon name="arrow-right" custom-prefix="custom-icon" size="20"></u-icon>
     </view>
     <view class="u-flex u-flex-wrap theme-icon" :style="{ '--skull-bg-image': skullBgImage }">
       <view
@@ -136,13 +136,13 @@
             {{ data.shopInfo.address }}
           </text>
         </view>
-        <text class="arrow-right"></text>
+        <u-icon name="arrow-right" custom-prefix="custom-icon" size="20"></u-icon>
       </view>
     </view>
     <view class="u-padding-30 theme-ugc" v-if="data.commits.length">
       <view class="u-flex u-row-between title common u-skeleton-fillet" @click="goToCommitList()">
         当前主题评价({{ data.commitCount }})
-        <text class="arrow-right"></text>
+        <u-icon name="arrow-right" custom-prefix="custom-icon" size="20"></u-icon>
       </view>
       <view class="u-margin-top-20 ugc-content">
         <view
@@ -198,7 +198,7 @@
         @click="goToCommitList()"
       >
         查看全部网友点评
-        <text class="arrow-right"></text>
+        <u-icon name="arrow-right" custom-prefix="custom-icon" size="20"></u-icon>
       </view>
     </view>
     <view class="theme-detail link">
@@ -826,7 +826,7 @@ export default {
     box-sizing: border-box;
     width: 100%;
     height: 120rpx;
-    padding: 24rpx 30rpx;
+    padding: 24rpx 55rpx;
     &:after {
         position: absolute;
         right: 0;
@@ -1140,14 +1140,6 @@ export default {
     font-weight: 700;
 
     color: #111;
-}
-.arrow-right {
-    width: 22rpx;
-    height: 22rpx;
-
-    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAsCAYAAAAacYo8AAACwUlEQVRoQ+3ZPYgTQRQA4De7QfODQmYISAJWAQvFFFqKBM7zRBtTBE4RtBK1SOFPq3u2pxYpVKwURKw8C0XPHwhiqUXCCYIBo5KgLDMrFkkUd58M5HDZw8tls7uXAdNuGL7Mvrz35g0BRT9EUTeMBS+Xy3qtVtuZSqU+tlqt71Fugm84IhLG2CIiTgOAiMViJdM0X0WF9w1Pp9NbAeDTMpQQ0gOAkhBiMQq8b3ixWIw1Go0lRNzmgv7SNO0I5/xB2HjfcAkb7PpLAMi7oLamaSc453fDxI8Fl7BMJrPFtu3niLjDBUUAOGNZ1s2w8GPDJSyXy7Fer/cUEXe7oYSQC0KIK2HgA4FLGKV0MyI+BoA9HvycEMIIGh8YXMKy2Wyy3+8vIOJ+D/6aEOJckPhA4RKWz+c3cs7vA8BhD/5WpVI5bRiGE8QPCBwuUTJV1uv1OwBw1IO8VygUjtdqtd/j4kOBS5RhGFq1Wr2BiCc9yIeMsdlms/lzHHxo8GUUpfQqIp71hM2zeDxe6nQ6Xb/40OGDjDOHiBc9yNeEkENCiB9+8JHAB/jziDjvQb5NJpMz7Xabj4qPDC5h6XT6FABcB/jbThNC3um6vs80za+j4COFSxhj7JjjOLcBQHdBmwAwZVnW57XiI4cP8CXHcWSu37AMJYR80XV9yjTND2vBrwt8EPMzACCrbMKF/0YIKXLO3w/DrxtcwjKZzF7bth8h4iYX/okQ4uB/+LAdGPU5pVS9UGGMqffnVDId/qMALem6Pj2xBYhSuqLkE0LeJBKJAxNb8imlBiJeUqrJUq6tVfIgoeTRTcnDspLjiVUGQpeFEN6MMmqHsOL7gXSHcgTX7XbleHmX51A8uSO4wdDzBSJud6Ene+ip5Jh5lcH+LOd8YewgHrKA7xhX9ipF2csr+SaVvC4MO4aHre87xoctHPbzP8hhczwaPeppAAAAAElFTkSuQmCC);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
 }
 .pool-rule-desc {
     padding: 35rpx 30rpx;
