@@ -7,17 +7,19 @@
           :length="dateLength"
           @change="dateChange"
         ></date-slide-selection>
-        <view class="u-flex sort">
+        <view class="u-flex sort" v-show="!showFilter">
           <view class="label">排序</view>
           <view class="u-flex-1 u-flex u-row-around">
             <u-button
               class="btn"
               size="mini"
               type="primary"
+              shape="circle"
+              :ripple="true"
               v-for="(btn, index) in sortList"
               :key="index"
-              :plain="btn.value !== sort.value"
               :throttle-time="300"
+              :custom-style="btn.value !== sort.value ? defaultBtnStyle : activeBtnStyle"
               @click="changeSort(btn)"
             >
               <view class="u-flex">
@@ -192,6 +194,18 @@ export default {
         },
       ],
       sort: { value: null },
+      defaultBtnStyle: {
+        backgroundColor: style.white,
+        color: style.black,
+        boxShadow: '0 0 10rpx 0 rgba(0, 0, 0, 0.88) inset',
+        height: '40rpx',
+      },
+      activeBtnStyle: {
+        backgroundColor: style.themeColor,
+        color: style.black,
+        boxShadow: '0 0 10rpx 0 rgba(0, 0, 0, 0.88) inset',
+        height: '40rpx',
+      },
       styleVariable: style,
     };
   },
@@ -505,15 +519,35 @@ export default {
 
     background-color: $background-color;
     .label {
-        margin-right: 20rpx;
+        font-size: 25rpx;
+        font-weight: bold;
+        line-height: 36rpx;
+
+        position: relative;
+
+        margin-right: 13rpx;
         margin-left: 10rpx;
-        padding: 0 10rpx;
+        padding-right: 16rpx;
 
         white-space: nowrap;
 
         color: $text-common-color;
-        border-right: 2px solid $theme-color;
-        border-left: 2px solid $theme-color;
+        &:after {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            display: block;
+
+            width: 4rpx;
+            height: 100%;
+
+            content: '';
+
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAA1CAYAAABm10p2AAAA3ElEQVQokV2TCQ6DMAwENxRQT/qo/rqvQj05SqiM1pZjS4hktHbiNaT+fmsArGDUfLIHOwCVBw1cCGhjjQPXq4JjVJwIsoIzgaV03CwKLgASgDkqfgquBLNPgVd0rDF5kLUnvUf2CgWj7wU+ZR/9UGC9tLEXtXCJCrt68sqaI9C3LTKVtqkIUs22kzd5ZR+DgjEapCkGJipGn1L4MUTFmzXslEdUvGK3oihG2fMUM0iAhKUoMIXWMPCMQBRS1PwQhYSBb/wKP3GU4kehUINs+tJD8a1v52vYn7QFgD9F1VktnGjMcwAAAABJRU5ErkJggg==');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
     }
     .btn {
         &:not(:nth-child(1)) {

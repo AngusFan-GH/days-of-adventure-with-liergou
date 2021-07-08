@@ -160,8 +160,10 @@ export default {
     .item {
         display: inline-block;
 
-        width: 136rpx;
-        padding: 0 15rpx;
+        width: 107rpx;
+        padding: 0 15rpx 10rpx;
+
+        flex-shrink: 0;
         .date {
             display: inline-block;
 
@@ -173,12 +175,10 @@ export default {
                 white-space: nowrap;
             }
             &-week {
-                font-size: 30rpx;
-                line-height: 100%;
+                font-size: 24rpx;
             }
             &-day {
                 font-size: 24rpx;
-                line-height: 220%;
             }
         }
     }

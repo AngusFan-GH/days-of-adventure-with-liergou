@@ -26,8 +26,12 @@ $filter-btn-text-color: #59503f;
 $filter-btn-active-bg-color: rgba(135, 84, 39, .8);
 $filter-btn-active-text-color: #fff;
 $pay-submit-btn-bg-color: #f0ba43;
+$white: #fff;
+$black: #000;
 
 :export {
+    white: $white;
+    black: $black;
     backgroundColor: $background-color;
     themeColor: $theme-color;
     titleColor: $title-color;
