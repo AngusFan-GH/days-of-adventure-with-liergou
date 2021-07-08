@@ -7,13 +7,12 @@
           :length="dateLength"
           @change="dateChange"
         ></date-slide-selection>
-        <view class="u-flex sort" v-show="!showFilter">
+        <view class="u-flex sort">
           <view class="label">排序</view>
           <view class="u-flex-1 u-flex u-row-around">
             <u-button
               class="btn"
               size="mini"
-              type="primary"
               shape="circle"
               :ripple="true"
               v-for="(btn, index) in sortList"
