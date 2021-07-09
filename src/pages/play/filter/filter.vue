@@ -23,14 +23,17 @@
         <scroll-view :scroll-y="true" style="height: 100%">
           <view class="tab-content">
             <filterAdress
+              class="filter-adress"
               v-if="currentFiltertab === 'position'"
               v-model="filterData.position"
             ></filterAdress>
             <filterType
+              class="filter-type"
               v-if="currentFiltertab === 'styles'"
               v-model="filterData.styles"
             ></filterType>
             <filterFeature
+              class="filter-feature"
               v-if="currentFiltertab === 'features'"
               v-model="filterData.features"
             ></filterFeature>
@@ -40,6 +43,7 @@
               :dateLength="dateLength"
             ></filterTime>
             <filterPeopleCount
+              class="filter-people-count"
               v-if="currentFiltertab === 'people'"
               v-model="filterData.people"
             ></filterPeopleCount>
@@ -48,6 +52,7 @@
               v-model="filterData.price"
             ></filterPrice>
             <filterBlockBooking
+              class="filter-block-booking"
               v-if="currentFiltertab === 'blockBooking'"
               v-model="filterData.blockBooking"
             ></filterBlockBooking>
@@ -297,6 +302,15 @@ $btn-container-height: 108rpx;
 
     background: var(--background);
     background-color: #85817c;
+    .filter-adress,
+    .filter-type,
+    .filter-feature,
+    .filter-block-booking,
+    .filter-people-count {
+        display: block;
+
+        height: 100%;
+    }
     .main {
         position: relative;
 

@@ -1,5 +1,5 @@
 <template>
-  <view class="u-flex filter-people-count">
+  <view class="filter-people-count" :style="{ '--background': background }">
     <u-button
       class="btn"
       v-for="(count, index) in btnList"
@@ -17,6 +17,65 @@
 
 <script>
 import style from '../../../../common/style/variable.scss';
+import { fileUrl } from '../../../../common/js/config';
+const person = [
+  // 数组顺序决定了人物背景图层级
+  {
+    id: 1,
+    position: { x: 331, y: 599 },
+    size: { w: 116, h: 451 },
+  },
+  {
+    id: 4,
+    position: { x: 240, y: 632 },
+    size: { w: 97, h: 360 },
+  },
+  {
+    id: 2,
+    position: { x: 264, y: 631 },
+    size: { w: 124, h: 344 },
+  },
+  {
+    id: 3,
+    position: { x: 372, y: 621 },
+    size: { w: 128, h: 429 },
+  },
+  {
+    id: 5,
+    position: { x: 434, y: 632 },
+    size: { w: 102, h: 359 },
+  },
+  {
+    id: 8,
+    position: { x: 146, y: 652 },
+    size: { w: 101, h: 392 },
+  },
+  {
+    id: 6,
+    position: { x: 218, y: 640 },
+    size: { w: 109, h: 332 },
+  },
+  {
+    id: 7,
+    position: { x: 515, y: 640 },
+    size: { w: 98, h: 391 },
+  },
+  {
+    id: 9,
+    position: { x: 582, y: 659 },
+    size: { w: 76, h: 364 },
+  },
+  {
+    id: 10,
+    position: { x: 99, y: 660 },
+    size: { w: 89, h: 376 },
+  },
+  {
+    id: 11,
+    position: { x: 20, y: 679 },
+    size: { w: 122, h: 266 },
+  },
+];
 export default {
   name: 'filter-people-count',
   model: {
@@ -69,6 +128,20 @@ export default {
       },
     };
   },
+  computed: {
+    background() {
+      const res = person
+        .filter(p => p.id <= this.current + 1)
+        .map(
+          p =>
+            `url(${fileUrl}person${p.id}.png) ${p.position.x}rpx ${p.position.y}rpx / ${p.size.w}rpx ${p.size.h}rpx no-repeat`
+        );
+      res.unshift(
+        `url(${fileUrl}filter_background_grass.png) left calc(100% + 108rpx) / 100% no-repeat`
+      );
+      return res.join(',');
+    },
+  },
   methods: {
     handleClick(index) {
       if (this.current === index) {
@@ -87,12 +160,13 @@ export default {
 @import '../../../../common/style/variable.scss';
 .filter-people-count {
     width: 100%;
+    height: 100%;
     padding: 50rpx 0 40rpx $filter-tab-width;
 
-    flex-wrap: wrap;
+    background: var(--background);
 }
 .btn {
-    display: block;
+    display: inline-block;
 
     margin-bottom: 40rpx;
     &:nth-child(2n+1) {
