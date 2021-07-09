@@ -27,13 +27,13 @@ const person = [
   },
   {
     id: 4,
-    position: { x: 240, y: 632 },
-    size: { w: 97, h: 360 },
+    position: { x: 225, y: 652 },
+    size: { w: 112, h: 431 },
   },
   {
     id: 2,
-    position: { x: 264, y: 631 },
-    size: { w: 124, h: 344 },
+    position: { x: 264, y: 651 },
+    size: { w: 124, h: 431 },
   },
   {
     id: 3,
@@ -52,8 +52,8 @@ const person = [
   },
   {
     id: 6,
-    position: { x: 218, y: 640 },
-    size: { w: 109, h: 332 },
+    position: { x: 198, y: 660 },
+    size: { w: 109, h: 431 },
   },
   {
     id: 7,
@@ -134,7 +134,9 @@ export default {
         .filter(p => p.id <= this.current + 1)
         .map(
           p =>
-            `url(${fileUrl}person${p.id}.png) ${p.position.x}rpx ${p.position.y}rpx / ${p.size.w}rpx ${p.size.h}rpx no-repeat`
+            `url(${fileUrl}person${p.id}.png) ${p.position.x}rpx ${
+              ((p.position.y + p.size.h) / (667 * 2 * 0.85)) * 100
+            }% / ${p.size.w}rpx ${(p.size.h / (667 * 2 * 0.85)) * 100}% no-repeat`
         );
       res.unshift(
         `url(${fileUrl}filter_background_grass.png) left calc(100% + 108rpx) / 100% no-repeat`
