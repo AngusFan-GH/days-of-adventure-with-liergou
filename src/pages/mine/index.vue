@@ -1,6 +1,6 @@
 <template>
-  <view class="container">
-    <view class="u-flex user-info" @click="goToOrderList()">
+  <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
+    <view class="u-flex user-info">
       <u-avatar
         :src="user.avatarUrl"
         size="large"
@@ -12,6 +12,16 @@
         <view class="u-margin-bottom-10 u-line-1 name">{{ user.nickName }}</view>
       </view>
     </view>
+    <view class="op-list">
+      <view class="u-flex u-row-between list-item" @click="goToOrderList()">
+        <text class="label">订单</text>
+        <u-icon name="arrow-right" custom-prefix="custom-icon" size="30"></u-icon>
+      </view>
+      <view class="u-flex u-row-between list-item" @click="goToCouponList()">
+        <view class="label">优惠券</view>
+        <u-icon name="arrow-right" custom-prefix="custom-icon" size="30"></u-icon>
+      </view>
+    </view>
     <loading class="loading" v-if="loading" :label="labels[current]"></loading>
     <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
   </view>
@@ -20,6 +30,7 @@
 <script>
 import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
 import loading from '@/components/loading/loading.vue';
+import { fileUrl } from '../../common/js/config';
 export default {
   components: {
     customTabBar,
@@ -61,6 +72,8 @@ export default {
       current: 0,
       timer: null,
       first: true,
+
+      backgroundImage: fileUrl + 'background_image.png',
     };
   },
   methods: {
@@ -97,6 +110,12 @@ export default {
         url: '/subPackages/order/list/index',
       });
     },
+    goToCouponList() {
+      console.log('/subPackages/coupon/index');
+      uni.navigateTo({
+        url: '/subPackages/coupon/index',
+      });
+    },
   },
   onHide() {
     clearInterval(this.timer);
@@ -112,7 +131,7 @@ export default {
 
     min-height: 100%;
 
-    background-color: $background-color;
+    background: $background-color var(--background) no-repeat bottom / 100%;
 }
 .user-info {
     padding: 30rpx 40rpx;
@@ -128,12 +147,27 @@ export default {
         color: $title-color;
     }
 }
+.op-list {
+    padding: 60rpx 50rpx;
+    .list-item {
+        font-size: 30rpx;
+
+        padding: 20rpx 0;
+
+        color: $title-color;
+        border-bottom: 2rpx solid $line-color;
+        .label {
+            color: $title-color;
+        }
+    }
+}
 .loading {
     position: fixed;
-    top: 40%;
+    top: 45%;
     left: 50%;
 
     transform: translate(-50%,-50%);
 }
+
 
 </style>

@@ -365,10 +365,14 @@ export default {
     },
     handleErr(err) {
       if (!this.recommends.length) {
-        this.pageNum--;
+        if (this.pageNum > 1) {
+          this.pageNum--;
+        }
       } else {
-        this.recommendPageNum--;
-        this.recommendDisplayPageNum--;
+        if (this.recommendPageNum > 1) {
+          this.recommendPageNum--;
+          this.recommendDisplayPageNum--;
+        }
       }
       this.stopLoading();
       console.error(err);

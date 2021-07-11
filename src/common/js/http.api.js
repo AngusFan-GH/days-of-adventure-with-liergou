@@ -45,6 +45,30 @@ const install = (Vue, vm) => {
 	let createPay = (params = {}) => vm.$u.post('/market-boot/app/order/createPay', params);
 
 	/**
+	 * 订单列表
+	 */
+	let getOrderList = (params = {}) => {
+		return new Promise((res, rej) => {
+			setTimeout(() => {
+				res({
+					pages: params.pageNum + 1,
+					records: new Array(params.pageSize).fill({}).reduce((p) => {
+						p.push({
+							shopName: '入梦时空沉浸式实景剧场',
+							blockBooking: Math.random() >= 0.5 ? 0 : 1,
+							price: (Math.random() * 999).toFixed(2),
+							headPicUrl: 'https://img11.360buyimg.com/n7/jfs/t1/94448/29/2734/524808/5dd4cc16E990dfb6b/59c256f85a8c3757.jpg',
+							productName: '最后的幸存者',
+							time: '2021-07-10 20:22',
+						});
+						return p;
+					}, [])
+				});
+			}, 500);
+		});
+	};
+
+	/**
 	 * 微信通知处理
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/noticeUsingPOST
 	 */
@@ -66,7 +90,8 @@ const install = (Vue, vm) => {
 		queryPay,
 		updateUserInfo,
 		getDetail,
-		getProductCommits
+		getProductCommits,
+		getOrderList
 	};
 };
 

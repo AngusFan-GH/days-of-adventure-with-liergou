@@ -173,7 +173,9 @@ export default {
       this.loading = false;
     },
     handleErr(err) {
-      this.pageNum--;
+      if (this.pageNum > 1) {
+        this.pageNum--;
+      }
       this.handleReadBottomStatus();
       console.error(err);
     },
