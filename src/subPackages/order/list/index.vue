@@ -1,5 +1,8 @@
 <template>
-  <view class="u-flex-col order-list" :style="{ '--background': 'url(' + backgroundImage + ')' }">
+  <view
+    class="u-flex-col order-list safe-area-inset-bottom"
+    :style="{ '--background': 'url(' + backgroundImage + ')' }"
+  >
     <view class="u-padding-left-20 u-padding-right-20">
       <u-tabs-swiper
         ref="uTabs"
@@ -105,7 +108,7 @@ export default {
     };
   },
   onShow() {
-    this.getOrderList();
+    this.getOrderList(true);
   },
   onPullDownRefresh() {
     this.getOrderList(true);
@@ -117,6 +120,11 @@ export default {
       this.status = 'loading';
       if (isRefrash) {
         this.pageNum = 1;
+        this.list[this.current].orders.length = 0;
+        uni.pageScrollTo({
+          duration: 0,
+          scrollTop: 0,
+        });
       }
       const params = {
         pageNum: this.pageNum,
@@ -127,7 +135,6 @@ export default {
         .getOrderList(params)
         .then(res => {
           if (isRefrash) {
-            this.list[this.current].orders = [];
             uni.stopPullDownRefresh();
           }
           this.handleResult(res);
@@ -162,10 +169,8 @@ export default {
     },
     tabsChange(index) {
       this.swiperCurrent = index;
-      this.pageNum = 1;
-      this.pages = 1;
-      this.list[this.swiperCurrent].orders.length = 0;
       this.loading = true;
+      this.list[this.current].orders.length = 0;
     },
     transition(e) {
       let dx = e.detail.dx;
