@@ -1,5 +1,5 @@
 <template>
-  <view class="u-relative filter" :style="{ '--background': background }">
+  <view class="u-relative filter" :style="{ '--background': displayBackground }">
     <view class="u-flex main">
       <view class="tabs">
         <!-- <scroll-view :scroll-y="true" style="height: 100%"> -->
@@ -134,6 +134,7 @@
         确定
       </u-button>
     </view>
+    <preload-image :srcs="preloadImages" @load="getPreloadImage"></preload-image>
   </view>
 </template>
 
@@ -145,6 +146,7 @@ import filterPrice from './components/price.vue';
 import filterFeature from './components/feature.vue';
 import filterBlockBooking from './components/block-booking.vue';
 import filterPeopleCount from './components/people-count.vue';
+import preloadImage from '@/components/preload-image/preload-image.vue';
 import { timeFmt, isToday } from '@/common/js/time-fmt';
 import areaList from '../modal/area';
 import style from '../../../common/style/variable.scss';
@@ -159,6 +161,7 @@ export default {
     filterFeature,
     filterBlockBooking,
     filterPeopleCount,
+    preloadImage,
   },
   props: {
     data: Object,
@@ -169,6 +172,9 @@ export default {
   },
   created() {
     this.currentFiltertab = this.filterTabs[0].value;
+    this.preloadImages = this.displayBackground
+      .match(/url\((.*?)!s1\)/g)
+      .map(v => v.match(/url\((.*?)!s1\)/)[1] + '!d1');
   },
   watch: {
     data: {
@@ -215,10 +221,10 @@ export default {
       filterData: {},
       showPreview: false,
       background: [
-        `url(${fileUrl}filter_background_grass.png) bottom / 100% no-repeat`,
-        `url(${fileUrl}filter_background_hourse.png) 60% 75% / 110% 50% no-repeat`,
-        `url(${fileUrl}filter_background_image.png) bottom / 100% 100% no-repeat`,
-      ].join(','),
+        `url(${fileUrl}filter_background_grass.png!s1) bottom / 100% no-repeat`,
+        `url(${fileUrl}filter_background_hourse.png!s1) 60% 75% / 110% 50% no-repeat`,
+        `url(${fileUrl}filter_background_image.png!s1) bottom / 100% 100% no-repeat`,
+      ],
       cancelBtnStyle: {
         backgroundColor: style.filterCancelBtnColor,
         color: style.filterCancelTextColor,
@@ -231,9 +237,13 @@ export default {
         width: '196rpx',
         height: '74rpx',
       },
+      preloadImages: [],
     };
   },
   computed: {
+    displayBackground() {
+      return this.background.join(',');
+    },
     displayFilterTabs() {
       return this.filterTabs.filter(v => this.filterData[v.value] != null);
     },
@@ -285,6 +295,9 @@ export default {
     },
     touchEnd() {
       this.showPreview = false;
+    },
+    getPreloadImage(e) {
+      this.background[e.index].replace('!s1', '!d1');
     },
   },
 };

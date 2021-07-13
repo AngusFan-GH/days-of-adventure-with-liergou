@@ -88,7 +88,7 @@ export default {
       gettingPosition: false,
       isRefrash: true,
       styleVariable: style,
-      backgroundImage: fileUrl + 'background_image.png',
+      backgroundImage: fileUrl + 'background_image.png!d1',
     };
   },
   onPullDownRefresh() {

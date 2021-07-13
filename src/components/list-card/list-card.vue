@@ -23,6 +23,7 @@
           <view class="label">难度</view>
           <view class="star">
             <u-rate
+              v-show="data.difficultLevel"
               :count="5"
               v-model="data.difficultLevel"
               disabled
@@ -32,6 +33,7 @@
               size="22"
               gutter="9"
             ></u-rate>
+            <view v-show="!data.difficultLevel">有待探索</view>
           </view>
         </view>
         <view class="u-margin-top-16 u-margin-bottom-6 u-flex u-col-top desc attributes-list">

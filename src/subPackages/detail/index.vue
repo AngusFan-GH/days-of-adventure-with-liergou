@@ -21,6 +21,7 @@
                 <view class="u-margin-right-10 label">难度</view>
                 <view class="star">
                   <u-rate
+                    v-show="data.difficultLevel"
                     :count="5"
                     v-model="data.difficultLevel"
                     disabled
@@ -29,6 +30,7 @@
                     inactive-icon="lock"
                     gutter="0"
                   ></u-rate>
+                  <view v-show="!data.difficultLevel">有待探索</view>
                 </view>
               </view>
               <view class="u-margin-top-10 u-line-1 theme-tag u-skeleton-rect">
@@ -454,8 +456,8 @@ export default {
       displaySession: [],
       chosenSession: null,
       chosenPeople: true,
-      backgroundImage: fileUrl + 'background_image.png',
-      skullBgImage: `url(${fileUrl}skull_bg_image.png)`,
+      backgroundImage: fileUrl + 'background_image.png!d1',
+      skullBgImage: `url(${fileUrl}skull_bg_image.png!d1)`,
     };
   },
   computed: {
@@ -481,12 +483,6 @@ export default {
         .then(data => {
           data.difficultLevel = data.difficultLevel / 10;
           data.shopInfo.star = data.shopInfo.star / 10;
-          // 临时获取人数上下限
-          const people = /建议(.+)人/.exec(data.tipList[1])[1].split('-');
-          data.advicePeopleMin = people[0];
-          data.advicePeopleMax = people[1] || people[0];
-          // 临时获取时长
-          data.duration = /时长(\d+)分钟/.exec(data.tipList[2])[1];
           // 遍历所有场次取价格最小值
           data.price =
             data.basicPrice != null

@@ -134,12 +134,12 @@ export default {
         .filter(p => p.id <= this.current + 1)
         .map(
           p =>
-            `url(${fileUrl}person${p.id}.png) ${p.position.x}rpx ${
+            `url(${fileUrl}person${p.id}.png!d1) ${p.position.x}rpx ${
               ((p.position.y + p.size.h) / (667 * 2 * 0.85)) * 100
             }% / ${p.size.w}rpx ${(p.size.h / (667 * 2 * 0.85)) * 100}% no-repeat`
         );
       res.unshift(
-        `url(${fileUrl}filter_background_grass.png) left calc(100% + 108rpx) / 100% no-repeat`
+        `url(${fileUrl}filter_background_grass.png!d1) left calc(100% + 108rpx) / 100% no-repeat`
       );
       return res.join(',');
     },

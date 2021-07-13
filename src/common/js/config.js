@@ -23,4 +23,4 @@ const baseApi = {
 // request请求baseURL
 export const apiUrl = baseApi[env];
 
-export const fileUrl = 'https://r.heizhuidian.com/s3-files/static/';
+export const fileUrl = 'http://i.heizhuidian.com/static/';

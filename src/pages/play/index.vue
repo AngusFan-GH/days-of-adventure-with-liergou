@@ -158,10 +158,10 @@ export default {
       },
       dateLength: 15,
       gettingPosition: false,
-      backgroundImage: fileUrl + 'background_image.png',
+      backgroundImage: fileUrl + 'background_image.png!d1',
       filterMaskStyle: {
         filter: 'blur(5px)',
-        backgroundImage: `url(${fileUrl}filter_background_image.png)`,
+        backgroundImage: `url(${fileUrl}filter_background_image.png!d1)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 100%',
       },

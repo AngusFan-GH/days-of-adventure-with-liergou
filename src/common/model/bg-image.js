@@ -1,11 +1,11 @@
 const variable2ImageName = {
-    normal: ['bg_normal.png'],
-    suspense: ['bg_suspense.png'],
-    scienceFinction: ['bg_science_fiction.png'],
-    magic: ['bg_magic.png'],
-    modern: ['bg_modern.png'],
-    ancientCustoms: ['bg_ancient_customs.png'],
-    terror: ['bg_terror.png'],
+    normal: ['bg_normal.png!d1'],
+    suspense: ['bg_suspense.png!d1'],
+    scienceFinction: ['bg_science_fiction.png!d1'],
+    magic: ['bg_magic.png!d1'],
+    modern: ['bg_modern.png!d1'],
+    ancientCustoms: ['bg_ancient_customs.png!d1'],
+    terror: ['bg_terror.png!d1'],
 };
 
 const variable2Chinese = {

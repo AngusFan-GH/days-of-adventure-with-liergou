@@ -102,7 +102,7 @@
           <view class="u-margin-bottom-18 u-line-1 shop-name">{{ screening.shopName }}</view>
           <view class="u-margin-bottom-20 u-line-1 product-name">{{ screening.productName }}</view>
           <view class="u-margin-bottom-20 order-time">
-            {{ time }} | {{ screening.duration }}分钟
+            {{ time }} <text v-show="screening.duration">| {{ screening.duration }}分钟</text>
           </view>
           <view class="price-block">
             <view class="price">￥{{ price }}</view>
@@ -295,11 +295,11 @@ export default {
         width: '243rpx',
       },
       filterData: null,
-      leftBackground: `url(${fileUrl}pay_pinchange_image.png)`,
-      rightBackground: `url(${fileUrl}pay_baochang_image.png)`,
-      centerBackground: `url(${fileUrl}pay_pinchang_single_image.png)`,
-      productIndoBgImage: `url(${fileUrl}pay_product_info_bg_image.png)`,
-      noticeBgImage: `url(${fileUrl}pay_notice_bg_image.png)`,
+      leftBackground: `url(${fileUrl}pay_pinchange_image.png!d1)`,
+      rightBackground: `url(${fileUrl}pay_baochang_image.png!d1)`,
+      centerBackground: `url(${fileUrl}pay_pinchang_single_image.png!d1)`,
+      productIndoBgImage: `url(${fileUrl}pay_product_info_bg_image.png!d1)`,
+      noticeBgImage: `url(${fileUrl}pay_notice_bg_image.png!d1)`,
     };
   },
   watch: {

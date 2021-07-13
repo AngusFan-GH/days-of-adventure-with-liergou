@@ -73,7 +73,7 @@ export default {
       timer: null,
       first: true,
 
-      backgroundImage: fileUrl + 'background_image.png',
+      backgroundImage: fileUrl + 'background_image.png!d1',
     };
   },
   methods: {
