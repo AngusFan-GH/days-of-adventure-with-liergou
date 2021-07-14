@@ -37,7 +37,7 @@ export default {
       phone: null,
     };
   },
-  mounted() {
+  onShow() {
     this.weChatLogin();
   },
   methods: {
