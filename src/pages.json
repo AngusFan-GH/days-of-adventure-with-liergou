@@ -41,6 +41,12 @@
 					}
 				},
 				{
+					"path": "order/pay/result",
+					"style": {
+						"navigationBarTitleText": "支付结果"
+					}
+				},
+				{
 					"path": "order/list/index",
 					"style": {
 						"navigationBarTitleText": "订单列表",
@@ -64,6 +70,12 @@
 					"style": {
 						"navigationBarTitleText": "全部评价",
 						"enablePullDownRefresh": true
+					}
+				},
+				{
+					"path": "share/index",
+					"style": {
+						"navigationBarTitleText": "分享页面"
 					}
 				}
 			]

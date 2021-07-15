@@ -390,6 +390,8 @@ export default {
             uni.showToast({
               title: '支付成功',
             });
+            // 跳转支付成功结果页面
+            return this.goToResultPage();
           }
         },
         fail: err => {
@@ -404,6 +406,11 @@ export default {
     goToLogin() {
       uni.navigateTo({
         url: '/pages/login/index',
+      });
+    },
+    goToResultPage() {
+      uni.navigateTo({
+        url: '/subPackages/order/pay/result',
       });
     },
   },
