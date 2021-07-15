@@ -42,12 +42,13 @@
             <text class="u-margin-right-4">使用规则</text>
             <u-icon
               :name="isShowRules ? 'arrow-up' : 'arrow-down'"
-              :color="style.textDarkColor"
+              :color="styleVariable.textDarkColor"
               size="20"
             ></u-icon>
           </view>
         </view>
-        <view class="card-rule-content" v-show="isShowRules">
+        <view class="card-rule-content" v-if="isShowRules">
+          <u-gap height="2" :bg-color="styleVariable.lineColor"></u-gap>
           <view class="card-rule-item" v-for="(rule, index) in coupon.rules || []" :key="index">
             {{ index + 1 }}.{{ rule }}
           </view>
@@ -103,8 +104,6 @@ export default {
             overflow: hidden;
 
             padding: 10rpx 20rpx;
-
-            border-bottom: 1px solid $line-color;
         }
         &-type {
             font-weight: bold;
@@ -120,8 +119,6 @@ export default {
         }
         &-status {
             padding-right: 20rpx;
-
-            border-bottom: 1px solid $line-color;
         }
         &-price {
             font-size: 35rpx;
@@ -133,7 +130,6 @@ export default {
             white-space: nowrap;
 
             color: $theme-color;
-            border-bottom: 1px solid $filter-confirm-btn-color;
             background-image: linear-gradient(45deg, $filter-confirm-btn-color 50%, transparent 25%), linear-gradient(-225deg, $filter-confirm-btn-color 50%, transparent 25%);
             background-position: 0 0;
             background-size: 180% 20%;
@@ -143,10 +139,12 @@ export default {
             flex-shrink: 0;
         }
         &-rule {
+            box-shadow: 0 0 6rpx 0 rgba(0, 0, 0, .5) inset;
+
             &-top {
                 font-size: 25rpx;
 
-                padding: 4rpx 20rpx;
+                padding: 8rpx 20rpx;
             }
             &-label {
                 font-size: 22rpx;
@@ -154,14 +152,15 @@ export default {
                 color: $text-dark-color;
             }
             &-content {
-                padding: 10rpx 20rpx 20rpx;
-
-                border-top: 1px solid $line-color;
+                padding: 0 20rpx 20rpx;
             }
             &-item {
                 font-size: 20rpx;
 
                 color: $text-gray-color;
+                &:nth-child(2) {
+                    margin-top: 10rpx;
+                }
             }
         }
     }
