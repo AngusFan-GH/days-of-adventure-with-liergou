@@ -1,0 +1,151 @@
+<template>
+  <view class="coupon-card">
+    <view class="u-flex card-main">
+      <view class="u-flex u-row-center u-line-1 card-price">¥{{ coupon.price }}</view>
+      <view class="u-flex-1 card-info">
+        <view class="u-margin-bottom-20 u-line-1 card-type">{{ coupon.type }}</view>
+        <view class="u-line-1 card-time">{{ coupon.startTime }} - {{ coupon.endTime }}</view>
+        <view
+          class="u-margin-top-10 card-order"
+          v-show="coupon.status === 1 && coupon.relativeOrder"
+        >
+          关联订单：
+          <text class="order">{{ coupon.relativeOrder }}</text>
+        </view>
+      </view>
+      <view class="u-flex card-status">
+        <u-icon
+          name="yiguoqi"
+          custom-prefix="custom-icon"
+          size="60"
+          v-show="coupon.status === 2"
+        ></u-icon>
+        <u-icon
+          name="daishiyong"
+          custom-prefix="custom-icon"
+          size="60"
+          v-show="coupon.status === 0"
+        ></u-icon>
+        <u-icon
+          name="yishiyong"
+          custom-prefix="custom-icon"
+          size="60"
+          v-show="coupon.status === 1"
+        ></u-icon>
+      </view>
+    </view>
+    <view class="card-bottom">
+      <view class="card-rule">
+        <view class="u-flex u-row-between card-rule-top">
+          <view class="card-range">单次消费金额满{{ coupon.range }}使用</view>
+          <view class="card-rule-label">使用规则</view>
+        </view>
+        <view class="card-rule-content">
+          <view class="card-rule-item" v-for="(rule, index) in coupon.rules || []" :key="index">
+            {{ index + 1 }}.{{ rule }}
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  props: {
+    name: 'coupon-card',
+    coupon: {
+      default: {},
+    },
+  },
+};
+</script>
+
+<style lang="scss">
+@import '../../../../common/style/variable.scss';
+.coupon-card {
+    font-size: 28rpx;
+
+    position: relative;
+
+    display: block;
+    overflow: hidden;
+
+    margin: 15px;
+
+    border-radius: 8rpx;
+    background-color: $white;
+    box-shadow: none;
+    .card {
+        &-main {
+            align-items: stretch;
+        }
+        &-info {
+            overflow: hidden;
+
+            padding: 10rpx 20rpx;
+
+            border-bottom: 1px solid $line-color;
+        }
+        &-type {
+            font-weight: bold;
+        }
+        &-time {
+            font-size: 20rpx;
+        }
+        &-order {
+            font-size: 25rpx;
+            .order {
+                color: $text-light-gray-color;
+            }
+        }
+        &-status {
+            padding-right: 20rpx;
+
+            border-bottom: 1px solid $line-color;
+        }
+        &-price {
+            font-size: 35rpx;
+            font-weight: bold;
+
+            width: 200rpx;
+            padding: 0 20rpx;
+
+            white-space: nowrap;
+
+            color: $theme-color;
+            border-bottom: 1px solid $filter-confirm-btn-color;
+            background-image: linear-gradient(45deg, $filter-confirm-btn-color 50%, transparent 25%), linear-gradient(-225deg, $filter-confirm-btn-color 50%, transparent 25%);
+            background-position: 0 0;
+            background-size: 190% 20%;
+        }
+        &-price,
+        &-status {
+            flex-shrink: 0;
+        }
+        &-rule {
+            &-top {
+                font-size: 25rpx;
+
+                padding: 4rpx 20rpx;
+            }
+            &-label {
+                font-size: 22rpx;
+
+                color: $text-dark-color;
+            }
+            &-content {
+                padding: 10rpx 20rpx 20rpx;
+
+                border-top: 1px solid $line-color;
+            }
+            &-item {
+                font-size: 20rpx;
+
+                color: $text-gray-color;
+            }
+        }
+    }
+}
+
+</style>

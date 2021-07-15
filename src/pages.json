@@ -54,6 +54,13 @@
 					}
 				},
 				{
+					"path": "coupon/index",
+					"style": {
+						"navigationBarTitleText": "优惠券",
+						"enablePullDownRefresh": true
+					}
+				},
+				{
 					"path": "order/detail/index",
 					"style": {
 						"navigationBarTitleText": "订单详情"
