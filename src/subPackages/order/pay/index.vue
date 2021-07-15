@@ -102,7 +102,7 @@
           <view class="u-margin-bottom-18 u-line-1 shop-name">{{ screening.shopName }}</view>
           <view class="u-margin-bottom-20 u-line-1 product-name">{{ screening.productName }}</view>
           <view class="u-margin-bottom-20 order-time">
-            {{ time }} <text v-show="screening.duration">| {{ screening.duration }}分钟</text>
+            {{ time }} | {{ screening.duration }}分钟
           </view>
           <view class="price-block">
             <view class="price">￥{{ price }}</view>
