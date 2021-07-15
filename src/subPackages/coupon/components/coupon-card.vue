@@ -6,10 +6,10 @@
         <view class="u-margin-bottom-20 u-line-1 card-type">{{ coupon.type }}</view>
         <view class="u-line-1 card-time">{{ coupon.startTime }} - {{ coupon.endTime }}</view>
         <view
-          class="u-margin-top-10 card-order"
+          class="u-margin-top-10 u-flex card-order"
           v-show="coupon.status === 1 && coupon.relativeOrder"
         >
-          关联订单：
+          <text>订单：</text>
           <text class="order">{{ coupon.relativeOrder }}</text>
         </view>
       </view>
@@ -38,9 +38,16 @@
       <view class="card-rule">
         <view class="u-flex u-row-between card-rule-top">
           <view class="card-range">单次消费金额满{{ coupon.range }}使用</view>
-          <view class="card-rule-label">使用规则</view>
+          <view class="card-rule-label" @click="showRules()">
+            <text class="u-margin-right-4">使用规则</text>
+            <u-icon
+              :name="isShowRules ? 'arrow-up' : 'arrow-down'"
+              :color="style.textDarkColor"
+              size="20"
+            ></u-icon>
+          </view>
         </view>
-        <view class="card-rule-content">
+        <view class="card-rule-content" v-show="isShowRules">
           <view class="card-rule-item" v-for="(rule, index) in coupon.rules || []" :key="index">
             {{ index + 1 }}.{{ rule }}
           </view>
@@ -51,18 +58,30 @@
 </template>
 
 <script>
+import style from '@/common/style/variable.scss';
 export default {
+  name: 'coupon-card',
+  data() {
+    return {
+      isShowRules: false,
+      styleVariable: style,
+    };
+  },
   props: {
-    name: 'coupon-card',
     coupon: {
       default: {},
+    },
+  },
+  methods: {
+    showRules() {
+      this.isShowRules = !this.isShowRules;
     },
   },
 };
 </script>
 
 <style lang="scss">
-@import '../../../../common/style/variable.scss';
+@import '../../../common/style/variable.scss';
 .coupon-card {
     font-size: 28rpx;
 
@@ -109,7 +128,7 @@ export default {
             font-weight: bold;
 
             width: 200rpx;
-            padding: 0 20rpx;
+            padding: 0 30rpx 0 16rpx;
 
             white-space: nowrap;
 
@@ -117,7 +136,7 @@ export default {
             border-bottom: 1px solid $filter-confirm-btn-color;
             background-image: linear-gradient(45deg, $filter-confirm-btn-color 50%, transparent 25%), linear-gradient(-225deg, $filter-confirm-btn-color 50%, transparent 25%);
             background-position: 0 0;
-            background-size: 190% 20%;
+            background-size: 180% 20%;
         }
         &-price,
         &-status {

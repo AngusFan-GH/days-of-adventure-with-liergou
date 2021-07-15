@@ -44,7 +44,7 @@
 import loading from '@/components/loading/loading.vue';
 import style from '@/common/style/variable.scss';
 import { fileUrl } from '@/common/js/config';
-import couponCard from './components/coupon-card/index.vue';
+import couponCard from './components/coupon-card.vue';
 export default {
   components: {
     loading,

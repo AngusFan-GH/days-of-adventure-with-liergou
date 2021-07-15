@@ -97,7 +97,7 @@ const install = (Vue, vm) => {
 								'不可与其他优惠活动同时使用'
 							],
 							status: params.type,
-							relativeOrder: 'ORDER334554321123322'
+							relativeOrder: 'ORDER33455432'
 						});
 						return p;
 					}, [])
