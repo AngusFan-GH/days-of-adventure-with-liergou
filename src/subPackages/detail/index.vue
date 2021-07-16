@@ -76,7 +76,7 @@
         </view>
       </view>
     </view>
-    <view class="u-flex pool-detail" @click="openPoolRuleDesc()">
+    <view class="u-flex pool-detail" @click="openPoolRuleDesc()" v-if="data.poolRuleDescMap.length">
       <view class="u-flex u-row-center pool-text u-skeleton-rect">可拼场</view>
       <view class="u-flex-col u-flex-1 pool-tips u-skeleton-rect">
         <view class="u-flex single-tip">
@@ -498,12 +498,14 @@ export default {
                     )
                   )
                 );
-          data.poolRuleDescMap = ['拼场方式', '详细规则'].map(rule => {
-            return {
-              label: rule,
-              value: data.poolRuleDescMap[rule],
-            };
-          });
+          data.poolRuleDescMap = Object.keys(data.poolRuleDescMap).length
+            ? ['拼场方式', '详细规则'].map(rule => {
+                return {
+                  label: rule,
+                  value: data.poolRuleDescMap[rule],
+                };
+              })
+            : [];
           data.commits = this.data.commits || [];
           data.commitCount = this.data.commitCount || 0;
           this.data = data;
