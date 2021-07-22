@@ -233,7 +233,7 @@ export default {
 }
 .empty-display {
     position: absolute;
-    top: 375rpx;
+    top: 520rpx;
     left: 50%;
 
     transform: translate(-50%, -50%);
