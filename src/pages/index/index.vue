@@ -2,6 +2,9 @@
   <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
     <view class="u-page list-container">
       <u-sticky :bg-color="styleVariable.backgroundColor">
+        <view class="wrap">
+          <u-swiper :list="bannerList"></u-swiper>
+        </view>
         <u-search
           class="search"
           placeholder="输入剧本名，快速找到哈"
@@ -89,6 +92,20 @@ export default {
       isRefrash: true,
       styleVariable: style,
       backgroundImage: fileUrl + 'background_image.png!d1',
+      bannerList: [
+        {
+          image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
+          title: '昨夜星辰昨夜风，画楼西畔桂堂东',
+        },
+        {
+          image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
+          title: '身无彩凤双飞翼，心有灵犀一点通',
+        },
+        {
+          image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
+          title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳',
+        },
+      ],
     };
   },
   onPullDownRefresh() {
@@ -205,6 +222,9 @@ export default {
     min-height: 100%;
 
     background: $background-color var(--background) no-repeat bottom / 100%;
+}
+.wrap {
+  margin: 0 24rpx;
 }
 .list {
     overflow: hidden;
