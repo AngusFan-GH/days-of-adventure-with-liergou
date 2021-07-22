@@ -84,6 +84,12 @@
 					"style": {
 						"navigationBarTitleText": "分享页面"
 					}
+				},
+				{
+					"path": "activity/index",
+					"style": {
+						"navigationBarTitleText": "活动详情"
+					}
 				}
 			]
 		}

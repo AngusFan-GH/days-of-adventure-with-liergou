@@ -3,7 +3,7 @@
     <view class="u-page list-container">
       <u-sticky :bg-color="styleVariable.backgroundColor">
         <view class="wrap">
-          <u-swiper :list="bannerList"></u-swiper>
+          <u-swiper :list="bannerList" @click="handleClickBanner"></u-swiper>
         </view>
         <u-search
           class="search"
@@ -94,16 +94,11 @@ export default {
       backgroundImage: fileUrl + 'background_image.png!d1',
       bannerList: [
         {
-          image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-          title: '昨夜星辰昨夜风，画楼西畔桂堂东',
+          image: fileUrl + 'banner/bannerA.jpg!d1',
+          activity: 'A',
         },
         {
-          image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-          title: '身无彩凤双飞翼，心有灵犀一点通',
-        },
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-          title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳',
+          image: fileUrl + 'banner/bannerB.jpg!d1',
         },
       ],
     };
@@ -207,6 +202,15 @@ export default {
       this.pageNum++;
       this.getCardList();
     },
+    handleClickBanner(index) {
+      console.log(this.bannerList[index]);
+      const banner = this.bannerList[index];
+      if (banner.activity) {
+        uni.navigateTo({
+          url: '/subPackages/activity/index?id=' + banner.activity,
+        });
+      }
+    },
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
@@ -225,6 +229,7 @@ export default {
 }
 .wrap {
   margin: 0 24rpx;
+  height: 250rpx;
 }
 .list {
     overflow: hidden;
@@ -233,7 +238,7 @@ export default {
 }
 .empty-display {
     position: absolute;
-    top: 520rpx;
+    top: 600rpx;
     left: 50%;
 
     transform: translate(-50%, -50%);
