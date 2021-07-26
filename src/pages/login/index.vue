@@ -66,6 +66,7 @@ export default {
                 language: user.language,
                 nickName: user.nickName,
                 province: user.province,
+                id: user.id,
               });
               if (phoneNumber) {
                 uni.setStorageSync('phone', phoneNumber);

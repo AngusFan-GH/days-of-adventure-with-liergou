@@ -10,7 +10,18 @@
       ></u-avatar>
       <view class="u-flex-1 u-margin-left-20 main">
         <view class="u-margin-bottom-10 u-line-1 name">{{ user.nickName }}</view>
+        <view class="u-margin-bottom-10 u-line-1 id">
+          <text class="u-margin-right-6">ID：{{ user.id }}</text>
+          <u-icon name="copy" custom-prefix="custom-icon" size="22" @click="copy(user.id)"></u-icon>
+        </view>
       </view>
+      <u-icon
+        class="edit-btn"
+        name="map-edit"
+        custom-prefix="custom-icon"
+        size="30"
+        @click="edit(user.id)"
+      ></u-icon>
     </view>
     <view class="op-list">
       <view class="u-flex u-row-between list-item" @click="goToOrderList()">
@@ -105,15 +116,26 @@ export default {
       }, 2 * 1000);
     },
     goToOrderList() {
-      console.log('/subPackages/order/list/index');
       uni.navigateTo({
         url: '/subPackages/order/list/index',
       });
     },
     goToCouponList() {
-      console.log('/subPackages/coupon/index');
       uni.navigateTo({
         url: '/subPackages/coupon/index',
+      });
+    },
+    copy(text) {
+      uni.setClipboardData({
+        data: text,
+        success: function () {
+          console.log('copy success');
+        },
+      });
+    },
+    edit(userId) {
+      uni.navigateTo({
+        url: '/subPackages/user/edit/index?id=' + userId,
       });
     },
   },
@@ -134,6 +156,8 @@ export default {
     background: $background-color var(--background) no-repeat bottom / 100%;
 }
 .user-info {
+    position: relative;
+
     padding: 30rpx 40rpx;
 
     background-image: linear-gradient(to right, $theme-color, $difficult-icon-color);
@@ -145,6 +169,18 @@ export default {
         font-weight: bold;
 
         color: $title-color;
+    }
+    .id {
+        font-size: 22rpx;
+
+        color: $text-common-color;
+    }
+    .edit-btn {
+        position: absolute;
+        top: 30rpx;
+        right: 30rpx;
+
+        color: $text-common-color;
     }
 }
 .op-list {

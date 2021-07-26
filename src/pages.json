@@ -90,6 +90,18 @@
 					"style": {
 						"navigationBarTitleText": "活动详情"
 					}
+				},
+				{
+					"path": "user/edit/index",
+					"style": {
+						"navigationBarTitleText": "编辑信息"
+					}
+				},
+				{
+					"path": "user/detail/index",
+					"style": {
+						"navigationBarTitleText": "我的详情"
+					}
 				}
 			]
 		}
