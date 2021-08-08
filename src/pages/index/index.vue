@@ -2,8 +2,8 @@
   <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
     <view class="u-page list-container">
       <u-sticky :bg-color="styleVariable.backgroundColor">
-        <view class="wrap">
-          <u-swiper :list="bannerList" @click="handleClickBanner"></u-swiper>
+        <view class="wrap" v-if="bannerList.length">
+          <u-swiper :list="bannerList" @click="handleClickBanner" title></u-swiper>
         </view>
         <u-search
           class="search"
@@ -62,6 +62,7 @@ export default {
   },
   mounted() {
     this.getCardList(true);
+    this.getActivityList();
   },
   data() {
     return {
@@ -92,15 +93,7 @@ export default {
       isRefrash: true,
       styleVariable: style,
       backgroundImage: fileUrl + 'background_image.png!d1',
-      bannerList: [
-        {
-          image: fileUrl + 'banner/bannerA.jpg!d1',
-          activity: 'A',
-        },
-        {
-          image: fileUrl + 'banner/bannerB.jpg!d1',
-        },
-      ],
+      bannerList: [],
     };
   },
   onPullDownRefresh() {
@@ -210,6 +203,15 @@ export default {
           url: '/subPackages/activity/index?id=' + banner.activity,
         });
       }
+    },
+    getActivityList() {
+      this.$u.api.getActivityList().then(e => {
+        console.log(e);
+        this.bannerList = e.map(v => {
+          v.image = v.banner;
+          return v;
+        });
+      });
     },
   },
   onHide() {
