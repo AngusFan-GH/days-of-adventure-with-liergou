@@ -55,17 +55,17 @@ export default {
       list: [
         {
           name: '待使用',
-          type: 0,
+          status: 1,
           coupons: [],
         },
         {
           name: '已使用',
-          type: 1,
+          status: 2,
           coupons: [],
         },
         {
           name: '已过期',
-          type: 2,
+          status: 3,
           coupons: [],
         },
       ],
@@ -109,7 +109,7 @@ export default {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        type: this.list[this.current].type,
+        status: this.list[this.current].status,
       };
       this.$u.api
         .getCouponList(params)
@@ -186,7 +186,7 @@ export default {
     transform: translate(-50%, -50%);
     text-align: center;
 
-    color: $black;
+    color: $white;
 }
 .loading {
     position: fixed;

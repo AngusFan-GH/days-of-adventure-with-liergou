@@ -1,16 +1,18 @@
 <template>
   <view class="coupon-card">
     <view class="u-flex card-main">
-      <view class="u-flex u-row-center u-line-1 card-price">¥{{ coupon.price }}</view>
+      <view class="u-flex u-row-center u-line-1 card-price">¥{{ coupon.offsetAmount }}</view>
       <view class="u-flex-1 card-info">
-        <view class="u-margin-bottom-20 u-line-1 card-type">{{ coupon.type }}</view>
-        <view class="u-line-1 card-time">{{ coupon.startTime }} - {{ coupon.endTime }}</view>
+        <view class="u-margin-bottom-20 u-line-1 card-title">{{ coupon.title }}</view>
+        <view class="u-line-1 card-time">
+          {{ coupon.validStartTime }} - {{ coupon.validEndTime }}
+        </view>
         <view
           class="u-margin-top-10 u-flex card-order"
-          v-show="coupon.status === 1 && coupon.relativeOrder"
+          v-show="coupon.status === 1 && coupon.bizNumber"
         >
           <text>订单：</text>
-          <text class="order">{{ coupon.relativeOrder }}</text>
+          <text class="order">{{ coupon.bizNumber }}</text>
         </view>
       </view>
       <view class="u-flex card-status">
@@ -18,26 +20,26 @@
           name="yiguoqi"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 2"
+          v-show="coupon.status === 3"
         ></u-icon>
         <u-icon
           name="daishiyong"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 0"
+          v-show="coupon.status === 1"
         ></u-icon>
         <u-icon
           name="yishiyong"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 1"
+          v-show="coupon.status === 2"
         ></u-icon>
       </view>
     </view>
     <view class="card-bottom">
       <view class="card-rule">
         <view class="u-flex u-row-between card-rule-top">
-          <view class="card-range">单次消费金额满{{ coupon.range }}使用</view>
+          <view class="card-range">单次消费金额满{{ coupon.withAmount }}使用</view>
           <view class="card-rule-label" @click="showRules()">
             <text class="u-margin-right-4">使用规则</text>
             <u-icon
@@ -105,7 +107,7 @@ export default {
 
             padding: 10rpx 20rpx;
         }
-        &-type {
+        &-title {
             font-weight: bold;
         }
         &-time {

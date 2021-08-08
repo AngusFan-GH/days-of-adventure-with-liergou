@@ -70,41 +70,9 @@ const install = (Vue, vm) => {
 
 	/**
 	 * 优惠券列表
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E4%BC%98%E6%83%A0%E5%88%B8/couponPageListUsingPOST
 	 */
-	let getCouponList = (params = {}) => {
-		return new Promise((res, rej) => {
-			setTimeout(() => {
-				const type = Math.random() >= 0.5;
-				res(params.pageNum > 3 ? { pages: params.pageNum, records: [] } : {
-					pages: params.pageNum + 1,
-					records: new Array(params.pageSize).fill({}).reduce((p) => {
-						p.push({
-							count: Math.ceil(Math.random() * 10),
-							price: (Math.random() * 999).toFixed(2),
-							type: type ? '包场立减券' : '拼场立减券',
-							startTime: '2021-07-10 20:22',
-							endTime: '2021-07-15 20:22',
-							range: Math.ceil(Math.random() * 1999),
-							rules: type ? [
-								'仅限包场使用',
-								'包场下单时勾选自动扣除相应金额',
-								'不可与其他优惠活动同时使用'
-
-							] : [
-								'仅限拼场使用',
-								'拼场成功到点核销后返现金红包',
-								'如拼单不成功不返',
-								'不可与其他优惠活动同时使用'
-							],
-							status: params.type,
-							relativeOrder: 'ORDER33455432'
-						});
-						return p;
-					}, [])
-				});
-			}, 500);
-		});
-	};
+	let getCouponList = (params = {}) => vm.$u.post('/market-boot/app/coupon/couponPageList', params);
 
 	/**
 	 * 微信通知处理
