@@ -33,6 +33,12 @@ const install = (Vue, vm) => {
 	let getDetail = (productId) => vm.$u.get(`/market-boot/app/productitem/view/${productId}`);
 
 	/**
+	 * 场次详情
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/viewSceneUsingGET
+	 */
+	let getViewScene = (uniqueId) => vm.$u.get(`/market-boot/app/productitem/viewScene/${uniqueId}`);
+
+	/**
 	 * 获取产品评论
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E5%95%86%E5%93%81/reviewUsingGET
 	 */
@@ -102,6 +108,7 @@ const install = (Vue, vm) => {
 		queryPay,
 		updateUserInfo,
 		getDetail,
+		getViewScene,
 		getProductCommits,
 		getOrderList,
 		getCouponList,
