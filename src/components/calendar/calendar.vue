@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { timeFmt, dateStr2timestamp } from '@/common/js/time-fmt';
+import { timeFmt, dateStr2timestamp } from '@/common/js/utils/time-fmt';
 export default {
   name: 'ren-calendar',
   created() {

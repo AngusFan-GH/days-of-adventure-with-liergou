@@ -1,4 +1,4 @@
-import { apiUrl } from './config.js';
+import { apiUrl } from '../config.js';
 
 const install = (Vue, vm) => {
 	Vue.prototype.$u.http.setConfig({

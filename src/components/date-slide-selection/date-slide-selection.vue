@@ -22,7 +22,11 @@
 
 <script>
 import style from '../../common/style/variable.scss';
-import { dateSlideSelectionDataMaker, timeFmt, dateStr2timestamp } from '@/common/js/time-fmt';
+import {
+  dateSlideSelectionDataMaker,
+  timeFmt,
+  dateStr2timestamp,
+} from '@/common/js/utils/time-fmt';
 const { windowWidth } = uni.getSystemInfoSync();
 const preId = 'El_';
 export default {

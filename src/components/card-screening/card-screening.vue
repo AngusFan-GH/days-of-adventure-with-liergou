@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { timeRangeFmt } from '@/common/js/time-fmt';
+import { timeRangeFmt } from '@/common/js/utils/time-fmt';
 import style from '../../common/style/variable.scss';
 export default {
   props: {

@@ -93,7 +93,7 @@ import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
 import dateSlideSelection from '@/components/date-slide-selection/date-slide-selection.vue';
-import { timeFmt, defaultStartTimeMaker } from '@/common/js/time-fmt';
+import { timeFmt, defaultStartTimeMaker } from '@/common/js/utils/time-fmt';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
 import { fileUrl } from '../../common/js/config';

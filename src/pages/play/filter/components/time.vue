@@ -46,7 +46,7 @@
 <script>
 import calendar from '@/components/calendar/calendar.vue';
 import timePicker from '@/components/time-picker/time-picker.vue';
-import { defaultStartTimeMaker } from '@/common/js/time-fmt';
+import { defaultStartTimeMaker } from '@/common/js/utils/time-fmt';
 import label from '../common/label.vue';
 const $moment = require('moment');
 export default {

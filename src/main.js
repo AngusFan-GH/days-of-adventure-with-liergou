@@ -14,11 +14,11 @@ const app = new Vue({
 });
 
 // http拦截器
-import httpInterceptor from '@/common/js/http.interceptor.js';
+import httpInterceptor from '@/common/js/services/http.interceptor.js';
 Vue.use(httpInterceptor, app);
 
 // http接口API集中管理引入部分
-import httpApi from '@/common/js/http.api.js';
+import httpApi from '@/common/js/services/http.api.js';
 Vue.use(httpApi, app);
 
 app.$mount();
