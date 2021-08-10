@@ -24,12 +24,12 @@
 export default {
   data() {
     return {
-      userInfo: uni.getStorageInfoSync('userInfo'),
+      userInfo: uni.getStorageSync('userInfo'),
     };
   },
   computed: {
     gender() {
-      switch (this.userInfo.gender) {
+      switch (+this.userInfo.gender) {
         case 1:
           return '男';
         case 2:

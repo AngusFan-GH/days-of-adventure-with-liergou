@@ -205,7 +205,7 @@ export default {
       }
     },
     getActivityList() {
-      this.$u.api.getActivityList().then(e => {
+      this.$u.api.getActivityList({ location: 'location' }).then(e => {
         console.log(e);
         this.bannerList = e.map(v => {
           v.image = v.banner;
