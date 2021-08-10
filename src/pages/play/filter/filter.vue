@@ -147,7 +147,7 @@ import filterFeature from './components/feature.vue';
 import filterBlockBooking from './components/block-booking.vue';
 import filterPeopleCount from './components/people-count.vue';
 import preloadImage from '@/components/preload-image/preload-image.vue';
-import { timeFmt, isToday } from '@/common/js/time-fmt';
+import { timeFmt, isToday } from '@/common/js/utils/time-fmt';
 import areaList from '../modal/area';
 import style from '../../../common/style/variable.scss';
 import { fileUrl } from '../../../common/js/config';

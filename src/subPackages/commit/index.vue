@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { timeFmt } from '@/common/js/time-fmt';
+import { timeFmt } from '@/common/js/utils/time-fmt';
 export default {
   name: 'commit-list',
   onLoad(options) {

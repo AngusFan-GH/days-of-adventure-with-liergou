@@ -50,24 +50,15 @@ export default {
               code: res.code,
             })
             .then(result => {
-              console.log('weChatLogin', result);
               const { token, user } = result;
               uni.setStorageSync('token', token);
-              const { openId, nickName, phoneNumber } = user;
+              const { openId, id, phoneNumber } = user || {};
+              this.phone = phoneNumber;
               uni.setStorageSync('openId', openId);
-              if (nickName == null) {
+              if (id == null) {
                 return (this.step = 1);
               }
-              uni.setStorageSync('userInfo', {
-                avatarUrl: user.avatarUrl,
-                city: user.city,
-                country: user.country,
-                gender: user.gender,
-                language: user.language,
-                nickName: user.nickName,
-                province: user.province,
-                id: user.id,
-              });
+              uni.setStorageSync('userInfo', user);
               if (phoneNumber) {
                 uni.setStorageSync('phone', phoneNumber);
                 this.navigateBack();
@@ -89,15 +80,17 @@ export default {
         desc: '必须授权才可以继续使用',
         success: res => {
           this.userInfo = res.userInfo;
-          console.log('getUserProfile', this.userInfo);
           uni.setStorageSync('userInfo', res.userInfo);
           this.$u.api
             .updateUserInfo({
               userInfo: this.userInfo,
             })
-            .then(res => {
-              console.log('updateUserInfo', res);
-              this.step = 2;
+            .then(() => {
+              if (this.phone) {
+                this.navigateBack();
+              } else {
+                this.step = 2;
+              }
             })
             .catch(err => console.error(err));
         },
@@ -110,7 +103,6 @@ export default {
       });
     },
     getPhoneNumber(e) {
-      console.log('getPhoneNumber', e);
       if (e.detail.errMsg == 'getPhoneNumber:ok') {
         const { encryptedData, iv } = e.detail;
         this.$u.api
@@ -119,15 +111,16 @@ export default {
             iv,
           })
           .then(res => {
-            console.log('decryptUserInfo', res);
-            uni.setStorageSync('phone', res.phoneNumber);
+            const phone = res.phoneNumber;
+            this.phone = phone;
+            uni.setStorageSync('phone', phone);
             this.navigateBack();
           })
           .catch(err => console.error(err));
       }
     },
     navigateBack() {
-      uni.navigateBack({
+      wx.navigateBack({
         delta: 1,
         success: res => {
           console.log('navigateBack', res);

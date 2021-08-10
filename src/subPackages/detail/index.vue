@@ -414,7 +414,7 @@
 
 <script>
 import defaultThumb from '@/static/image/bg_login.png';
-import { timeFmt } from '@/common/js/time-fmt';
+import { timeFmt } from '@/common/js/utils/time-fmt';
 import style from '../../common/style/variable.scss';
 import { fileUrl } from '../../common/js/config';
 export default {
