@@ -39,6 +39,20 @@
       v-model="gettingPosition"
       @gotPosition="handleGotPosition"
     ></position-popup>
+
+    <view class="popup-container" v-if="popupList.length">
+      <view class="popup">
+        <view>
+          <image class="pic" :src="popupList[0].banner" mode="aspectFit"></image>
+        </view>
+        <view class="u-m-t-20 u-flex u-row-around btn-container">
+          <u-button size="mini" :ripple="true" @click="laterView(true, $event)">关闭</u-button>
+          <u-button type="primary" size="mini" :ripple="true" @click="laterView(false, $event)">
+            稍后再看
+          </u-button>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -95,6 +109,7 @@ export default {
       styleVariable: style,
       backgroundImage: fileUrl + 'background_image.png!d1',
       bannerList: [],
+      popupList: [],
     };
   },
   onPullDownRefresh() {
@@ -216,7 +231,20 @@ export default {
     getPopupList() {
       this.$u.api.getActivityList({ location: '2' }).then(e => {
         console.log(e);
+        this.popupList = e;
       });
+    },
+    laterView(isIgnore = true, e) {
+      const activityId = this.popupList[0].id;
+      console.log('isIgnore:', isIgnore, activityId);
+      isIgnore &&
+        this.$u.api
+          .ignoreActivity({
+            activityId,
+            ignoreDuration: 30,
+          })
+          .then(() => console.log('ignoreActivity', activityId));
+      this.popupList.shift();
     },
   },
   onHide() {
@@ -259,6 +287,33 @@ export default {
     left: 50%;
 
     transform: translate(-50%,-50%);
+}
+
+.popup-container {
+    position: fixed;
+    z-index: 999999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    background-color: rgba($color: #000, $alpha: .5);
+    .popup {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+
+        display: block;
+
+        width: 70vw;
+
+        transform: translate(-50%, -50%);
+        .pic {
+            display: block;
+
+            width: 100%;
+        }
+    }
 }
 
 </style>
