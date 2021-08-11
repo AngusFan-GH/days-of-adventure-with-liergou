@@ -63,6 +63,7 @@ export default {
   mounted() {
     this.getCardList(true);
     this.getActivityList();
+    this.getPopupList();
   },
   data() {
     return {
@@ -206,11 +207,15 @@ export default {
     },
     getActivityList() {
       this.$u.api.getActivityList({ location: '1' }).then(e => {
-        console.log(e);
         this.bannerList = e.map(v => {
           v.image = v.banner;
           return v;
         });
+      });
+    },
+    getPopupList() {
+      this.$u.api.getActivityList({ location: '2' }).then(e => {
+        console.log(e);
       });
     },
   },
