@@ -42,7 +42,7 @@
 
     <view class="popup-container" v-if="popupList.length">
       <view class="popup">
-        <view>
+        <view @click="handleClickPopup">
           <image class="pic" :src="popupList[0].banner" mode="aspectFit"></image>
         </view>
         <view class="u-m-t-20 u-flex u-row-around btn-container">
@@ -213,12 +213,7 @@ export default {
     },
     handleClickBanner(index) {
       console.log(this.bannerList[index]);
-      const banner = this.bannerList[index];
-      if (banner.activity) {
-        uni.navigateTo({
-          url: '/subPackages/activity/index?id=' + banner.activity,
-        });
-      }
+      this.jumpToActivityDetail(this.bannerList[index]);
     },
     getActivityList() {
       this.$u.api.getActivityList({ location: '1' }).then(e => {
@@ -245,6 +240,17 @@ export default {
           })
           .then(() => console.log('ignoreActivity', activityId));
       this.popupList.shift();
+    },
+    handleClickPopup() {
+      console.log(this.popupList[0]);
+      this.jumpToActivityDetail(this.popupList[0]);
+    },
+    jumpToActivityDetail({ id, templateId, type }) {
+      if (id) {
+        uni.navigateTo({
+          url: `/subPackages/activity/index?id=${id}&templateId=${templateId}&type=${type}`,
+        });
+      }
     },
   },
   onHide() {

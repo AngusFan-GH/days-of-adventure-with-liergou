@@ -99,10 +99,16 @@ const install = (Vue, vm) => {
 	let getActivityList = (location) => vm.$u.get('/market-boot/app/activity/activityList', location);
 
 	/**
+	 * 活动详情
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E6%B4%BB%E5%8A%A8/viewUsingGET
+	 */
+	let getActivityDetail = (activityId) => vm.$u.get(`/market-boot/app/activity/view/${activityId}`);
+
+	/**
 	 * 忽略活动
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E6%B4%BB%E5%8A%A8/ignoreUsingPOST
 	 */
-	let ignoreActivity = (params) => vm.$u.post(`/market-boot/app/activity/ignore/${params.activityId}`, params);
+	let ignoreActivity = (params) => vm.$u.post(`/market-boot/app/activity/ignore/${params.activityId}?ignoreDuration=${params.ignoreDuration}`, {});
 
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
 	vm.$u.api = {
@@ -119,7 +125,8 @@ const install = (Vue, vm) => {
 		getOrderList,
 		getCouponList,
 		getActivityList,
-		ignoreActivity
+		ignoreActivity,
+		getActivityDetail
 	};
 };
 

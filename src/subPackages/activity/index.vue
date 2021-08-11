@@ -1,19 +1,40 @@
 <template>
   <view class="activity-page">
-    <image :src="activityUrl" mode="widthFix" />
+    <image v-if="templateId === 'img'" :src="activityUrl" mode="widthFix" />
   </view>
 </template>
 
 <script>
-import { fileUrl } from '../../common/js/config';
 export default {
   onLoad(options) {
-    this.activityUrl = `${fileUrl}activity/activity${options.id}.jpg!d1`;
+    console.log('activity-page', options);
+    this.id = options.id;
+    this.templateId = options.templateId;
+    this.getDetail(options.id);
   },
   data() {
     return {
+      id: '',
+      templateId: '',
       activityUrl: '',
     };
+  },
+  methods: {
+    getDetail(id) {
+      this.$u.api.getActivityDetail(id).then(e => {
+        this.render(e);
+      });
+    },
+    render(e) {
+      console.log('render', this.templateId, e);
+      switch (this.templateId) {
+        case 'img':
+          this.activityUrl = e.basic.url;
+          break;
+        case 'url':
+          break;
+      }
+    },
   },
 };
 </script>
@@ -21,8 +42,10 @@ export default {
 <style lang="scss">
 .activity-page {
     > image {
-        width: 100%;
         display: block;
+
+        width: 100%;
     }
 }
+
 </style>
