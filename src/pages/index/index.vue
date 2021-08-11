@@ -294,14 +294,23 @@ export default {
         paySign,
         success: e => {
           if (e.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-            });
-            this.$u.api.takeCoupon(id).then(e => {
-              if (this.popupList[0] && this.popupList[0].id === id) {
-                this.laterView();
-              }
-            });
+            this.$u.api
+              .takeCoupon(id)
+              .then(e => {
+                uni.showToast({
+                  title: '领取成功',
+                });
+                if (this.popupList[0] && this.popupList[0].id === id) {
+                  this.laterView();
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                uni.showToast({
+                  title: '领取失败',
+                  icon: 'none',
+                });
+              });
           }
         },
         fail: err => {
