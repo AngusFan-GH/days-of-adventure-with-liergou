@@ -40,7 +40,7 @@
       @gotPosition="handleGotPosition"
     ></position-popup>
 
-    <view class="popup-container" v-if="popupList.length">
+    <view class="popup-container" v-if="popupList.length" @touchmove.stop.prevent="moveHandle">
       <view class="popup">
         <image
           class="pic"
@@ -322,6 +322,7 @@ export default {
         },
       });
     },
+    moveHandle() {},
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
