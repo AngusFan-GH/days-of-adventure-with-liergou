@@ -45,10 +45,22 @@ const install = (Vue, vm) => {
 	let getProductCommits = (params) => vm.$u.get(`/market-boot/app/productitem/review/${params.productId}`, params);
 
 	/**
-	 * 创建支付
-	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/createPayUsingPOST
+	 * 创建支付(主题)
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/createActivityPayUsingPOST
 	 */
 	let createPay = (params = {}) => vm.$u.post('/market-boot/app/order/createPay', params);
+
+	/**
+	 * 创建支付(活动)
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/createPayUsingPOST
+	 */
+	let createActivityPay = (params = {}) => vm.$u.post('/market-boot/app/order/createActivityPay', params);
+
+	/**
+	 * 领取优惠券
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E4%BC%98%E6%83%A0%E5%88%B8/takeUsingPOST
+	 */
+	let takeCoupon = (couponTmplId) => vm.$u.post(`/market-boot/app/coupon/take/${couponTmplId}`, {});
 
 	/**
 	 * 订单列表
@@ -126,7 +138,9 @@ const install = (Vue, vm) => {
 		getCouponList,
 		getActivityList,
 		ignoreActivity,
-		getActivityDetail
+		getActivityDetail,
+		createActivityPay,
+		takeCoupon
 	};
 };
 

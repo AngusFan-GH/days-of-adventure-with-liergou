@@ -42,12 +42,15 @@
 
     <view class="popup-container" v-if="popupList.length">
       <view class="popup">
-        <view @click="handleClickPopup">
-          <image class="pic" :src="popupList[0].banner" mode="aspectFit"></image>
-        </view>
+        <image
+          class="pic"
+          :src="popupList[0].banner"
+          mode="aspectFit"
+          @click="handleClickPopup"
+        ></image>
         <view class="u-m-t-20 u-flex u-row-around btn-container">
-          <u-button size="mini" :ripple="true" @click="laterView(true, $event)">关闭</u-button>
-          <u-button type="primary" size="mini" :ripple="true" @click="laterView(false, $event)">
+          <u-button size="mini" :ripple="true" @click="laterView()">关闭</u-button>
+          <u-button type="primary" size="mini" :ripple="true" @click="laterView(false)">
             稍后再看
           </u-button>
         </view>
@@ -73,11 +76,11 @@ export default {
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
     this.$refs.positionRef.startLocationUpdate();
+    this.getActivityList();
+    this.getPopupList();
   },
   mounted() {
     this.getCardList(true);
-    this.getActivityList();
-    this.getPopupList();
   },
   data() {
     return {
@@ -229,7 +232,7 @@ export default {
         this.popupList = e;
       });
     },
-    laterView(isIgnore = true, e) {
+    laterView(isIgnore = true) {
       const activityId = this.popupList[0].id;
       console.log('isIgnore:', isIgnore, activityId);
       isIgnore &&
@@ -243,7 +246,12 @@ export default {
     },
     handleClickPopup() {
       console.log(this.popupList[0]);
-      this.jumpToActivityDetail(this.popupList[0]);
+      const { templateId, id } = this.popupList[0];
+      if (templateId === '1') {
+        this.createActivityPay(id);
+      } else {
+        this.jumpToActivityDetail(this.popupList[0]);
+      }
     },
     jumpToActivityDetail({ id, templateId, type }) {
       if (id) {
@@ -251,6 +259,59 @@ export default {
           url: `/subPackages/activity/index?id=${id}&templateId=${templateId}&type=${type}`,
         });
       }
+    },
+    createActivityPay(id) {
+      const { nickname } = uni.getStorageSync('userInfo');
+      const phone = uni.getStorageSync('phone');
+      this.$u.api
+        .createActivityPay({
+          activityId: id,
+          payerName: nickname,
+          payerPhone: phone,
+        })
+        .then(res => {
+          const { orderInfo } = res;
+          this.pay(id, orderInfo);
+        })
+        .catch(err => console.error(err));
+    },
+    pay(id, orderInfo) {
+      const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
+      console.log('requestPayment', {
+        appId,
+        timeStamp,
+        nonceStr,
+        package: prepayId,
+        signType: 'RSA',
+        paySign,
+      });
+      uni.requestPayment({
+        // appId,
+        timeStamp,
+        nonceStr,
+        package: prepayId,
+        signType: 'RSA',
+        paySign,
+        success: e => {
+          if (e.errMsg === 'requestPayment:ok') {
+            uni.showToast({
+              title: '支付成功',
+            });
+            this.$u.api.takeCoupon(id).then(e => {
+              if (this.popupList[0] && this.popupList[0].id === id) {
+                this.laterView();
+              }
+            });
+          }
+        },
+        fail: err => {
+          console.error(err);
+          uni.showToast({
+            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
+            icon: 'none',
+          });
+        },
+      });
     },
   },
   onHide() {
