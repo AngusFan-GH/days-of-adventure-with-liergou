@@ -34,17 +34,17 @@
       </view>
     </view>
     <loading class="loading" v-if="loading" :label="labels[current]"></loading>
-    <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
+    <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
   </view>
 </template>
 
 <script>
-import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
+import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import loading from '@/components/loading/loading.vue';
 import { fileUrl } from '../../common/js/config';
 export default {
   components: {
-    customTabBar,
+    customTabbar,
     loading,
   },
   onShow() {
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      tabBarIndex: 2,
+      tabbarIndex: 2,
       user: null,
       loading: true,
       labels: [

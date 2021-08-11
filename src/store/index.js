@@ -1,17 +1,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import tabBar from './modules/tabbar';
-import getters from './getters';
-import mutations from './mutations';
+import tabbar from './modules/tabbar';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
     modules: {
-        tabBar
-    },
-    getters,
-    mutations
+        tabbar
+    }
 });
 
 export default store;

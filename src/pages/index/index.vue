@@ -33,7 +33,7 @@
       :icon-style="backTopIconStyle"
       :custom-style="backTopCustomStyle"
     ></u-back-top>
-    <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
+    <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
     <position-popup
       ref="positionRef"
       v-model="gettingPosition"
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
+import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
@@ -52,7 +52,7 @@ import { fileUrl } from '../../common/js/config';
 export default {
   components: {
     listCard,
-    customTabBar,
+    customTabbar,
     loading,
     positionPopup,
   },
@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       tabPageName: 'index',
-      tabBarIndex: 0,
+      tabbarIndex: 0,
       loading: true,
       status: 'loadmore',
       loadText: {
@@ -205,7 +205,7 @@ export default {
       }
     },
     getActivityList() {
-      this.$u.api.getActivityList({ location: 'location' }).then(e => {
+      this.$u.api.getActivityList({ location: '1' }).then(e => {
         console.log(e);
         this.bannerList = e.map(v => {
           v.image = v.banner;
@@ -230,8 +230,8 @@ export default {
     background: $background-color var(--background) no-repeat bottom / 100%;
 }
 .wrap {
-  margin: 0 24rpx;
-  height: 250rpx;
+    height: 250rpx;
+    margin: 0 24rpx;
 }
 .list {
     overflow: hidden;

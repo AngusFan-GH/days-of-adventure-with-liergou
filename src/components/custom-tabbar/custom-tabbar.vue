@@ -1,7 +1,7 @@
 <template>
   <u-tabbar
-    :show="showTabBar"
-    :list="tabBarList"
+    :show="showTabbar"
+    :list="tabbarList"
     :mid-button="true"
     :active-color="activeColor"
     :mid-button-size="60"
@@ -13,9 +13,9 @@
 import { mapGetters } from 'vuex';
 import style from '../../common/style/variable.scss';
 export default {
-  name: 'custom-tab-bar',
+  name: 'custom-tabbar',
   props: {
-    tabBarIndex: {
+    tabbarIndex: {
       type: Number,
       default: 0,
     },
@@ -28,14 +28,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['tabBarList', 'showTabBar']),
+    ...mapGetters('tabbar', ['tabbarList', 'showTabbar']),
   },
   methods: {
     beforeSwitch(index) {
-      // this为当前pages页面this，而非tab-bar的this
-      console.log('current', this.tabBarIndex, index);
-      if (this.tabBarIndex === index) {
-        this.handletabBarClick && this.handletabBarClick();
+      // this为当前pages页面this，而非tabbar的this
+      console.log('current', this.tabbarIndex, index);
+      if (this.tabbarIndex === index) {
+        this.handletabbarClick && this.handletabbarClick();
         return false;
       }
       return true;

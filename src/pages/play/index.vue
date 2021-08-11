@@ -78,7 +78,7 @@
       :icon-style="backTopIconStyle"
       :custom-style="backTopCustomStyle"
     ></u-back-top>
-    <custom-tab-bar :tabBarIndex="tabBarIndex"></custom-tab-bar>
+    <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
     <position-popup
       ref="positionRef"
       v-model="gettingPosition"
@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { customTabBar } from '@/components/custom-tab-bar/custom-tab-bar.vue';
+import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import filter from './filter/filter.vue';
@@ -100,7 +100,7 @@ import { fileUrl } from '../../common/js/config';
 export default {
   components: {
     listCard,
-    customTabBar,
+    customTabbar,
     loading,
     filter,
     dateSlideSelection,
@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       tabPageName: 'play',
-      tabBarIndex: 1,
+      tabbarIndex: 1,
       loading: true,
       // 加载更多
       status: 'loadmore',
@@ -475,7 +475,7 @@ export default {
       this.showFilter = false;
       this.getCardList(true);
     },
-    handletabBarClick() {
+    handletabbarClick() {
       if (!this.showFilter) {
         this.showFilter = true;
       }

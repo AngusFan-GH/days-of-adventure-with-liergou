@@ -1,4 +1,4 @@
-const tabBarList = [
+const tabbarList = [
     {
         iconPath: "/static/image/tabbar/home.png",
         selectedIconPath: "/static/image/tabbar/home_selected.png",
@@ -25,11 +25,22 @@ const tabBarList = [
 ];
 
 const state = {
-    list: tabBarList,
+    list: tabbarList,
     show: true
+};
+
+const getters = {
+    tabbarList: state => state.list,
+    showTabbar: state => state.show
+};
+
+const mutations = {
+    toggleTabbar: (state, isShow) => state.show = isShow,
 };
 
 export default {
     namespaced: true,
-    state
+    state,
+    getters,
+    mutations
 };
