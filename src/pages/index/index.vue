@@ -271,11 +271,11 @@ export default {
         })
         .then(res => {
           const { orderInfo } = res;
-          this.pay(id, orderInfo);
+          this.pay(orderInfo);
         })
         .catch(err => console.error(err));
     },
-    pay(id, orderInfo) {
+    pay(orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
       console.log('requestPayment', {
         appId,
@@ -294,23 +294,12 @@ export default {
         paySign,
         success: e => {
           if (e.errMsg === 'requestPayment:ok') {
-            this.$u.api
-              .takeCoupon(id)
-              .then(e => {
-                uni.showToast({
-                  title: '领取成功',
-                });
-                if (this.popupList[0] && this.popupList[0].id === id) {
-                  this.laterView();
-                }
-              })
-              .catch(err => {
-                console.error(err);
-                uni.showToast({
-                  title: '领取失败',
-                  icon: 'none',
-                });
-              });
+            uni.navigateTo({
+              url: '/subPackages/coupon/index',
+            });
+            uni.showToast({
+              title: '支付成功',
+            });
           }
         },
         fail: err => {
