@@ -87,7 +87,7 @@ export default {
       backgroundImage: fileUrl + 'background_image.png!d1',
     };
   },
-  onShow() {
+  mounted() {
     this.getCouponList(true);
   },
   onPullDownRefresh() {
