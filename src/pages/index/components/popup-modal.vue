@@ -44,9 +44,9 @@ export default {
   methods: {
     getPopupList() {
       this.$u.api.getActivityList({ location: '2' }).then(e => {
-        console.log(e);
         this.popupList = e;
         this.$emit('input', false);
+        uni.stopPullDownRefresh();
       });
     },
     laterView(time) {
