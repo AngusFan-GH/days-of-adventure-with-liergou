@@ -31,6 +31,10 @@
         :scroll-top="listScrollTop"
         @scroll="scroll"
         @scrolltolower="scrolltolower"
+        refresher-default-style="white"
+        :refresher-triggered="triggered"
+        :refresher-enabled="true"
+        @refresherrefresh="refresherrefresh"
       >
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
         <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
@@ -95,6 +99,7 @@ export default {
       },
       scrollTop: 0,
       listScrollTop: 0,
+      triggered: false,
       backTopIconStyle: {
         fontSize: '32rpx',
         color: style.themeColor,
@@ -118,10 +123,6 @@ export default {
   },
   onPullDownRefresh() {
     this.isShowPopup = true;
-    if (this.gettingPosition) {
-      return;
-    }
-    this.getCardList(true);
   },
   methods: {
     scrolltolower() {
@@ -130,6 +131,13 @@ export default {
     },
     scroll(e) {
       this.scrollTop = e.detail.scrollTop;
+    },
+    refresherrefresh() {
+      this.triggered = true;
+      if (this.gettingPosition) {
+        return;
+      }
+      this.getCardList(true);
     },
     handleClickBackTop() {
       this.listScrollTop = this.scrollTop;
@@ -172,7 +180,7 @@ export default {
         .then(res => {
           if (isRefrash) {
             this.list = [];
-            uni.stopPullDownRefresh();
+            this.triggered = false;
           }
           this.handleResult(res);
         })
