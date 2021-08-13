@@ -1,37 +1,51 @@
 <template>
-  <view class="container" :style="{ '--background': 'url(' + backgroundImage + ')' }">
-    <view class="u-page list-container">
-      <u-sticky :bg-color="styleVariable.backgroundColor">
-        <view class="wrap" v-if="bannerList.length">
-          <u-swiper :list="bannerList" @click="handleClickBanner" title></u-swiper>
-        </view>
-        <u-search
-          class="search"
-          placeholder="输入剧本名，快速找到哈"
-          v-model="keyword"
-          :clearabled="true"
-          :show-action="false"
-          shape="square"
-          :border-color="styleVariable.textCommonColor"
-          margin="10rpx 24rpx"
-          @search="search"
-          @clear="clear"
-        ></u-search>
-      </u-sticky>
-      <view class="list">
+  <view
+    class="container safe-area-inset-bottom"
+    :style="{ '--background': 'url(' + backgroundImage + ')' }"
+  >
+    <view class="u-page u-flex-col safe-area-inset-bottom">
+      <view class="wrap" v-if="bannerList.length">
+        <u-swiper
+          title
+          :list="bannerList"
+          :bg-color="styleVariable.backgroundColor"
+          @click="handleClickBanner"
+        ></u-swiper>
+      </view>
+      <u-search
+        class="search"
+        placeholder="输入剧本名，快速找到哈"
+        v-model="keyword"
+        :clearabled="true"
+        :show-action="false"
+        shape="square"
+        :border-color="styleVariable.textCommonColor"
+        margin="10rpx 24rpx"
+        @search="search"
+        @clear="clear"
+      ></u-search>
+      <scroll-view
+        class="u-flex-1 list"
+        scroll-y="true"
+        :enable-back-to-top="true"
+        :scroll-top="listScrollTop"
+        @scroll="scroll"
+        @scrolltolower="scrolltolower"
+      >
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
-      </view>
-      <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
-      <view class="empty-display" v-if="!loading && !list.length">
-        <image src="/static/image/empty.png"></image>
-        <text>暂无数据</text>
-      </view>
-      <loading class="loading" v-if="loading && !list.length"></loading>
+        <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
+        <view class="empty-display" v-if="!loading && !list.length">
+          <image src="/static/image/empty.png"></image>
+          <text>暂无数据</text>
+        </view>
+        <loading class="loading" v-if="loading && !list.length"></loading>
+      </scroll-view>
     </view>
     <u-back-top
       :scroll-top="scrollTop"
       :icon-style="backTopIconStyle"
       :custom-style="backTopCustomStyle"
+      @click.native="handleClickBackTop"
     ></u-back-top>
     <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
     <position-popup
@@ -39,7 +53,7 @@
       v-model="gettingPosition"
       @gotPosition="handleGotPosition"
     ></position-popup>
-    <popup-modal :isShow="isShowPopup"></popup-modal>
+    <popup-modal v-model="isShowPopup"></popup-modal>
   </view>
 </template>
 
@@ -80,6 +94,7 @@ export default {
         nomore: '暂时没有了',
       },
       scrollTop: 0,
+      listScrollTop: 0,
       backTopIconStyle: {
         fontSize: '32rpx',
         color: style.themeColor,
@@ -102,19 +117,26 @@ export default {
     };
   },
   onPullDownRefresh() {
+    this.isShowPopup = true;
     if (this.gettingPosition) {
       return;
     }
     this.getCardList(true);
   },
-  onReachBottom() {
-    if (this.pageNum >= this.pages) return;
-    this.loadmore();
-  },
-  onPageScroll(e) {
-    this.scrollTop = e.scrollTop;
-  },
   methods: {
+    scrolltolower() {
+      if (this.pageNum >= this.pages || this.loading) return;
+      this.loadmore();
+    },
+    scroll(e) {
+      this.scrollTop = e.detail.scrollTop;
+    },
+    handleClickBackTop() {
+      this.listScrollTop = this.scrollTop;
+      this.$nextTick(() => {
+        this.listScrollTop = 0;
+      });
+    },
     search(e) {
       this.keyword = e.trim();
       this.getCardList(true);
@@ -161,7 +183,6 @@ export default {
     },
     handleResult(res) {
       const { records, pages } = res;
-      // console.table(records);
       this.pages = pages;
       this.list.push(
         ...records.map(v => {
@@ -222,17 +243,20 @@ export default {
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
-    this.isShowPopup = false;
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../common/style/variable.scss';
 .container {
     overflow: hidden;
 
-    min-height: 100%;
+    height: 100%;
+    padding-bottom: 100rpx;
+}
+.u-page {
+    height: 100%;
 
     background: $background-color var(--background) no-repeat bottom / 100%;
 }
@@ -241,13 +265,17 @@ export default {
     margin: 0 24rpx;
 }
 .list {
-    overflow: hidden;
+    position: relative;
 
-    margin: 0 24rpx 10rpx;
+    overflow: auto;
+
+    box-sizing: border-box;
+    margin-bottom: 10rpx;
+    padding: 0 24rpx;
 }
 .empty-display {
     position: absolute;
-    top: 600rpx;
+    top: 50%;
     left: 50%;
 
     transform: translate(-50%, -50%);
@@ -256,7 +284,7 @@ export default {
     color: $text-common-color;
 }
 .loading {
-    position: fixed;
+    position: absolute;
     top: 40%;
     left: 50%;
 

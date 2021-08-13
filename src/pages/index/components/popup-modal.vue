@@ -21,8 +21,12 @@
 <script>
 export default {
   name: 'popup-modal',
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
-    isShow: Boolean,
+    value: Boolean,
   },
   data() {
     return {
@@ -30,7 +34,7 @@ export default {
     };
   },
   watch: {
-    isShow: {
+    value: {
       immediate: true,
       handler(val) {
         val && this.getPopupList();
@@ -42,6 +46,7 @@ export default {
       this.$u.api.getActivityList({ location: '2' }).then(e => {
         console.log(e);
         this.popupList = e;
+        this.$emit('input', false);
       });
     },
     laterView(time) {

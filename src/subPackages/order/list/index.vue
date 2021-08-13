@@ -142,9 +142,9 @@ export default {
         .catch(err => this.handleErr(err));
     },
     handleResult(res) {
-      const { records, pages } = res;
+      const { orders, pages } = res;
       this.pages = pages;
-      this.list[this.current].orders.push(...records);
+      this.list[this.current].orders.push(...orders);
       uni.hideNavigationBarLoading();
       this.handleReadBottomStatus();
       this.loading = false;
