@@ -39,23 +39,7 @@
       v-model="gettingPosition"
       @gotPosition="handleGotPosition"
     ></position-popup>
-
-    <view class="popup-container" v-if="popupList.length" @touchmove.stop.prevent="moveHandle">
-      <view class="popup">
-        <image
-          class="pic"
-          :src="popupList[0].banner"
-          mode="aspectFit"
-          @click="handleClickPopup"
-        ></image>
-        <view class="u-m-t-20 u-flex u-row-around btn-container">
-          <u-button size="mini" :ripple="true" @click="laterView()">关闭</u-button>
-          <u-button type="primary" size="mini" :ripple="true" @click="laterView(false)">
-            稍后再看
-          </u-button>
-        </view>
-      </view>
-    </view>
+    <popup-modal :isShow="isShowPopup"></popup-modal>
   </view>
 </template>
 
@@ -66,18 +50,20 @@ import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
 import { fileUrl } from '../../common/js/config';
+import { popupModal } from './components/popup-modal.vue';
 export default {
   components: {
     listCard,
     customTabbar,
     loading,
     positionPopup,
+    popupModal,
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
     this.$refs.positionRef.startLocationUpdate();
     this.getActivityList();
-    this.getPopupList();
+    this.isShowPopup = true;
   },
   mounted() {
     this.getCardList(true);
@@ -112,7 +98,7 @@ export default {
       styleVariable: style,
       backgroundImage: fileUrl + 'background_image.png!d1',
       bannerList: [],
-      popupList: [],
+      isShowPopup: false,
     };
   },
   onPullDownRefresh() {
@@ -226,33 +212,6 @@ export default {
         });
       });
     },
-    getPopupList() {
-      this.$u.api.getActivityList({ location: '2' }).then(e => {
-        console.log(e);
-        this.popupList = e;
-      });
-    },
-    laterView(isIgnore = true) {
-      const activityId = this.popupList[0].id;
-      console.log('isIgnore:', isIgnore, activityId);
-      isIgnore &&
-        this.$u.api
-          .ignoreActivity({
-            activityId,
-            ignoreDuration: 30,
-          })
-          .then(() => console.log('ignoreActivity', activityId));
-      this.popupList.shift();
-    },
-    handleClickPopup() {
-      console.log(this.popupList[0]);
-      const { templateId, id } = this.popupList[0];
-      if (templateId === '1') {
-        this.createActivityPay(id);
-      } else {
-        this.jumpToActivityDetail(this.popupList[0]);
-      }
-    },
     jumpToActivityDetail({ id, templateId, type }) {
       if (id) {
         uni.navigateTo({
@@ -260,72 +219,10 @@ export default {
         });
       }
     },
-    createActivityPay(id) {
-      const { nickname } = uni.getStorageSync('userInfo');
-      const phone = uni.getStorageSync('phone');
-      this.$u.api
-        .createActivityPay({
-          activityId: id,
-          payerName: nickname,
-          payerPhone: phone,
-        })
-        .then(res => {
-          const { orderInfo } = res;
-          this.pay(id, orderInfo);
-        })
-        .catch(err => console.error(err));
-    },
-    pay(id, orderInfo) {
-      const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      console.log('requestPayment', {
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-      });
-      uni.requestPayment({
-        // appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-        success: e => {
-          if (e.errMsg === 'requestPayment:ok') {
-            this.$u.api
-              .takeCoupon(id)
-              .then(e => {
-                uni.showToast({
-                  title: '领取成功',
-                });
-                if (this.popupList[0] && this.popupList[0].id === id) {
-                  this.laterView();
-                }
-              })
-              .catch(err => {
-                console.error(err);
-                uni.showToast({
-                  title: '领取失败',
-                  icon: 'none',
-                });
-              });
-          }
-        },
-        fail: err => {
-          console.error(err);
-          uni.showToast({
-            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
-            icon: 'none',
-          });
-        },
-      });
-    },
-    moveHandle() {},
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
+    this.isShowPopup = false;
   },
 };
 </script>
@@ -364,33 +261,6 @@ export default {
     left: 50%;
 
     transform: translate(-50%,-50%);
-}
-
-.popup-container {
-    position: fixed;
-    z-index: 999999;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    background-color: rgba($color: #000, $alpha: .5);
-    .popup {
-        position: absolute;
-        top: 40%;
-        left: 50%;
-
-        display: block;
-
-        width: 70vw;
-
-        transform: translate(-50%, -50%);
-        .pic {
-            display: block;
-
-            width: 100%;
-        }
-    }
 }
 
 </style>
