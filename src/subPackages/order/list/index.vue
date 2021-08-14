@@ -26,23 +26,41 @@
             v-for="(order, i) in item.orders"
             :key="i"
             :title="order.shopName"
-            :sub-title="order.blockBooking === 1 ? '包场' : '拼场'"
+            :sub-title="order.productItemUniqueId ? '主题' : '活动'"
             padding="18"
           >
             <view slot="body">
               <view class="u-body-item u-flex u-col-between u-p-t-0">
-                <image :src="order.headPicUrl" mode="aspectFill"></image>
+                <image v-show="order.headPicUrl" :src="order.headPicUrl" mode="aspectFill"></image>
                 <view>
-                  <view class="u-line-1 u-margin-bottom-20">{{ order.productName }}</view>
-                  <view class="u-line-1 u-margin-bottom-20 high-light">¥{{ order.price }}</view>
-                  <view class="u-line-1">{{ order.time }}</view>
+                  <view class="u-line-1 u-margin-bottom-20">{{ order.description }}</view>
+                  <view class="u-line-1 u-margin-bottom-20 high-light">
+                    ¥{{ order.orderPrice }}
+                  </view>
+                  <view class="u-line-1">{{ order.buyTime }}</view>
                 </view>
               </view>
             </view>
             <view class="u-flex u-row-right" slot="foot">
-              <u-button class="u-margin-right-10" size="mini" :ripple="true">删除</u-button>
-              <u-button size="mini" :ripple="true" v-show="list[current].type === 1">评价</u-button>
-              <u-button size="mini" :ripple="true" v-show="list[current].type === 2">退款</u-button>
+              <u-button
+                class="u-margin-right-10"
+                size="mini"
+                :ripple="true"
+                @click="deleteOrder(order.orderId)"
+              >
+                删除
+              </u-button>
+              <u-button size="mini" :ripple="true" v-show="list[current].payStatus == '1'">
+                支付
+              </u-button>
+              <u-button
+                size="mini"
+                :ripple="true"
+                v-show="list[current].payStatus == '2'"
+                @click="cancelOrder(order.orderId)"
+              >
+                取消
+              </u-button>
             </view>
           </u-card>
           <u-loadmore
@@ -74,18 +92,23 @@ export default {
     return {
       list: [
         {
-          name: '待消费',
-          type: 0,
+          name: '已支付',
+          payStatus: '2',
           orders: [],
         },
         {
-          name: '已消费',
-          type: 1,
+          name: '未支付',
+          payStatus: '1',
           orders: [],
         },
         {
-          name: '退款',
-          type: 2,
+          name: '已取消',
+          payStatus: '3',
+          orders: [],
+        },
+        {
+          name: '已关闭',
+          payStatus: '4',
           orders: [],
         },
       ],
@@ -129,7 +152,7 @@ export default {
       const params = {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        type: this.list[this.current].type,
+        payStatus: this.list[this.current].payStatus,
       };
       this.$u.api
         .getOrderList(params)
@@ -186,6 +209,31 @@ export default {
     onreachBottom() {
       if (this.pageNum >= this.pages) return;
       this.loadmore();
+    },
+    cancelOrder(id) {
+      this.$u.api
+        .cancelOrder({
+          orderId: id,
+          operate: 'cancel',
+        })
+        .then(e => {
+          console.log(e);
+        });
+    },
+    deleteOrder(id) {
+      this.$u.api
+        .cancelOrder({
+          orderId: id,
+          operate: 'delete',
+        })
+        .then(e => {
+          console.log(e);
+        });
+    },
+    continuePay(id) {
+      this.$u.api.continuePay(id).then(e => {
+        console.log(e);
+      });
     },
   },
 };

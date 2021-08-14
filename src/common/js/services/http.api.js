@@ -62,6 +62,12 @@ const install = (Vue, vm) => {
 	 */
 	let takeCoupon = (couponTmplId) => vm.$u.post(`/market-boot/app/coupon/take/${couponTmplId}`, {});
 
+	/**
+	 * 领取全部优惠券
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E4%BC%98%E6%83%A0%E5%88%B8/takeAllUsingPOST
+	 */
+	let takeAllCoupon = (activityId) => vm.$u.post(`/market-boot/app/coupon/takeAll/${activityId}`, {});
+
 	// /**
 	//  * 订单列表
 	//  */
@@ -111,6 +117,24 @@ const install = (Vue, vm) => {
 	let queryPay = (params = {}) => vm.$u.post('/market-boot/app/order/queryPay', params);
 
 	/**
+	 * 继续支付
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/continuePayUsingPOST
+	 */
+	let continuePay = (orderId) => vm.$u.post(`/market-boot/app/order/continuePay/${orderId}`, {});
+
+	/**
+	 * 取消订单
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/closeUsingPOST
+	 */
+	let cancelOrder = (params = {}) => vm.$u.post(`/market-boot/app/order/${params.orderId}?operate=${params.operate}`, {});
+
+	/**
+	 * 申请退款
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/applyRefundUsingPOST
+	 */
+	let applyRefund = (orderId) => vm.$u.post(`/market-boot/app/order/applyRefund/${orderId}`, {});
+
+	/**
 	 * 活动列表
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E6%B4%BB%E5%8A%A8/activityListUsingGET
 	 */
@@ -146,7 +170,11 @@ const install = (Vue, vm) => {
 		ignoreActivity,
 		getActivityDetail,
 		createActivityPay,
-		takeCoupon
+		takeCoupon,
+		takeAllCoupon,
+		continuePay,
+		cancelOrder,
+		applyRefund
 	};
 };
 
