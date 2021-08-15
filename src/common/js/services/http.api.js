@@ -68,30 +68,6 @@ const install = (Vue, vm) => {
 	 */
 	let takeAllCoupon = (activityId) => vm.$u.post(`/market-boot/app/coupon/takeAll/${activityId}`, {});
 
-	// /**
-	//  * 订单列表
-	//  */
-	// let getOrderList = (params = {}) => {
-	// 	return new Promise((res, rej) => {
-	// 		setTimeout(() => {
-	// 			res(params.pageNum > 3 ? { pages: params.pageNum, records: [] } : {
-	// 				pages: params.pageNum + 1,
-	// 				records: new Array(params.pageSize).fill({}).reduce((p, c, i) => {
-	// 					p.push({
-	// 						shopName: '入梦时空沉浸式实景剧场' + params.type,
-	// 						blockBooking: Math.random() >= 0.5 ? 0 : 1,
-	// 						price: (Math.random() * 999).toFixed(2),
-	// 						headPicUrl: 'https://img11.360buyimg.com/n7/jfs/t1/94448/29/2734/524808/5dd4cc16E990dfb6b/59c256f85a8c3757.jpg',
-	// 						productName: '最后的幸存者' + ((params.pageNum - 1) * params.pageSize + i + 1),
-	// 						time: '2021-07-10 20:22',
-	// 					});
-	// 					return p;
-	// 				}, [])
-	// 			});
-	// 		}, 500);
-	// 	});
-	// };
-
 	/**
 	 * 订单列表
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/pageListUsingPOST
@@ -135,6 +111,12 @@ const install = (Vue, vm) => {
 	let applyRefund = (orderId) => vm.$u.post(`/market-boot/app/order/applyRefund/${orderId}`, {});
 
 	/**
+	 * 订单-强制退款
+	 * http://182.92.107.174/market-boot/doc.html#/app/API/refundOrderRefundUsingPOST
+	 */
+	let refundOrderRefund = (orderId) => vm.$u.post(`/market-boot/app/api/refundOrderRefund/${orderId}`, {});
+
+	/**
 	 * 活动列表
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E6%B4%BB%E5%8A%A8/activityListUsingGET
 	 */
@@ -174,7 +156,8 @@ const install = (Vue, vm) => {
 		takeAllCoupon,
 		continuePay,
 		cancelOrder,
-		applyRefund
+		applyRefund,
+		refundOrderRefund
 	};
 };
 

@@ -2,14 +2,14 @@ const $moment = require("moment");
 
 $moment.locale("zh_CN");
 
-export function timeRangeFmt(startTime, endTime, isFull = false) {
+export function timeRangeFmt(startTime, endTime, isFull = false, isOrder = false) {
     if (startTime == null && endTime == null) return null;
     const isMissed = $moment(endTime).isBefore();
-    if (isMissed) {
+    if (!isOrder && isMissed) {
         return "已结束";
     }
     const isBegin = $moment(startTime).isBefore();
-    if (isBegin) {
+    if (!isOrder && isBegin) {
         return "已开始";
     }
     const startTimeStr = $moment(startTime).calendar(

@@ -22,47 +22,80 @@
     >
       <swiper-item class="swiper-item" v-for="(item, index) in list" :key="index">
         <scroll-view scroll-y style="height: 100%; width: 100%" @scrolltolower="onreachBottom">
-          <u-card
-            v-for="(order, i) in item.orders"
-            :key="i"
-            :title="order.shopName"
-            :sub-title="order.productItemUniqueId ? '主题' : '活动'"
-            padding="18"
-          >
-            <view slot="body">
-              <view class="u-body-item u-flex u-col-between u-p-t-0">
-                <image v-show="order.headPicUrl" :src="order.headPicUrl" mode="aspectFill"></image>
-                <view>
-                  <view class="u-line-1 u-margin-bottom-20">{{ order.description }}</view>
-                  <view class="u-line-1 u-margin-bottom-20 high-light">
-                    ¥{{ order.orderPrice }}
-                  </view>
-                  <view class="u-line-1">{{ order.buyTime }}</view>
-                </view>
+          <template v-for="(order, i) in item.orders">
+            <order-theme v-if="order.orderType === '1'" :order="order" :key="i">
+              <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '1'"
+                  @click="continuePay(orderId)"
+                >
+                  立即付款
+                </u-button>
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '2'"
+                  @click="refundOrderRefund(orderId)"
+                >
+                  退款
+                </u-button>
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '1'"
+                  @click="cancelOrder(orderId)"
+                >
+                  取消
+                </u-button>
+                <u-button
+                  class="u-margin-right-10"
+                  size="mini"
+                  :ripple="true"
+                  @click="deleteOrder(orderId)"
+                >
+                  删除
+                </u-button>
               </view>
-            </view>
-            <view class="u-flex u-row-right" slot="foot">
-              <u-button
-                class="u-margin-right-10"
-                size="mini"
-                :ripple="true"
-                @click="deleteOrder(order.orderId)"
-              >
-                删除
-              </u-button>
-              <u-button size="mini" :ripple="true" v-show="list[current].payStatus == '1'">
-                支付
-              </u-button>
-              <u-button
-                size="mini"
-                :ripple="true"
-                v-show="list[current].payStatus == '2'"
-                @click="cancelOrder(order.orderId)"
-              >
-                取消
-              </u-button>
-            </view>
-          </u-card>
+            </order-theme>
+            <order-activity v-if="order.orderType === '2'" :order="order" :key="i">
+              <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '1'"
+                  @click="continuePay(orderId)"
+                >
+                  立即付款
+                </u-button>
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '2'"
+                  @click="refundOrderRefund(orderId)"
+                >
+                  退款
+                </u-button>
+                <u-button
+                  size="mini"
+                  :ripple="true"
+                  v-show="status == '1'"
+                  @click="cancelOrder(orderId)"
+                >
+                  取消
+                </u-button>
+                <u-button
+                  class="u-margin-right-10"
+                  size="mini"
+                  :ripple="true"
+                  @click="deleteOrder(orderId)"
+                >
+                  删除
+                </u-button>
+              </view>
+            </order-activity>
+          </template>
           <u-loadmore
             v-if="item.orders.length"
             :status="status"
@@ -84,16 +117,20 @@
 import loading from '@/components/loading/loading.vue';
 import style from '../../../common/style/variable.scss';
 import { fileUrl } from '../../../common/js/config';
+import { orderTheme } from './components/theme.vue';
+import { orderActivity } from './components/activity.vue';
 export default {
   components: {
     loading,
+    orderTheme,
+    orderActivity,
   },
   data() {
     return {
       list: [
         {
-          name: '已支付',
-          payStatus: '2',
+          name: '全部',
+          payStatus: '',
           orders: [],
         },
         {
@@ -102,12 +139,17 @@ export default {
           orders: [],
         },
         {
+          name: '已支付',
+          payStatus: '2',
+          orders: [],
+        },
+        {
           name: '已取消',
           payStatus: '3',
           orders: [],
         },
         {
-          name: '已关闭',
+          name: '退款',
           payStatus: '4',
           orders: [],
         },
@@ -235,35 +277,21 @@ export default {
         console.log(e);
       });
     },
+    refundOrderRefund(id) {
+      this.$u.api.refundOrderRefund(id).then(e => {
+        console.log(e);
+      });
+    },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../../common/style/variable.scss';
 .order-list {
     height: 100%;
 
     background: $background-color var(--background) no-repeat bottom / 100%;
-    .u-card-wrap {
-        background-color: $u-bg-color;
-    }
-
-    .u-body-item {
-        font-size: 32rpx;
-
-        color: #333;
-    }
-
-    .u-body-item image {
-        flex: 0 0 145rpx;
-
-        width: 145rpx;
-        height: 211rpx;
-        margin-right: 20rpx;
-
-        border-radius: 8rpx;
-    }
 }
 .empty-display {
     position: absolute;
@@ -273,7 +301,7 @@ export default {
     transform: translate(-50%, -50%);
     text-align: center;
 
-    color: $black;
+    color: $white;
 }
 .loading {
     position: fixed;
@@ -282,8 +310,10 @@ export default {
 
     transform: translate(-50%,-50%);
 }
-.high-light {
-    color: $theme-color;
+.btn-container {
+    /deep/ u-button {
+        margin-left: 20rpx;
+    }
 }
 
 </style>
