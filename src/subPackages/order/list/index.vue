@@ -25,30 +25,22 @@
           <template v-for="(order, i) in item.orders">
             <order-theme v-if="order.orderType === '1'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
-              <view
-                class="btn-container"
-                slot="btn-container"
-                slot-scope="{ status, orderId, orderType }"
-              >
+              <view class="btn-container" slot="btn-container">
                 <btn-container
-                  :status="status"
-                  :orderId="orderId"
-                  :orderType="orderType"
+                  :status="order.payStatus"
+                  :orderId="order.outTradeNo"
+                  :orderType="order.orderType"
                   @change="handleOrder"
                 ></btn-container>
               </view>
             </order-theme>
             <order-activity v-if="order.orderType === '2'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
-              <view
-                class="btn-container"
-                slot="btn-container"
-                slot-scope="{ status, orderId, orderType }"
-              >
+              <view class="btn-container" slot="btn-container">
                 <btn-container
-                  :status="status"
-                  :orderId="orderId"
-                  :orderType="orderType"
+                  :status="order.payStatus"
+                  :orderId="order.outTradeNo"
+                  :orderType="order.orderType"
                   @change="handleOrder"
                 ></btn-container>
               </view>

@@ -12,7 +12,7 @@
         name="close-circle"
         size="60"
         color="#fff"
-        @click="laterView(60)"
+        @click="laterView(popupList[0].id)"
       ></u-icon>
     </view>
   </view>
@@ -49,8 +49,8 @@ export default {
         uni.stopPullDownRefresh();
       });
     },
-    laterView(time = 60) {
-      const activityId = this.popupList[0].id;
+    laterView(id, time = 60) {
+      const activityId = id;
       console.log('isIgnore:', activityId, time);
       this.$u.api
         .ignoreActivity({
@@ -58,7 +58,8 @@ export default {
           ignoreDuration: time,
         })
         .then(() => console.log('ignoreActivity', activityId));
-      this.popupList.shift();
+      const index = this.popupList.findIndex(v => v.id === id);
+      index >= 0 && this.popupList.splice(index, 1);
     },
     handleClickPopup() {
       console.log(this.popupList[0]);
@@ -93,16 +94,8 @@ export default {
     },
     pay(id, orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      console.log('requestPayment', {
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-      });
       uni.requestPayment({
-        // appId,
+        appId,
         timeStamp,
         nonceStr,
         package: prepayId,
@@ -116,18 +109,14 @@ export default {
                 uni.showToast({
                   title: '领取成功',
                 });
-                if (this.popupList[0] && this.popupList[0].id === id) {
-                  this.laterView(3600);
-                }
+                this.laterView(id, 60 * 60 * 24 * 365 * 100);
                 uni.navigateTo({
                   url: `/subPackages/coupon/index`,
                 });
               })
               .catch(err => {
                 console.error(err);
-                if (this.popupList[0] && this.popupList[0].id === id) {
-                  this.laterView(3600);
-                }
+                this.laterView(id);
               });
           }
         },

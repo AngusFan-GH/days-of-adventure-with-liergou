@@ -29,12 +29,7 @@
       </view>
     </view>
     <view class="u-flex u-row-right footer">
-      <slot
-        name="btn-container"
-        :status="order.payStatus"
-        :orderId="order.outTradeNo"
-        :orderType="order.orderType"
-      ></slot>
+      <slot name="btn-container"></slot>
     </view>
   </view>
 </template>
