@@ -49,13 +49,13 @@ export default {
         uni.stopPullDownRefresh();
       });
     },
-    laterView(time) {
+    laterView(time = 60) {
       const activityId = this.popupList[0].id;
       console.log('isIgnore:', activityId, time);
       this.$u.api
         .ignoreActivity({
           activityId,
-          ignoreDuration: time != null ? time : 60 * 60 * 24 * 365 * 100,
+          ignoreDuration: time,
         })
         .then(() => console.log('ignoreActivity', activityId));
       this.popupList.shift();
@@ -117,15 +117,14 @@ export default {
                   title: '领取成功',
                 });
                 if (this.popupList[0] && this.popupList[0].id === id) {
-                  this.laterView();
+                  this.laterView(3600);
                 }
+                uni.navigateTo({
+                  url: `/subPackages/coupon/index`,
+                });
               })
               .catch(err => {
                 console.error(err);
-                uni.showToast({
-                  title: '领取失败',
-                  icon: 'none',
-                });
               });
           }
         },

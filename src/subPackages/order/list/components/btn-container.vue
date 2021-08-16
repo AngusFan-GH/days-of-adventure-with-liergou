@@ -13,7 +13,7 @@
     <u-button
       size="mini"
       :ripple="true"
-      v-show="status == '2'"
+      v-show="status == '2' && orderType !== '2'"
       shape="circle"
       type="warning"
       @click="refundOrderRefund(orderId)"
@@ -54,6 +54,7 @@ export default {
   props: {
     orderId: String,
     status: String,
+    orderType: String,
   },
   data() {
     return {
@@ -68,7 +69,6 @@ export default {
           operate: 'cancel',
         })
         .then(e => {
-          console.log(e);
           this.$emit('change', { type: 'cancel', id });
         });
     },
@@ -79,20 +79,48 @@ export default {
           operate: 'delete',
         })
         .then(e => {
-          console.log(e);
           this.$emit('change', { type: 'delete', id });
         });
     },
-    continuePay(id) {
-      this.$u.api.continuePay(id).then(e => {
-        console.log(e);
-        this.$emit('change', { type: 'pay', id });
-      });
-    },
     refundOrderRefund(id) {
       this.$u.api.refundOrderRefund(id).then(e => {
-        console.log(e);
         this.$emit('change', { type: 'refund', id });
+      });
+    },
+    continuePay(id) {
+      this.$u.api.continuePay(id).then(e => {
+        this.pay(e.orderInfo, id);
+      });
+    },
+    pay(orderInfo, id) {
+      const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
+      console.log('requestPayment', {
+        appId,
+        timeStamp,
+        nonceStr,
+        package: prepayId,
+        signType: 'RSA',
+        paySign,
+      });
+      uni.requestPayment({
+        // appId,
+        timeStamp,
+        nonceStr,
+        package: prepayId,
+        signType: 'RSA',
+        paySign,
+        success: e => {
+          if (e.errMsg === 'requestPayment:ok') {
+            this.$emit('change', { type: 'pay', id });
+          }
+        },
+        fail: err => {
+          console.error(err);
+          uni.showToast({
+            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
+            icon: 'none',
+          });
+        },
       });
     },
   },

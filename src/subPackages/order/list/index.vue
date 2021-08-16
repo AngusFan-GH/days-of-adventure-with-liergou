@@ -25,20 +25,30 @@
           <template v-for="(order, i) in item.orders">
             <order-theme v-if="order.orderType === '1'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
-              <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
+              <view
+                class="btn-container"
+                slot="btn-container"
+                slot-scope="{ status, orderId, orderType }"
+              >
                 <btn-container
                   :status="status"
                   :orderId="orderId"
+                  :orderType="orderType"
                   @change="handleOrder"
                 ></btn-container>
               </view>
             </order-theme>
             <order-activity v-if="order.orderType === '2'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
-              <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
+              <view
+                class="btn-container"
+                slot="btn-container"
+                slot-scope="{ status, orderId, orderType }"
+              >
                 <btn-container
                   :status="status"
                   :orderId="orderId"
+                  :orderType="orderType"
                   @change="handleOrder"
                 ></btn-container>
               </view>
@@ -104,7 +114,12 @@ export default {
           orders: [],
         },
       ],
-      statusMap: {},
+      statusMap: {
+        1: '未支付',
+        2: '已支付',
+        3: '已取消',
+        4: '已退款',
+      },
       pageNum: 1,
       pageSize: 10,
       pages: 1,
@@ -123,19 +138,11 @@ export default {
       backgroundImage: fileUrl + 'background_image.png!d1',
     };
   },
-  onShow() {
-    this.getOrderList(true);
-  },
   onPullDownRefresh() {
     this.getOrderList(true);
   },
   mounted() {
-    this.statusMap = this.list.reduce((map, v) => {
-      if (v.payStatus === '') return map;
-      map[v.payStatus] = v.name;
-      return map;
-    }, {});
-    console.log(this.statusMap);
+    this.getOrderList(true);
   },
   methods: {
     getOrderList(isRefrash = false) {
@@ -181,15 +188,16 @@ export default {
       console.error(err);
     },
     handleOrder({ type, id }) {
+      if (this.list[this.current].payStatus !== '' || type === 'delete') {
+        const index = this.list[this.current].orders.findIndex(v => v.outTradeNo === id);
+        index >= 0 && this.list[this.current].orders.splice(index, 1);
+        return;
+      }
       const order = this.list[this.current].orders.find(v => v.outTradeNo === id);
       if (!order) {
         return;
       }
       switch (type) {
-        case 'delete':
-          const index = this.list[this.current].orders.findIndex(v => v.outTradeNo === id);
-          this.list[this.current].orders.splice(index, 1);
-          break;
         case 'cancel':
           order.payStatus = '3';
           break;

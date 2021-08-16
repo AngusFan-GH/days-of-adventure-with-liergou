@@ -54,18 +54,23 @@ export default {
     return {
       list: [
         {
+          name: '全部',
+          status: '',
+          coupons: [],
+        },
+        {
           name: '待使用',
-          status: 1,
+          status: '1',
           coupons: [],
         },
         {
           name: '已使用',
-          status: 2,
+          status: '2',
           coupons: [],
         },
         {
           name: '已过期',
-          status: 3,
+          status: '3',
           coupons: [],
         },
       ],

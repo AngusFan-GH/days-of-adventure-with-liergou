@@ -4,9 +4,7 @@
       <view class="u-flex u-row-center u-line-1 card-price">¥{{ coupon.offsetAmount }}</view>
       <view class="u-flex-1 card-info">
         <view class="u-margin-bottom-20 u-line-1 card-title">{{ coupon.title }}</view>
-        <view class="u-line-1 card-time">
-          {{ coupon.validStartTime }} - {{ coupon.validEndTime }}
-        </view>
+        <view class="u-line-1 card-time">{{ time }}</view>
         <view
           class="u-margin-top-10 u-flex card-order"
           v-show="coupon.status === 1 && coupon.bizNumber"
@@ -20,19 +18,19 @@
           name="yiguoqi"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 3"
+          v-show="coupon.status === '3'"
         ></u-icon>
         <u-icon
           name="daishiyong"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 1"
+          v-show="coupon.status === '1'"
         ></u-icon>
         <u-icon
           name="yishiyong"
           custom-prefix="custom-icon"
           size="60"
-          v-show="coupon.status === 2"
+          v-show="coupon.status === '2'"
         ></u-icon>
       </view>
     </view>
@@ -40,7 +38,7 @@
       <view class="card-rule">
         <view class="u-flex u-row-between card-rule-top">
           <view class="card-range">单次消费金额满{{ coupon.withAmount }}使用</view>
-          <view class="card-rule-label" @click="showRules()">
+          <view class="card-rule-label" @click="showRules()" v-if="coupon.rules.length">
             <text class="u-margin-right-4">使用规则</text>
             <u-icon
               :name="isShowRules ? 'arrow-up' : 'arrow-down'"
@@ -62,6 +60,7 @@
 
 <script>
 import style from '@/common/style/variable.scss';
+import { timeRangeFmt } from '@/common/js/utils/time-fmt';
 export default {
   name: 'coupon-card',
   data() {
@@ -73,6 +72,12 @@ export default {
   props: {
     coupon: {
       default: {},
+    },
+  },
+  computed: {
+    time() {
+      const { validStartTime, validEndTime } = this.coupon || {};
+      return timeRangeFmt(validStartTime, validEndTime, false, true);
     },
   },
   methods: {
