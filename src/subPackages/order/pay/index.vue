@@ -269,7 +269,6 @@ export default {
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
-      console.log('data from submitOrder', data);
       this.price = data.price;
       this.screening = {
         morePeople: data.advicePeopleMax - data.currentPeople,
@@ -280,7 +279,6 @@ export default {
       const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
       const filterData = uni.getStorageSync(currentTabPage + '_filter_data');
       this.filterData = filterData;
-      console.log('filterData', this.filterData);
       // 不可以包场，只能拼场
       if (!this.blockBooking) {
         return this.changeMode(0);
@@ -347,7 +345,6 @@ export default {
       }
     },
     totalPrice(val) {
-      console.log('totalPrice', val);
       this.getValidCouponList(val);
     },
   },
@@ -384,16 +381,19 @@ export default {
         });
         return;
       }
+      const params = {
+        itemCount: this.count,
+        payerName:
+          this.name || (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
+        payerPhone: this.phone,
+        productItemUniqueId: this.screening.uniqueId,
+        userNote: this.remark,
+      };
+      if (this.couponChoosn) {
+        params.couponId = this.couponChoosn.id;
+      }
       this.$u.api
-        .createPay({
-          itemCount: this.count,
-          payerName:
-            this.name ||
-            (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
-          payerPhone: this.phone,
-          productItemUniqueId: this.screening.uniqueId,
-          userNote: this.remark,
-        })
+        .createPay(params)
         .then(res => {
           const { orderInfo } = res;
           this.pay(orderInfo);
@@ -402,34 +402,45 @@ export default {
     },
     getValidCouponList(price) {
       this.$u.api.getValidCouponList(price).then(e => {
-        console.log(e);
+        this.resetCouponInfo();
         this.couponList = e;
       });
     },
+    resetCouponInfo() {
+      this.couponChoosn = null;
+      this.calculateResult = null;
+    },
     goToValidCouponList() {
-      this.couponChoosn = this.couponList[0];
+      uni.navigateTo({
+        url: '/subPackages/order/pay/valid-coupon-list',
+        events: {
+          chooseCoupon: ({ id }) => {
+            const couponInfo = this.couponList.find(v => v.id === id);
+            this.couponChoosn = couponInfo;
+            this.calculateResult = couponInfo.calculateInfo;
+            // this.calculateCouponInfo();
+          },
+        },
+        success: res => {
+          const { id } = this.couponChoosn || {};
+          res.eventChannel.emit('validCouponList', { value: id, list: this.couponList });
+        },
+      });
+    },
+    calculateCouponInfo() {
       this.$u.api
         .calculateCoupon({
           couponId: this.couponChoosn.id,
           totalAmount: this.totalPrice,
         })
         .then(e => {
-          console.log('calculateCoupon', e);
           this.calculateResult = e;
         });
     },
     pay(orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      console.log('requestPayment', {
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-      });
       uni.requestPayment({
-        // appId,
+        appId,
         timeStamp,
         nonceStr,
         package: prepayId,

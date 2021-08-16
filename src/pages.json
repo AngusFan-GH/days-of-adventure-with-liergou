@@ -47,6 +47,12 @@
 					}
 				},
 				{
+					"path": "order/pay/valid-coupon-list",
+					"style": {
+						"navigationBarTitleText": "优惠券列表"
+					}
+				},
+				{
 					"path": "order/list/index",
 					"style": {
 						"navigationBarTitleText": "订单列表",
