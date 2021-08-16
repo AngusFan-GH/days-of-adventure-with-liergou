@@ -114,7 +114,9 @@ const install = (Vue, vm) => {
 	 * 订单-强制退款
 	 * http://182.92.107.174/market-boot/doc.html#/app/API/refundOrderRefundUsingPOST
 	 */
-	let refundOrderRefund = (orderId) => vm.$u.post(`/market-boot/app/api/refundOrderRefund/${orderId}`, {});
+	let refundOrderRefund = (orderId) => vm.$u.post(`/market-boot/app/api/refundOrderRefund/${orderId}`, {}, {
+		'api-token': 'Rck8ejfZTIkKJGgWhZtE61gvRI6reyquGYuC5QgE14lU6zDm0IQOdUltNoTt6VVD'
+	});
 
 	/**
 	 * 活动列表

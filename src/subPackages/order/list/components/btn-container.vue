@@ -35,10 +35,17 @@
       size="mini"
       :ripple="true"
       shape="circle"
-      @click="deleteOrder(orderId)"
+      @click="isShowDeleteModal = true"
     >
       删除
     </u-button>
+    <u-modal
+      v-model="isShowDeleteModal"
+      title="确认删除订单？"
+      content="删除后将无法恢复和查看订单"
+      show-cancel-button
+      @confirm="deleteOrder(orderId)"
+    ></u-modal>
   </view>
 </template>
 
@@ -47,6 +54,11 @@ export default {
   props: {
     orderId: String,
     status: String,
+  },
+  data() {
+    return {
+      isShowDeleteModal: false,
+    };
   },
   methods: {
     cancelOrder(id) {
@@ -57,6 +69,7 @@ export default {
         })
         .then(e => {
           console.log(e);
+          this.$emit('change', { type: 'cancel', id });
         });
     },
     deleteOrder(id) {
@@ -67,16 +80,19 @@ export default {
         })
         .then(e => {
           console.log(e);
+          this.$emit('change', { type: 'delete', id });
         });
     },
     continuePay(id) {
       this.$u.api.continuePay(id).then(e => {
         console.log(e);
+        this.$emit('change', { type: 'pay', id });
       });
     },
     refundOrderRefund(id) {
       this.$u.api.refundOrderRefund(id).then(e => {
         console.log(e);
+        this.$emit('change', { type: 'refund', id });
       });
     },
   },

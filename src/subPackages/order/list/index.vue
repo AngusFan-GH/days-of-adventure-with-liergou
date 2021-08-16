@@ -26,13 +26,21 @@
             <order-theme v-if="order.orderType === '1'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
               <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
-                <btn-container :status="status" :orderId="orderId"></btn-container>
+                <btn-container
+                  :status="status"
+                  :orderId="orderId"
+                  @change="handleOrder"
+                ></btn-container>
               </view>
             </order-theme>
             <order-activity v-if="order.orderType === '2'" :order="order" :key="i">
               <text slot="status">{{ statusMap[order.payStatus] }}</text>
               <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
-                <btn-container :status="status" :orderId="orderId"></btn-container>
+                <btn-container
+                  :status="status"
+                  :orderId="orderId"
+                  @change="handleOrder"
+                ></btn-container>
               </view>
             </order-activity>
           </template>
@@ -171,6 +179,27 @@ export default {
       }
       this.handleReadBottomStatus();
       console.error(err);
+    },
+    handleOrder({ type, id }) {
+      const order = this.list[this.current].orders.find(v => v.outTradeNo === id);
+      if (!order) {
+        return;
+      }
+      switch (type) {
+        case 'delete':
+          const index = this.list[this.current].orders.findIndex(v => v.outTradeNo === id);
+          this.list[this.current].orders.splice(index, 1);
+          break;
+        case 'cancel':
+          order.payStatus = '3';
+          break;
+        case 'refund':
+          order.payStatus = '4';
+          break;
+        case 'pay':
+          order.payStatus = '2';
+          break;
+      }
     },
     loadmore() {
       this.pageNum++;
