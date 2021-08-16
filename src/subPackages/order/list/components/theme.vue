@@ -22,7 +22,7 @@
           <view class="u-line-1 u-margin-bottom-16">
             <text class="u-m-r-10">{{ order.itemCount }}张</text>
             |
-            <text class="u-m-l-10 high-light">总价：¥{{ order.orderPrice }}</text>
+            <text class="u-m-l-10 high-light">总价：¥{{ order.payPrice }}</text>
           </view>
           <view class="u-line-1 u-margin-bottom-16">{{ order.extraInfo.shopName }}</view>
         </view>

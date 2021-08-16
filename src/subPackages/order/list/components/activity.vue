@@ -15,7 +15,7 @@
         <view class="content">
           <view class="u-flex u-row-between u-m-b-16">
             <view class="u-flex-1 u-line-1 title">{{ order.title }}</view>
-            <view class="high-light">¥{{ order.orderPrice }}</view>
+            <view class="high-light">¥{{ order.payPrice }}</view>
           </view>
           <view class="u-line-1 u-m-b-16 time">下单时间：{{ order.buyTime }}</view>
         </view>

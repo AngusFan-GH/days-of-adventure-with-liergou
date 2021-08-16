@@ -13,7 +13,7 @@
     <u-button
       size="mini"
       :ripple="true"
-      v-show="status == '2' && orderType !== '2'"
+      v-show="status == '2'"
       shape="circle"
       type="warning"
       @click="refundOrderRefund(orderId)"
