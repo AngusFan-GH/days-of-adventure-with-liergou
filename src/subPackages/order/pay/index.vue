@@ -142,6 +142,27 @@
           <text>其他玩家不可加入。</text>
         </view>
       </view>
+      <view class="coupon-wrapper u-flex">
+        <view class="u-padding-top-34 u-padding-bottom-34 prefix">优惠券</view>
+        <view class="u-flex-1 u-flex u-row-right u-margin-right-18">
+          <view
+            class="coupon"
+            @click="goToValidCouponList"
+            v-if="couponList.length && !calculateResult"
+          >
+            {{ couponList.length }}张可用
+          </view>
+          <view
+            class="choosen-coupon"
+            @click="goToValidCouponList"
+            v-if="couponList.length && calculateResult"
+          >
+            -¥{{ calculateResult.discountAmount }}
+          </view>
+          <view class="no-coupon" v-if="!couponList.length">暂无可用</view>
+        </view>
+        <u-icon name="arrow-right" class="arrow-right"></u-icon>
+      </view>
       <view class="common-usertable-wrapper">
         <view class="mobile-item u-flex">
           <view class="u-padding-top-26 u-padding-bottom-30 prefix">联系人</view>
@@ -214,7 +235,11 @@
         <view class="price">
           <text class="price-label">合计：</text>
           <text class="price-logo">¥</text>
-          <text class="price-num">{{ totalPrice }}</text>
+          <text class="price-num" v-if="calculateResult">
+            {{ calculateResult.payAmount }}
+            <text class="tip">（已优惠¥{{ calculateResult.discountAmount }}）</text>
+          </text>
+          <text class="price-num" v-else>{{ totalPrice }}</text>
         </view>
         <view>
           <u-button
@@ -300,6 +325,9 @@ export default {
       centerBackground: `url(${fileUrl}pay_pinchang_single_image.png!d1)`,
       productIndoBgImage: `url(${fileUrl}pay_product_info_bg_image.png!d1)`,
       noticeBgImage: `url(${fileUrl}pay_notice_bg_image.png!d1)`,
+      couponList: [],
+      couponChoosn: null,
+      calculateResult: null,
     };
   },
   watch: {
@@ -317,6 +345,10 @@ export default {
           this.count = 1;
           break;
       }
+    },
+    totalPrice(val) {
+      console.log('totalPrice', val);
+      this.getValidCouponList(val);
     },
   },
   computed: {
@@ -367,6 +399,24 @@ export default {
           this.pay(orderInfo);
         })
         .catch(err => console.error(err));
+    },
+    getValidCouponList(price) {
+      this.$u.api.getValidCouponList(price).then(e => {
+        console.log(e);
+        this.couponList = e;
+      });
+    },
+    goToValidCouponList() {
+      this.couponChoosn = this.couponList[0];
+      this.$u.api
+        .calculateCoupon({
+          couponId: this.couponChoosn.id,
+          totalAmount: this.totalPrice,
+        })
+        .then(e => {
+          console.log('calculateCoupon', e);
+          this.calculateResult = e;
+        });
     },
     pay(orderInfo) {
       const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
@@ -624,6 +674,31 @@ export default {
             color: rgb(17, 17, 17);
         }
     }
+    .coupon-wrapper {
+        border-bottom: 1rpx solid #cacaca;
+        .coupon {
+            display: inline-block;
+
+            padding: 6rpx 16rpx;
+
+            color: #fff;
+            border-radius: 4px;
+            background-color: red;
+        }
+        .no-coupon {
+            color: #6e6e6e;
+        }
+        .choosen-coupon {
+            color: red;
+        }
+        .prefix {
+            font-size: 30rpx;
+            font-weight: 500;
+            line-height: 30rpx;
+
+            color: #333;
+        }
+    }
     .common-usertable-wrapper {
         .mobile-item {
             border-bottom: 1rpx solid #cacaca;
@@ -713,6 +788,11 @@ export default {
                 font-weight: bold;
                 line-height: 35rpx;
             }
+        }
+        .tip {
+            font-size: 24rpx;
+
+            color: #6e6e6e;
         }
     }
 }

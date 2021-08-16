@@ -81,6 +81,18 @@ const install = (Vue, vm) => {
 	let getCouponList = (params = {}) => vm.$u.post('/market-boot/app/coupon/couponPageList', params);
 
 	/**
+	 * 可用优惠券列表(用户)
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E4%BC%98%E6%83%A0%E5%88%B8/validCouponListUsingGET
+	 */
+	let getValidCouponList = (withAmount) => vm.$u.get(`/market-boot/app/coupon/validCouponList?withAmount=${withAmount}`, {});
+
+	/**
+	 * 计算优惠信息
+	 * http://182.92.107.174/market-boot/doc.html#/app/%E4%BC%98%E6%83%A0%E5%88%B8/calculateCouponUsingPOST
+	 */
+	let calculateCoupon = (params = {}) => vm.$u.post('/market-boot/app/coupon/calculateCoupon', params);
+
+	/**
 	 * 微信通知处理
 	 * http://182.92.107.174/market-boot/doc.html#/app/%E8%AE%A2%E5%8D%95/noticeUsingPOST
 	 */
@@ -150,6 +162,8 @@ const install = (Vue, vm) => {
 		getProductCommits,
 		getOrderList,
 		getCouponList,
+		getValidCouponList,
+		calculateCoupon,
 		getActivityList,
 		ignoreActivity,
 		getActivityDetail,
