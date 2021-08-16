@@ -125,6 +125,9 @@ export default {
               })
               .catch(err => {
                 console.error(err);
+                if (this.popupList[0] && this.popupList[0].id === id) {
+                  this.laterView(3600);
+                }
               });
           }
         },
