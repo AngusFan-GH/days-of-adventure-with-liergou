@@ -24,75 +24,15 @@
         <scroll-view scroll-y style="height: 100%; width: 100%" @scrolltolower="onreachBottom">
           <template v-for="(order, i) in item.orders">
             <order-theme v-if="order.orderType === '1'" :order="order" :key="i">
+              <text slot="status">{{ statusMap[order.payStatus] }}</text>
               <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '1'"
-                  @click="continuePay(orderId)"
-                >
-                  立即付款
-                </u-button>
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '2'"
-                  @click="refundOrderRefund(orderId)"
-                >
-                  退款
-                </u-button>
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '1'"
-                  @click="cancelOrder(orderId)"
-                >
-                  取消
-                </u-button>
-                <u-button
-                  class="u-margin-right-10"
-                  size="mini"
-                  :ripple="true"
-                  @click="deleteOrder(orderId)"
-                >
-                  删除
-                </u-button>
+                <btn-container :status="status" :orderId="orderId"></btn-container>
               </view>
             </order-theme>
             <order-activity v-if="order.orderType === '2'" :order="order" :key="i">
+              <text slot="status">{{ statusMap[order.payStatus] }}</text>
               <view class="btn-container" slot="btn-container" slot-scope="{ status, orderId }">
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '1'"
-                  @click="continuePay(orderId)"
-                >
-                  立即付款
-                </u-button>
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '2'"
-                  @click="refundOrderRefund(orderId)"
-                >
-                  退款
-                </u-button>
-                <u-button
-                  size="mini"
-                  :ripple="true"
-                  v-show="status == '1'"
-                  @click="cancelOrder(orderId)"
-                >
-                  取消
-                </u-button>
-                <u-button
-                  class="u-margin-right-10"
-                  size="mini"
-                  :ripple="true"
-                  @click="deleteOrder(orderId)"
-                >
-                  删除
-                </u-button>
+                <btn-container :status="status" :orderId="orderId"></btn-container>
               </view>
             </order-activity>
           </template>
@@ -119,11 +59,13 @@ import style from '../../../common/style/variable.scss';
 import { fileUrl } from '../../../common/js/config';
 import { orderTheme } from './components/theme.vue';
 import { orderActivity } from './components/activity.vue';
+import { btnContainer } from './components/btn-container.vue';
 export default {
   components: {
     loading,
     orderTheme,
     orderActivity,
+    btnContainer,
   },
   data() {
     return {
@@ -154,6 +96,7 @@ export default {
           orders: [],
         },
       ],
+      statusMap: {},
       pageNum: 1,
       pageSize: 10,
       pages: 1,
@@ -177,6 +120,14 @@ export default {
   },
   onPullDownRefresh() {
     this.getOrderList(true);
+  },
+  mounted() {
+    this.statusMap = this.list.reduce((map, v) => {
+      if (v.payStatus === '') return map;
+      map[v.payStatus] = v.name;
+      return map;
+    }, {});
+    console.log(this.statusMap);
   },
   methods: {
     getOrderList(isRefrash = false) {
@@ -252,36 +203,6 @@ export default {
       if (this.pageNum >= this.pages) return;
       this.loadmore();
     },
-    cancelOrder(id) {
-      this.$u.api
-        .cancelOrder({
-          orderId: id,
-          operate: 'cancel',
-        })
-        .then(e => {
-          console.log(e);
-        });
-    },
-    deleteOrder(id) {
-      this.$u.api
-        .cancelOrder({
-          orderId: id,
-          operate: 'delete',
-        })
-        .then(e => {
-          console.log(e);
-        });
-    },
-    continuePay(id) {
-      this.$u.api.continuePay(id).then(e => {
-        console.log(e);
-      });
-    },
-    refundOrderRefund(id) {
-      this.$u.api.refundOrderRefund(id).then(e => {
-        console.log(e);
-      });
-    },
   },
 };
 </script>
@@ -309,11 +230,6 @@ export default {
     left: 50%;
 
     transform: translate(-50%,-50%);
-}
-.btn-container {
-    /deep/ u-button {
-        margin-left: 20rpx;
-    }
 }
 
 </style>
