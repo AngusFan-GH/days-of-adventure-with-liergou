@@ -31,17 +31,13 @@ export default {
   data() {
     return {
       popupList: [],
-      paid: false,
     };
   },
   watch: {
     value: {
       immediate: true,
       handler(val) {
-        if (val && !this.paid) {
-          this.paid = false;
-          this.getPopupList();
-        }
+        val && this.getPopupList();
       },
     },
   },
@@ -107,24 +103,10 @@ export default {
         paySign,
         success: e => {
           if (e.errMsg === 'requestPayment:ok') {
-            this.$u.api
-              .takeCoupon(id)
-              .then(e => {
-                this.paid = true;
-                uni.showToast({
-                  title: '领取成功',
-                });
-                // this.laterView(id, 60 * 60 * 24 * 365 * 100);
-                this.laterView(id, 60 * 5);
-                uni.navigateTo({
-                  url: `/subPackages/coupon/index`,
-                });
-              })
-              .catch(err => {
-                this.paid = true;
-                console.error(err);
-                this.laterView(id);
-              });
+            this.laterView(id, 60 * 5);
+            uni.navigateTo({
+              url: `/subPackages/coupon/index`,
+            });
           }
         },
         fail: err => {

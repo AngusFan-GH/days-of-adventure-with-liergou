@@ -35,6 +35,7 @@ export default {
       step: 0,
       userInfo: null,
       phone: null,
+      id: null,
     };
   },
   onShow() {
@@ -52,10 +53,11 @@ export default {
             .then(result => {
               const { token, user } = result;
               uni.setStorageSync('token', token);
-              const { openId, id, phoneNumber } = user || {};
+              const { openId, id, phoneNumber, nickName, avatarUrl } = user || {};
               this.phone = phoneNumber;
               uni.setStorageSync('openId', openId);
-              if (id == null) {
+              this.id = id;
+              if (id == null || nickName == null || avatarUrl == null) {
                 return (this.step = 1);
               }
               uni.setStorageSync('userInfo', user);
@@ -80,7 +82,7 @@ export default {
         desc: '必须授权才可以继续使用',
         success: res => {
           this.userInfo = res.userInfo;
-          uni.setStorageSync('userInfo', res.userInfo);
+          uni.setStorageSync('userInfo', { ...res.userInfo, id: this.id });
           this.$u.api
             .updateUserInfo({
               userInfo: this.userInfo,
