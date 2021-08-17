@@ -109,7 +109,8 @@ export default {
                 uni.showToast({
                   title: '领取成功',
                 });
-                this.laterView(id, 60 * 60 * 24 * 365 * 100);
+                // this.laterView(id, 60 * 60 * 24 * 365 * 100);
+                this.laterView(id, 60 * 5);
                 uni.navigateTo({
                   url: `/subPackages/coupon/index`,
                 });
