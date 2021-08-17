@@ -31,13 +31,17 @@ export default {
   data() {
     return {
       popupList: [],
+      paid: false,
     };
   },
   watch: {
     value: {
       immediate: true,
       handler(val) {
-        val && this.getPopupList();
+        if (val && !this.paid) {
+          this.paid = false;
+          this.getPopupList();
+        }
       },
     },
   },
@@ -106,6 +110,7 @@ export default {
             this.$u.api
               .takeCoupon(id)
               .then(e => {
+                this.paid = true;
                 uni.showToast({
                   title: '领取成功',
                 });
@@ -116,6 +121,7 @@ export default {
                 });
               })
               .catch(err => {
+                this.paid = true;
                 console.error(err);
                 this.laterView(id);
               });
