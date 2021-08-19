@@ -41,6 +41,12 @@
 					}
 				},
 				{
+					"path": "order/pay/pay",
+					"style": {
+						"navigationBarTitleText": "支付订单"
+					}
+				},
+				{
 					"path": "order/pay/result",
 					"style": {
 						"navigationBarTitleText": "支付结果"

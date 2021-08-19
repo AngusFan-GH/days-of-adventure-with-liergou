@@ -254,6 +254,12 @@
         </view>
       </view>
     </view>
+    <u-modal
+      v-model="loading"
+      :show-title="false"
+      :show-confirm-button="false"
+      content="正在生成订单"
+    ></u-modal>
   </view>
 </template>
 
@@ -262,6 +268,9 @@ import { timeRangeFmt } from '@/common/js/utils/time-fmt';
 import style from '../../../common/style/variable.scss';
 import BigNumber from 'bignumber.js';
 import { fileUrl } from '../../../common/js/config';
+import { mapState, mapMutations } from 'vuex';
+const $moment = require('moment');
+
 export default {
   onShow() {
     this.init();
@@ -326,6 +335,7 @@ export default {
       couponList: [],
       couponChoosn: null,
       calculateResult: null,
+      loading: false,
     };
   },
   watch: {
@@ -349,6 +359,7 @@ export default {
     },
   },
   computed: {
+    ...mapState('pay', ['info']),
     totalPrice() {
       return BigNumber(this.price).multipliedBy(this.count);
     },
@@ -360,6 +371,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations('pay', { setOrderInfo: 'setOrderInfo', setOrderTime: 'setOrderTime' }),
     init() {
       const token = uni.getStorageSync('token');
       const userInfo = uni.getStorageSync('userInfo');
@@ -381,6 +393,7 @@ export default {
         });
         return;
       }
+      this.loading = true;
       const params = {
         itemCount: this.count,
         payerName:
@@ -395,10 +408,20 @@ export default {
       this.$u.api
         .createPay(params)
         .then(res => {
-          const { orderInfo } = res;
-          this.pay(orderInfo);
+          this.loading = false;
+          this.setOrderInfo(res);
+          this.setOrderTime($moment().format('YYYY/MM/DD HH:mm:ss'));
+          uni.navigateTo({
+            url: '/subPackages/order/pay/pay',
+          });
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+          this.loading = false;
+          uni.navigateTo({
+            url: '/subPackages/order/pay/pay',
+          });
+        });
     },
     getValidCouponList(price) {
       this.$u.api.getValidCouponList(price).then(e => {
@@ -437,41 +460,9 @@ export default {
           this.calculateResult = e;
         });
     },
-    pay(orderInfo) {
-      const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      uni.requestPayment({
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-        success: e => {
-          if (e.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-            });
-            // 跳转支付成功结果页面
-            return this.goToResultPage();
-          }
-        },
-        fail: err => {
-          console.error(err);
-          uni.showToast({
-            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
-            icon: 'none',
-          });
-        },
-      });
-    },
     goToLogin() {
       uni.navigateTo({
         url: '/pages/login/index',
-      });
-    },
-    goToResultPage() {
-      uni.navigateTo({
-        url: '/subPackages/order/pay/result',
       });
     },
   },
