@@ -157,7 +157,7 @@
             @click="goToValidCouponList"
             v-if="couponList.length && calculateResult"
           >
-            -¥{{ calculateResult.discountAmount }}
+            ¥-{{ calculateResult.discountAmount }}
           </view>
           <view class="no-coupon" v-if="!couponList.length">暂无可用</view>
         </view>
@@ -249,7 +249,7 @@
             :hair-line="false"
             @click="createPay"
           >
-            立即支付
+            提交订单
           </u-button>
         </view>
       </view>
@@ -271,9 +271,9 @@
 
 <script>
 import { timeRangeFmt } from '@/common/js/utils/time-fmt';
-import style from '../../../common/style/variable.scss';
+import style from '@/common/style/variable.scss';
 import BigNumber from 'bignumber.js';
-import { fileUrl } from '../../../common/js/config';
+import { fileUrl } from '@/common/js/config';
 import { mapState, mapMutations } from 'vuex';
 export default {
   onLoad() {
@@ -424,11 +424,16 @@ export default {
             id: this.screening.uniqueId,
             info: {
               time: Date.now(),
-              screening: this.screening,
+              screening: {
+                ...this.screening,
+                totalPrice: this.totalPrice,
+                price: this.calculateResult ? this.calculateResult.payAmount : this.totalPrice,
+                count: this.count,
+                discountAmount: this.calculateResult ? this.calculateResult.discountAmount : 0,
+              },
               ...res,
             },
           });
-          console.log('store', this.$store.state);
           this.goToUnpaidOrder();
         })
         .catch(err => {
@@ -480,16 +485,13 @@ export default {
     },
     handleUnpaidOrder() {
       this.clearTimeoutOrder();
-      console.log('screening', this.screening);
       if (!this.screening) {
         return;
       }
-      console.log('store', this.$store.state.pay.unpaidOrderMap);
       const id = this.screening.uniqueId;
       if (this.unpaidOrderMap[id]) {
-        console.log(this.unpaidOrderMap[id]);
         this.hasUnpaidOrder = true;
-        const ms = 5 * 60 * 1000 - (this.unpaidOrderMap[id].time - Date.now());
+        const ms = 5 * 60 * 1000 - (Date.now() - this.unpaidOrderMap[id].time);
         this.timer = setTimeout(() => {
           this.hasUnpaidOrder = false;
         }, ms);
@@ -508,7 +510,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../../common/style/variable.scss';
 .pay-container {
     min-height: 100%;
