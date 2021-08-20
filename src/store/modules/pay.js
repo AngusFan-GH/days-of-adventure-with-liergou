@@ -1,11 +1,27 @@
 const state = {
-    time: null,
-    info: null
+    /**
+     * time
+     * orderId
+     * orderInfo
+     * screening
+     */
+    unpaidOrderMap: {}
 };
 
 const mutations = {
-    setOrderTime: (state, time) => state.time = time,
-    setOrderInfo: (state, info) => state.info = info
+    addUnpaidOrder: (state, { id, info }) => state.unpaidOrderMap[id] = info,
+    clearTimeoutOrder(state) {
+        const now = Date.now();
+        Object.keys(state.unpaidOrderMap).forEach(id => {
+            const time = state.unpaidOrderMap[id].time;
+            if (now - time >= 5 * 60 * 1000) {
+                delete state.unpaidOrderMap[id];
+            }
+        });
+    },
+    removeUnpaidOrder(state, id) {
+        delete state.unpaidOrderMap[id];
+    }
 };
 
 export default {

@@ -260,6 +260,12 @@
       :show-confirm-button="false"
       content="正在生成订单"
     ></u-modal>
+    <u-modal
+      v-model="hasUnpaidOrder"
+      :show-title="false"
+      content="您在该场次存在未支付订单，请先支付或取消后再继续购买。"
+      @confirm="goToUnpaidOrder"
+    ></u-modal>
   </view>
 </template>
 
@@ -269,21 +275,17 @@ import style from '../../../common/style/variable.scss';
 import BigNumber from 'bignumber.js';
 import { fileUrl } from '../../../common/js/config';
 import { mapState, mapMutations } from 'vuex';
-const $moment = require('moment');
-
 export default {
-  onShow() {
-    this.init();
-  },
   onLoad() {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
-      this.price = data.price;
       this.screening = {
         morePeople: data.advicePeopleMax - data.currentPeople,
         restPeople: data.advicePeopleMin - data.currentPeople,
         ...data,
       };
+
+      this.price = data.price;
       this.blockBooking = data.blockBooking === 1;
       const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
       const filterData = uni.getStorageSync(currentTabPage + '_filter_data');
@@ -304,6 +306,10 @@ export default {
       // 拼场
       this.changeMode(0);
     });
+  },
+  onShow() {
+    this.getUserInfo();
+    this.handleUnpaidOrder();
   },
   data() {
     return {
@@ -336,6 +342,8 @@ export default {
       couponChoosn: null,
       calculateResult: null,
       loading: false,
+      hasUnpaidOrder: false,
+      timer: null,
     };
   },
   watch: {
@@ -359,7 +367,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('pay', ['info']),
+    ...mapState('pay', ['unpaidOrderMap']),
     totalPrice() {
       return BigNumber(this.price).multipliedBy(this.count);
     },
@@ -371,8 +379,11 @@ export default {
     },
   },
   methods: {
-    ...mapMutations('pay', { setOrderInfo: 'setOrderInfo', setOrderTime: 'setOrderTime' }),
-    init() {
+    ...mapMutations('pay', {
+      addUnpaidOrder: 'addUnpaidOrder',
+      clearTimeoutOrder: 'clearTimeoutOrder',
+    }),
+    getUserInfo() {
       const token = uni.getStorageSync('token');
       const userInfo = uni.getStorageSync('userInfo');
       const phone = uni.getStorageSync('phone');
@@ -409,18 +420,20 @@ export default {
         .createPay(params)
         .then(res => {
           this.loading = false;
-          this.setOrderInfo(res);
-          this.setOrderTime($moment().format('YYYY/MM/DD HH:mm:ss'));
-          uni.navigateTo({
-            url: '/subPackages/order/pay/pay',
+          this.addUnpaidOrder({
+            id: this.screening.uniqueId,
+            info: {
+              time: Date.now(),
+              screening: this.screening,
+              ...res,
+            },
           });
+          console.log('store', this.$store.state);
+          this.goToUnpaidOrder();
         })
         .catch(err => {
-          console.error(err);
           this.loading = false;
-          uni.navigateTo({
-            url: '/subPackages/order/pay/pay',
-          });
+          console.error(err);
         });
     },
     getValidCouponList(price) {
@@ -465,6 +478,32 @@ export default {
         url: '/pages/login/index',
       });
     },
+    handleUnpaidOrder() {
+      this.clearTimeoutOrder();
+      console.log('screening', this.screening);
+      if (!this.screening) {
+        return;
+      }
+      console.log('store', this.$store.state.pay.unpaidOrderMap);
+      const id = this.screening.uniqueId;
+      if (this.unpaidOrderMap[id]) {
+        console.log(this.unpaidOrderMap[id]);
+        this.hasUnpaidOrder = true;
+        const ms = 5 * 60 * 1000 - (this.unpaidOrderMap[id].time - Date.now());
+        this.timer = setTimeout(() => {
+          this.hasUnpaidOrder = false;
+        }, ms);
+      }
+    },
+    goToUnpaidOrder() {
+      uni.navigateTo({
+        url: '/subPackages/order/pay/pay?id=' + this.screening.uniqueId,
+      });
+    },
+  },
+  onHide() {
+    clearTimeout(this.timer);
+    this.timer = null;
   },
 };
 </script>

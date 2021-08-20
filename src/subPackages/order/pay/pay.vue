@@ -3,27 +3,47 @@
     pay
     <count-down-circle :orderUpdateTime="time"></count-down-circle>
     <view>{{ time }}</view>
-    <view>{{ info.orderId }}</view>
+    <view>{{ orderId }}</view>
+    <u-button @click="cancel">取消</u-button>
     <u-button @click="pay">立即支付</u-button>
   </view>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 import { countDownCircle } from '@/components/count-down-circle/count-down-circle.vue';
+const $moment = require('moment');
 export default {
   components: {
     countDownCircle,
   },
-  computed: {
-    ...mapState('pay', ['time', 'info']),
+  onLoad(options) {
+    console.log(options.id);
+    console.log(this.unpaidOrderMap[options.id]);
+    const { time, orderId, orderInfo, screening } = this.unpaidOrderMap[options.id] || {};
+    this.time = $moment(time).format('YYYY/MM/DD HH:mm:ss');
+    this.orderId = orderId;
+    this.orderInfo = orderInfo;
+    this.screening = screening;
   },
-  mounted() {
-    console.log(this.time, this.info);
+  data() {
+    return {
+      time: null,
+      orderId: null,
+      orderInfo: null,
+      screening: null,
+    };
+  },
+  computed: {
+    ...mapState('pay', ['unpaidOrderMap']),
   },
   methods: {
+    ...mapMutations('pay', {
+      getUnpaidOrderInfo: 'getUnpaidOrderInfo',
+      removeUnpaidOrder: 'removeUnpaidOrder',
+    }),
     pay() {
-      const [appId, timeStamp, nonceStr, prepayId, paySign] = this.info.orderInfo;
+      const [appId, timeStamp, nonceStr, prepayId, paySign] = this.orderInfo;
       uni.requestPayment({
         appId,
         timeStamp,
@@ -36,6 +56,7 @@ export default {
             uni.showToast({
               title: '支付成功',
             });
+            this.removeUnpaidOrder(this.screening.uniqueId);
             // 跳转支付成功结果页面
             return this.goToResultPage();
           }
@@ -49,8 +70,21 @@ export default {
         },
       });
     },
+    cancel() {
+      this.$u.api
+        .cancelOrder({
+          orderId: this.orderId,
+          operate: 'cancel',
+        })
+        .then(() => {
+          this.removeUnpaidOrder(this.screening.uniqueId);
+          uni.navigateBack({
+            delta: 1,
+          });
+        });
+    },
     goToResultPage() {
-      uni.navigateTo({
+      uni.redirectTo({
         url: '/subPackages/order/pay/result',
       });
     },
