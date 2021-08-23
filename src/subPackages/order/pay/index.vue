@@ -247,6 +247,7 @@
             hover-class="none"
             :ripple="true"
             :hair-line="false"
+            :disabled="!canSubmitOrder"
             @click="createPay"
           >
             提交订单
@@ -263,7 +264,11 @@
     <u-modal
       v-model="hasUnpaidOrder"
       :show-title="false"
-      content="您在该场次存在未支付订单，请先支付或取消后再继续购买。"
+      content="发现当前场次有未付款的订单，其中包含被锁的席位，请处理"
+      :show-cancel-button="true"
+      cancel-text="取消并重新下单"
+      @cancel="cancelOrder"
+      confirm-text="前往支付"
       @confirm="goToUnpaidOrder"
     ></u-modal>
   </view>
@@ -343,7 +348,9 @@ export default {
       calculateResult: null,
       loading: false,
       hasUnpaidOrder: false,
+      unpaidOrder: null,
       timer: null,
+      canSubmitOrder: false,
     };
   },
   watch: {
@@ -380,8 +387,8 @@ export default {
   },
   methods: {
     ...mapMutations('pay', {
-      addUnpaidOrder: 'addUnpaidOrder',
-      clearTimeoutOrder: 'clearTimeoutOrder',
+      setUnpaidOrder: 'setUnpaidOrder',
+      clearUnpaidOrder: 'clearUnpaidOrder',
     }),
     getUserInfo() {
       const token = uni.getStorageSync('token');
@@ -420,19 +427,16 @@ export default {
         .createPay(params)
         .then(res => {
           this.loading = false;
-          this.addUnpaidOrder({
-            id: this.screening.uniqueId,
-            info: {
-              time: Date.now(),
-              screening: {
-                ...this.screening,
-                totalPrice: this.totalPrice,
-                price: this.calculateResult ? this.calculateResult.payAmount : this.totalPrice,
-                count: this.count,
-                discountAmount: this.calculateResult ? this.calculateResult.discountAmount : 0,
-              },
-              ...res,
+          this.setUnpaidOrder({
+            time: res.timestamp,
+            screening: {
+              ...this.screening,
+              totalPrice: this.totalPrice,
+              price: this.calculateResult ? this.calculateResult.payAmount : this.totalPrice,
+              count: this.count,
+              discountAmount: this.calculateResult ? this.calculateResult.discountAmount : 0,
             },
+            ...res,
           });
           this.goToUnpaidOrder();
         })
@@ -484,23 +488,55 @@ export default {
       });
     },
     handleUnpaidOrder() {
-      this.clearTimeoutOrder();
-      if (!this.screening) {
-        return;
-      }
-      const id = this.screening.uniqueId;
-      if (this.unpaidOrderMap[id]) {
-        this.hasUnpaidOrder = true;
-        const ms = 5 * 60 * 1000 - (Date.now() - this.unpaidOrderMap[id].time);
-        this.timer = setTimeout(() => {
-          this.hasUnpaidOrder = false;
-        }, ms);
-      }
+      this.canSubmitOrder = false;
+      this.$u.api
+        .getOrderList({
+          productItemUniqueId: this.screening.uniqueId,
+          payStatus: '1',
+          orderType: '1',
+        })
+        .then(e => {
+          const unpaidOrder = e.orders[0];
+          if (unpaidOrder) {
+            this.unpaidOrder = unpaidOrder;
+            this.setUnpaidOrder({
+              orderId: unpaidOrder.outTradeNo,
+              time: unpaidOrder.buyTime,
+              screening: {
+                ...this.screening,
+                totalPrice: unpaidOrder.orderPrice,
+                price: unpaidOrder.payPrice,
+                count: unpaidOrder.itemCount,
+                discountAmount: unpaidOrder.orderPrice - unpaidOrder.payPrice,
+              },
+            });
+            this.hasUnpaidOrder = true;
+            const buyTime = new Date(unpaidOrder.buyTime.replace(/-/g, '/')).getTime();
+            const ms = 5 * 60 * 1000 - (Date.now() - buyTime);
+            this.timer = setTimeout(() => {
+              this.hasUnpaidOrder = false;
+            }, ms);
+          } else {
+            this.clearUnpaidOrder();
+            this.canSubmitOrder = true;
+          }
+        });
     },
     goToUnpaidOrder() {
       uni.navigateTo({
         url: '/subPackages/order/pay/pay?id=' + this.screening.uniqueId,
       });
+    },
+    cancelOrder() {
+      this.$u.api
+        .cancelOrder({
+          orderId: this.unpaidOrder.outTradeNo,
+          operate: 'cancel',
+        })
+        .then(() => {
+          this.hasUnpaidOrder = false;
+          this.canSubmitOrder = true;
+        });
     },
   },
   onHide() {

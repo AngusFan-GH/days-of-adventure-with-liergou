@@ -53,7 +53,7 @@
       </view>
       <view class="u-flex footer">
         <template v-if="!isOverTime">
-          <view class="u-p-l-30 u-p-r-30 u-m-r-10" @click="cancel">取消</view>
+          <view class="u-p-l-30 u-p-r-30 u-m-r-10" @click="cancel">取消订单</view>
           <u-button class="u-flex-1" type="error" @click="pay">立即支付</u-button>
         </template>
         <u-button class="u-flex-1" type="primary" v-else @click="goback">返回</u-button>
@@ -72,8 +72,8 @@ export default {
   components: {
     countDownCircle,
   },
-  onLoad(options) {
-    const { time, orderId, orderInfo, screening } = this.unpaidOrderMap[options.id] || {};
+  onLoad() {
+    const { time, orderId, orderInfo, screening } = this.unpaidOrder || {};
     this.time = $moment(time).format('YYYY/MM/DD HH:mm:ss');
     this.orderId = orderId;
     this.orderInfo = orderInfo;
@@ -91,17 +91,25 @@ export default {
     };
   },
   computed: {
-    ...mapState('pay', ['unpaidOrderMap']),
+    ...mapState('pay', ['unpaidOrder']),
     screeningTime() {
-      return timeRangeFmt(this.screening.roomBeginTime, this.screening.roomEndTime, true);
+      return (
+        this.screening &&
+        timeRangeFmt(this.screening.roomBeginTime, this.screening.roomEndTime, true)
+      );
     },
   },
   methods: {
-    ...mapMutations('pay', {
-      getUnpaidOrderInfo: 'getUnpaidOrderInfo',
-      removeUnpaidOrder: 'removeUnpaidOrder',
-    }),
-    pay() {
+    ...mapMutations('pay', { clearUnpaidOrder: 'clearUnpaidOrder' }),
+    async pay() {
+      if (!this.orderInfo) {
+        try {
+          const { orderInfo } = await this.$u.api.continuePay(this.orderId);
+          this.orderInfo = orderInfo;
+        } catch (error) {
+          console.error(error);
+        }
+      }
       const [appId, timeStamp, nonceStr, prepayId, paySign] = this.orderInfo;
       uni.requestPayment({
         appId,
@@ -115,7 +123,7 @@ export default {
             uni.showToast({
               title: '支付成功',
             });
-            this.removeUnpaidOrder(this.screening.uniqueId);
+            this.clearUnpaidOrder();
             // 跳转支付成功结果页面
             return this.goToResultPage();
           }
@@ -136,7 +144,7 @@ export default {
           operate: 'cancel',
         })
         .then(() => {
-          this.removeUnpaidOrder(this.screening.uniqueId);
+          this.clearUnpaidOrder();
           uni.navigateBack({
             delta: 1,
           });
