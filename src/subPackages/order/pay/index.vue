@@ -266,7 +266,7 @@
       :show-title="false"
       content="发现当前场次有未付款的订单，其中包含被锁的席位，请处理"
       :show-cancel-button="true"
-      cancel-text="取消并重新下单"
+      cancel-text="取消订单"
       @cancel="cancelOrder"
       confirm-text="前往支付"
       @confirm="goToUnpaidOrder"
