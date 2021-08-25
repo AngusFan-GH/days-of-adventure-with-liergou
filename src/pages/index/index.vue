@@ -4,14 +4,9 @@
     :style="{ '--background': 'url(' + backgroundImage + ')' }"
   >
     <view class="u-page u-flex-col safe-area-inset-bottom">
-      <view class="wrap" v-if="bannerList.length">
-        <u-swiper
-          title
-          :list="bannerList"
-          :bg-color="styleVariable.backgroundColor"
-          @click="handleClickBanner"
-        ></u-swiper>
-      </view>
+      <!-- 轮播 -->
+      <banner ref="bannerRef"></banner>
+      <!-- 搜索 -->
       <u-search
         class="search"
         placeholder="输入剧本名，快速找到哈"
@@ -24,6 +19,7 @@
         @search="search"
         @clear="clear"
       ></u-search>
+      <!-- 列表 -->
       <scroll-view
         class="u-flex-1 list"
         scroll-y="true"
@@ -45,43 +41,50 @@
         <loading class="loading" v-if="loading && !list.length"></loading>
       </scroll-view>
     </view>
+    <!-- 返回顶部 -->
     <u-back-top
       :scroll-top="scrollTop"
       :icon-style="backTopIconStyle"
       :custom-style="backTopCustomStyle"
       @click.native="handleClickBackTop"
     ></u-back-top>
+    <!-- 底部导航栏 -->
     <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
+    <!--  -->
     <position-popup
       ref="positionRef"
       v-model="gettingPosition"
       @gotPosition="handleGotPosition"
     ></position-popup>
-    <popup-modal v-model="isShowPopup"></popup-modal>
+    <!-- 弹窗 -->
+    <popup-modal ref="popupRef"></popup-modal>
   </view>
 </template>
 
 <script>
+import { stylesMixin, backgroundImageMixin } from '@/common/js/mixin/styles.js';
+import style from '@/common/style/variable.scss';
 import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
-import style from '../../common/style/variable.scss';
-import { fileUrl } from '../../common/js/config';
 import { popupModal } from './components/popup-modal.vue';
+import Banner from './components/banner.vue';
 export default {
+  mixins: [stylesMixin, backgroundImageMixin],
   components: {
     listCard,
     customTabbar,
     loading,
     positionPopup,
     popupModal,
+    Banner,
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
     this.$refs.positionRef.startLocationUpdate();
-    this.getActivityList();
-    this.isShowPopup = true;
+    this.$refs.bannerRef.init();
+    this.$refs.popupRef.init();
   },
   mounted() {
     this.getCardList(true);
@@ -115,14 +118,12 @@ export default {
       keyword: null,
       gettingPosition: false,
       isRefrash: true,
-      styleVariable: style,
-      backgroundImage: fileUrl + 'background_image.png!d1',
-      bannerList: [],
-      isShowPopup: false,
     };
   },
   onPullDownRefresh() {
-    this.isShowPopup = true;
+    Promise.all([this.$refs.bannerRef.init(), this.$refs.popupRef.init()]).finally(() =>
+      uni.stopPullDownRefresh()
+    );
   },
   methods: {
     scrolltolower() {
@@ -229,25 +230,6 @@ export default {
       this.pageNum++;
       this.getCardList();
     },
-    handleClickBanner(index) {
-      console.log(this.bannerList[index]);
-      this.jumpToActivityDetail(this.bannerList[index]);
-    },
-    getActivityList() {
-      this.$u.api.getActivityList({ location: '1' }).then(e => {
-        this.bannerList = e.map(v => {
-          v.image = v.banner;
-          return v;
-        });
-      });
-    },
-    jumpToActivityDetail({ id, templateId, type }) {
-      if (id) {
-        uni.navigateTo({
-          url: `/subPackages/activity/index?id=${id}&templateId=${templateId}&type=${type}`,
-        });
-      }
-    },
   },
   onHide() {
     this.$refs.positionRef.stopLocationUpdate();
@@ -267,10 +249,6 @@ export default {
     height: 100%;
 
     background: $background-color var(--background) no-repeat bottom / 100%;
-}
-.wrap {
-    height: 250rpx;
-    margin: 0 24rpx;
 }
 .list {
     position: relative;

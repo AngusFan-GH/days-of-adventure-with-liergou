@@ -12,57 +12,52 @@
         name="close-circle"
         size="60"
         color="#fff"
-        @click="laterView(popupList[0].id)"
+        @click="ignoreActivity(popupList[0].id)"
       ></u-icon>
     </view>
   </view>
 </template>
 
 <script>
+import $wechatPay from '@/common/js/utils/wechat-pay';
+import { env } from '@/common/js/config';
 export default {
   name: 'popup-modal',
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
-  props: {
-    value: Boolean,
-  },
   data() {
     return {
       popupList: [],
+      isSkipNextTime: false,
     };
   },
-  watch: {
-    value: {
-      immediate: true,
-      handler(val) {
-        val && this.getPopupList();
-      },
-    },
-  },
   methods: {
+    init() {
+      return this.getPopupList();
+    },
     getPopupList() {
-      this.$u.api.getActivityList({ location: '2' }).then(e => {
-        this.popupList = e;
-        this.$emit('input', false);
-        uni.stopPullDownRefresh();
+      return new Promise(res => {
+        if (!this.isSkipNextTime) {
+          this.isSkipNextTime = false;
+          return this.$u.api.getActivityList({ location: '2' }).then(e => {
+            this.popupList = e;
+            res();
+          });
+        }
+        res();
       });
     },
-    laterView(id, time = 60) {
-      const activityId = id;
-      console.log('isIgnore:', activityId, time);
+    ignoreActivity(id, time = 60) {
       this.$u.api
         .ignoreActivity({
-          activityId,
+          activityId: id,
           ignoreDuration: time,
         })
-        .then(() => console.log('ignoreActivity', activityId));
+        .then(() => this.removeFromList(id));
+    },
+    removeFromList(id) {
       const index = this.popupList.findIndex(v => v.id === id);
       index >= 0 && this.popupList.splice(index, 1);
     },
     handleClickPopup() {
-      console.log(this.popupList[0]);
       const { templateId, id } = this.popupList[0];
       if (templateId === '1') {
         this.createActivityPay(id);
@@ -78,7 +73,7 @@ export default {
       }
     },
     createActivityPay(id) {
-      const { nickname } = uni.getStorageSync('userInfo');
+      const { nickname } = uni.getStorageSync('userInfo') || {};
       const phone = uni.getStorageSync('phone');
       this.$u.api
         .createActivityPay({
@@ -88,35 +83,21 @@ export default {
         })
         .then(res => {
           const { orderInfo } = res;
-          this.pay(id, orderInfo);
-        })
-        .catch(err => console.error(err));
-    },
-    pay(id, orderInfo) {
-      const [appId, timeStamp, nonceStr, prepayId, paySign] = orderInfo;
-      uni.requestPayment({
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-        success: e => {
-          if (e.errMsg === 'requestPayment:ok') {
-            this.laterView(id, 60 * 5);
+          $wechatPay(orderInfo).then(() => {
+            this.isSkipThisTime = true;
+            if (env === 'release') {
+              this.ignoreActivity(id, 60 * 60 * 24 * 365 * 100); // 生产环境打开
+            } else {
+              this.ignoreActivity(id, 60 * 5); // 方便测试
+            }
             uni.navigateTo({
               url: `/subPackages/coupon/index`,
             });
-          }
-        },
-        fail: err => {
-          console.error(err);
-          uni.showToast({
-            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
-            icon: 'none',
           });
-        },
-      });
+        });
+    },
+    skipNextTime() {
+      this.isSkipNextTime = true;
     },
     moveHandle() {},
   },
