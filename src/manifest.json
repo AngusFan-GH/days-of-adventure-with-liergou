@@ -60,6 +60,9 @@
             "urlCheck": false
         },
         "usingComponents": true,
+        "optimization": {
+            "subPackages": true
+        },
         "permission": {
             "scope.userLocation": {
                 "desc": "你的位置信息将用于搜索附近场次"

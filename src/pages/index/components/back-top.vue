@@ -1,6 +1,6 @@
 <template>
   <u-back-top
-    :scroll-top="value"
+    :scroll-top="scrollTop"
     :icon-style="backTopIconStyle"
     :custom-style="backTopCustomStyle"
     @click.native="handleClick"
@@ -11,12 +11,8 @@
 import style from '@/common/style/variable.scss';
 export default {
   name: 'back-top',
-  model: {
-    prop: 'value',
-    event: 'input',
-  },
   props: {
-    value: {
+    scrollTop: {
       type: Number,
       default: 0,
     },
@@ -35,7 +31,7 @@ export default {
   },
   methods: {
     handleClick() {
-      this.$emit('input', 0);
+      this.$emit('backTop');
     },
   },
 };

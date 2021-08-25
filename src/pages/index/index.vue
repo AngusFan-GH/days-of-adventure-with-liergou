@@ -4,22 +4,22 @@
     :style="{ '--background': 'url(' + backgroundImage + ')' }"
   >
     <view class="u-page u-flex-col safe-area-inset-bottom">
-      <!-- 轮播 -->
+      <!-- 活动轮播 -->
       <banner ref="bannerRef"></banner>
       <!-- 搜索 -->
       <search v-model="keyword" @search="handleSearch"></search>
       <!-- 列表 -->
       <scroll-view
         class="u-flex-1 list"
-        scroll-y="true"
         :enable-back-to-top="true"
+        scroll-y="true"
         :scroll-top="listScrollTop"
         @scroll="scroll"
         @scrolltolower="scrolltolower"
-        refresher-default-style="white"
-        :refresher-triggered="triggered"
         :refresher-enabled="true"
-        @refresherrefresh="refresherrefresh"
+        refresher-default-style="white"
+        :refresher-triggered="refresherTriggered"
+        @refresherrefresh="refresherRefresh"
       >
         <list-card v-for="(card, index) in list" :key="index" :data="card"></list-card>
         <u-loadmore v-if="list.length" :status="status" @loadmore="loadmore" :loadText="loadText" />
@@ -31,16 +31,12 @@
       </scroll-view>
     </view>
     <!-- 返回顶部 -->
-    <back-top v-model="listScrollTop"></back-top>
+    <back-top :scrollTop="scrollTop" @backTop="handleBackTop"></back-top>
     <!-- 底部导航栏 -->
     <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
-    <!--  -->
-    <position-popup
-      ref="positionRef"
-      v-model="gettingPosition"
-      @gotPosition="handleGotPosition"
-    ></position-popup>
-    <!-- 弹窗 -->
+    <!-- 监听实时位置授权弹框 -->
+    <position-popup ref="positionRef" @gotPosition="handleGotPosition"></position-popup>
+    <!-- 活动弹窗 -->
     <popup-modal ref="popupRef"></popup-modal>
   </view>
 </template>
@@ -87,14 +83,14 @@ export default {
         loading: '努力加载中',
         nomore: '暂时没有了',
       },
+      scrollTop: 0,
       listScrollTop: 0,
-      triggered: false,
+      refresherTriggered: false,
       list: [],
       pageNum: 1,
       pageSize: 10,
       pages: 1,
       keyword: null,
-      gettingPosition: false,
       isRefrash: true,
     };
   },
@@ -105,21 +101,24 @@ export default {
   },
   methods: {
     scroll(e) {
-      this.listScrollTop = e.detail.scrollTop;
+      this.scrollTop = e.detail.scrollTop;
     },
     scrolltolower() {
       if (this.pageNum >= this.pages || this.loading) return;
       this.loadmore();
     },
-    refresherrefresh() {
-      this.triggered = true;
-      if (this.gettingPosition) {
-        return;
-      }
+    refresherRefresh() {
+      this.refresherTriggered = true;
       this.getCardList(true);
     },
     handleSearch() {
       this.getCardList(true);
+    },
+    handleBackTop() {
+      this.listScrollTop = this.scrollTop;
+      this.$nextTick(() => {
+        this.listScrollTop = 0;
+      });
     },
     getCardList(isRefrash = false) {
       this.isRefrash = isRefrash;
@@ -131,7 +130,8 @@ export default {
       }
       const { latitude, longitude } = uni.getStorageSync('position');
       if (latitude == null && longitude == null) {
-        return (this.gettingPosition = true);
+        this.$refs.positionRef.getPositon();
+        return;
       }
       const params = {
         pageNum: this.pageNum,
@@ -148,8 +148,8 @@ export default {
         .then(res => {
           if (isRefrash) {
             this.list = [];
-            this.triggered = false;
-            this.listScrollTop = 0;
+            this.refresherTriggered = false;
+            this.handleBackTop();
           }
           this.handleResult(res);
         })
@@ -212,11 +212,12 @@ export default {
 
     height: 100%;
     padding-bottom: 100rpx;
+    background: $background-color;
 }
 .u-page {
     height: 100%;
 
-    background: $background-color var(--background) no-repeat bottom / 100%;
+    background: var(--background) no-repeat bottom / 100%;
 }
 .list {
     position: relative;

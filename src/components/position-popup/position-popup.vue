@@ -23,29 +23,31 @@ export default {
   components: {
     openSetting,
   },
-  modal: {
-    prop: 'value',
-    event: 'input',
-  },
-  props: {
-    value: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  watch: {
-    value(isShow) {
-      if (isShow) {
-        this.getPositon();
-      }
-    },
-  },
   data() {
     return {
       showSettingPopup: false,
     };
   },
   methods: {
+    getPositon() {
+      uni.getLocation({
+        type: 'gcj02',
+        success: res => {
+          const position = {
+            longitude: res.longitude,
+            latitude: res.latitude,
+          };
+          uni.setStorageSync('position', position);
+          this.$emit('gotPosition', position);
+        },
+        fail: err => {
+          console.log(err);
+          if (err.errMsg === 'getLocation:fail auth deny') {
+            this.showSettingPopup = true;
+          }
+        },
+      });
+    },
     startLocationUpdate() {
       wx.startLocationUpdate({
         success: () => {
@@ -63,8 +65,8 @@ export default {
     stopLocationUpdate() {
       wx.stopLocationUpdate({
         success: () => {
-          console.log('stopLocationUpdate');
           wx.offLocationChange(this.handlerLocationChange);
+          console.log('stopLocationUpdate');
         },
         fail: err => {
           console.log(err);
@@ -79,33 +81,11 @@ export default {
     handleAfterSetting() {
       this.showSettingPopup = false;
       this.getPositon();
-      this.startLocationUpdate();
-    },
-    getPositon() {
-      uni.getLocation({
-        type: 'gcj02',
-        success: res => {
-          const position = {
-            longitude: res.longitude,
-            latitude: res.latitude,
-          };
-          console.log('position', position);
-          uni.setStorageSync('position', position);
-          this.$emit('gotPosition', position);
-          this.$emit('input', false);
-        },
-        fail: err => {
-          console.log(err);
-          if (err.errMsg === 'getLocation:fail auth deny') {
-            this.showSettingPopup = true;
-          }
-        },
-      });
     },
   },
   destroyed() {
-    console.log('destroyed');
     this.stopLocationUpdate();
+    console.log('stopLocationUpdate');
   },
 };
 </script>
