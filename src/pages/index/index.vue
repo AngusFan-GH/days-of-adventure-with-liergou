@@ -7,18 +7,7 @@
       <!-- 轮播 -->
       <banner ref="bannerRef"></banner>
       <!-- 搜索 -->
-      <u-search
-        class="search"
-        placeholder="输入剧本名，快速找到哈"
-        v-model="keyword"
-        :clearabled="true"
-        :show-action="false"
-        shape="square"
-        :border-color="styleVariable.textCommonColor"
-        margin="10rpx 24rpx"
-        @search="search"
-        @clear="clear"
-      ></u-search>
+      <search v-model="keyword" @search="handleSearch"></search>
       <!-- 列表 -->
       <scroll-view
         class="u-flex-1 list"
@@ -42,12 +31,7 @@
       </scroll-view>
     </view>
     <!-- 返回顶部 -->
-    <u-back-top
-      :scroll-top="scrollTop"
-      :icon-style="backTopIconStyle"
-      :custom-style="backTopCustomStyle"
-      @click.native="handleClickBackTop"
-    ></u-back-top>
+    <back-top v-model="listScrollTop"></back-top>
     <!-- 底部导航栏 -->
     <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
     <!--  -->
@@ -63,13 +47,14 @@
 
 <script>
 import { stylesMixin, backgroundImageMixin } from '@/common/js/mixin/styles.js';
-import style from '@/common/style/variable.scss';
 import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import listCard from '@/components/list-card/list-card.vue';
 import loading from '@/components/loading/loading.vue';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import { popupModal } from './components/popup-modal.vue';
 import Banner from './components/banner.vue';
+import Search from './components/search.vue';
+import BackTop from './components/back-top.vue';
 export default {
   mixins: [stylesMixin, backgroundImageMixin],
   components: {
@@ -79,6 +64,8 @@ export default {
     positionPopup,
     popupModal,
     Banner,
+    Search,
+    BackTop,
   },
   onShow() {
     uni.setStorageSync('current_tab_page', this.tabPageName);
@@ -100,17 +87,8 @@ export default {
         loading: '努力加载中',
         nomore: '暂时没有了',
       },
-      scrollTop: 0,
       listScrollTop: 0,
       triggered: false,
-      backTopIconStyle: {
-        fontSize: '32rpx',
-        color: style.themeColor,
-      },
-      backTopCustomStyle: {
-        background: '#fff',
-        border: '2rpx solid ' + style.titleColor,
-      },
       list: [],
       pageNum: 1,
       pageSize: 10,
@@ -126,12 +104,12 @@ export default {
     );
   },
   methods: {
+    scroll(e) {
+      this.listScrollTop = e.detail.scrollTop;
+    },
     scrolltolower() {
       if (this.pageNum >= this.pages || this.loading) return;
       this.loadmore();
-    },
-    scroll(e) {
-      this.scrollTop = e.detail.scrollTop;
     },
     refresherrefresh() {
       this.triggered = true;
@@ -140,18 +118,7 @@ export default {
       }
       this.getCardList(true);
     },
-    handleClickBackTop() {
-      this.listScrollTop = this.scrollTop;
-      this.$nextTick(() => {
-        this.listScrollTop = 0;
-      });
-    },
-    search(e) {
-      this.keyword = e.trim();
-      this.getCardList(true);
-    },
-    clear() {
-      this.keyword = null;
+    handleSearch() {
       this.getCardList(true);
     },
     getCardList(isRefrash = false) {
@@ -182,6 +149,7 @@ export default {
           if (isRefrash) {
             this.list = [];
             this.triggered = false;
+            this.listScrollTop = 0;
           }
           this.handleResult(res);
         })
