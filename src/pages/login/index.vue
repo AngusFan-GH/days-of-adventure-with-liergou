@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -42,6 +43,10 @@ export default {
     this.weChatLogin();
   },
   methods: {
+    ...mapMutations('user', {
+      $setUserInfo: 'setUserInfo',
+      $setPhone: 'setPhone',
+    }),
     weChatLogin() {
       uni.login({
         provider: 'weixin',
@@ -60,9 +65,9 @@ export default {
               if (id == null || nickName == null || avatarUrl == null) {
                 return (this.step = 1);
               }
-              uni.setStorageSync('userInfo', user);
+              this.$setUserInfo(user);
               if (phoneNumber) {
-                uni.setStorageSync('phone', phoneNumber);
+                this.$setPhone(phoneNumber);
                 this.navigateBack();
               } else {
                 this.step = 2;
@@ -82,7 +87,7 @@ export default {
         desc: '必须授权才可以继续使用',
         success: res => {
           this.userInfo = res.userInfo;
-          uni.setStorageSync('userInfo', { ...res.userInfo, id: this.id });
+          this.$setUserInfo({ ...res.userInfo, id: this.id });
           this.$u.api
             .updateUserInfo({
               userInfo: this.userInfo,
@@ -115,7 +120,7 @@ export default {
           .then(res => {
             const phone = res.phoneNumber;
             this.phone = phone;
-            uni.setStorageSync('phone', phone);
+            this.$setPhone(phone);
             this.navigateBack();
           })
           .catch(err => console.error(err));

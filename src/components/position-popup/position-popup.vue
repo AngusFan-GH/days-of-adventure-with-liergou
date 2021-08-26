@@ -18,6 +18,7 @@
 
 <script>
 import openSetting from '@/components/open-setting/open-setting.vue';
+import { mapMutations } from 'vuex';
 export default {
   name: 'position-popup',
   components: {
@@ -29,6 +30,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('position', { $setPosition: 'setPosition' }),
     getPositon() {
       uni.getLocation({
         type: 'gcj02',
@@ -37,7 +39,7 @@ export default {
             longitude: res.longitude,
             latitude: res.latitude,
           };
-          uni.setStorageSync('position', position);
+          this.$setPosition(position);
           this.$emit('gotPosition', position);
         },
         fail: err => {
@@ -76,7 +78,7 @@ export default {
     handlerLocationChange(res) {
       const { latitude, longitude } = res;
       console.log('onLocationChange', { latitude, longitude });
-      uni.setStorageSync('position', { latitude, longitude });
+      this.$setPosition({ latitude, longitude });
     },
     handleAfterSetting() {
       this.showSettingPopup = false;

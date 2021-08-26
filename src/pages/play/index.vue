@@ -59,6 +59,13 @@
       </view>
       <loading class="loading" v-if="loading && !list.length && !recommends.length"></loading>
     </view>
+
+    <u-back-top
+      :scroll-top="scrollTop"
+      :icon-style="backTopIconStyle"
+      :custom-style="backTopCustomStyle"
+    ></u-back-top>
+    <!-- 筛选弹框 -->
     <u-popup
       v-model="showFilter"
       mode="center"
@@ -73,17 +80,10 @@
     >
       <filter :data="filterData" :dateLength="dateLength" @confirm="handleFilterConfirm"></filter>
     </u-popup>
-    <u-back-top
-      :scroll-top="scrollTop"
-      :icon-style="backTopIconStyle"
-      :custom-style="backTopCustomStyle"
-    ></u-back-top>
+    <!-- 监听实时位置授权弹框 -->
+    <position-popup ref="positionRef" @gotPosition="handleGotPosition"></position-popup>
+    <!-- 底部导航栏 -->
     <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
-    <position-popup
-      ref="positionRef"
-      v-model="gettingPosition"
-      @gotPosition="handleGotPosition"
-    ></position-popup>
   </view>
 </template>
 
@@ -97,6 +97,7 @@ import { timeFmt, defaultStartTimeMaker } from '@/common/js/utils/time-fmt';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
 import { fileUrl } from '../../common/js/config';
+import { mapState } from 'vuex';
 export default {
   components: {
     listCard,
@@ -157,7 +158,6 @@ export default {
         time: null,
       },
       dateLength: 15,
-      gettingPosition: false,
       backgroundImage: fileUrl + 'background_image.png!d1',
       filterMaskStyle: {
         filter: 'blur(5px)',
@@ -208,14 +208,17 @@ export default {
       styleVariable: style,
     };
   },
+  computed: {
+    ...mapState('position', ['position']),
+    displayRecommends() {
+      return this.recommends.slice(0, this.recommendDisplayPageNum * this.pageSize);
+    },
+  },
   mounted() {
     this.getCardList(true);
     this.showFilter = true;
   },
   onPullDownRefresh() {
-    if (this.gettingPosition) {
-      return;
-    }
     this.getCardList(true);
   },
   onReachBottom() {
@@ -230,11 +233,6 @@ export default {
   },
   onPageScroll(e) {
     this.scrollTop = e.scrollTop;
-  },
-  computed: {
-    displayRecommends() {
-      return this.recommends.slice(0, this.recommendDisplayPageNum * this.pageSize);
-    },
   },
   methods: {
     // 列表
@@ -272,10 +270,11 @@ export default {
       if (asc != null) {
         params.asc = asc;
       }
-      const { longitude, latitude } = uni.getStorageSync('position');
+      const { longitude, latitude } = this.position || {};
       if (latitude == null && longitude == null) {
         // 获取经纬度，终止本次请求，在handleGotPosition中重新发起请求
-        return (this.gettingPosition = true);
+        this.$refs.positionRef.getPositon();
+        return;
       }
       params.longitude = longitude;
       params.latitude = latitude;

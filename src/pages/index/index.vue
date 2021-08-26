@@ -32,12 +32,12 @@
     </view>
     <!-- 返回顶部 -->
     <back-top :scrollTop="scrollTop" @backTop="handleBackTop"></back-top>
-    <!-- 底部导航栏 -->
-    <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
     <!-- 监听实时位置授权弹框 -->
     <position-popup ref="positionRef" @gotPosition="handleGotPosition"></position-popup>
     <!-- 活动弹窗 -->
     <popup-modal ref="popupRef"></popup-modal>
+    <!-- 底部导航栏 -->
+    <custom-tabbar :tabbarIndex="tabbarIndex"></custom-tabbar>
   </view>
 </template>
 
@@ -51,6 +51,7 @@ import { popupModal } from './components/popup-modal.vue';
 import Banner from './components/banner.vue';
 import Search from './components/search.vue';
 import BackTop from './components/back-top.vue';
+import { mapState } from 'vuex';
 export default {
   mixins: [stylesMixin, backgroundImageMixin],
   components: {
@@ -94,6 +95,9 @@ export default {
       isRefrash: true,
     };
   },
+  computed: {
+    ...mapState('position', ['position']),
+  },
   onPullDownRefresh() {
     Promise.all([this.$refs.bannerRef.init(), this.$refs.popupRef.init()]).finally(() =>
       uni.stopPullDownRefresh()
@@ -128,7 +132,7 @@ export default {
       if (isRefrash) {
         this.pageNum = 1;
       }
-      const { latitude, longitude } = uni.getStorageSync('position');
+      const { latitude, longitude } = this.position || {};
       if (latitude == null && longitude == null) {
         this.$refs.positionRef.getPositon();
         return;
@@ -212,6 +216,7 @@ export default {
 
     height: 100%;
     padding-bottom: 100rpx;
+
     background: $background-color;
 }
 .u-page {
