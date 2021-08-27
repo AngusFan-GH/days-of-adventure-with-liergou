@@ -42,6 +42,7 @@
 import { customTabbar } from '@/components/custom-tabbar/custom-tabbar.vue';
 import loading from '@/components/loading/loading.vue';
 import { fileUrl } from '../../common/js/config';
+import { mapState } from 'vuex';
 export default {
   components: {
     customTabbar,
@@ -87,9 +88,12 @@ export default {
       backgroundImage: fileUrl + 'background_image.png!d1',
     };
   },
+  computed: {
+    ...mapState('user', ['userInfo']),
+  },
   methods: {
     getUserInfo() {
-      const user = uni.getStorageSync('userInfo');
+      const user = this.userInfo;
       if (!user) {
         return uni.navigateTo({
           url: '/pages/login/index',

@@ -29,19 +29,20 @@
 
 <script>
 import { pickerViewDate } from '@/components/picker-view-date/picker-view-date.vue';
+import { mapState } from 'vuex';
 export default {
   components: {
     pickerViewDate,
   },
   data() {
     return {
-      userInfo: uni.getStorageSync('userInfo') || {},
       isShowDatePopup: false,
       birthday: '',
       constellation: '',
     };
   },
   computed: {
+    ...mapState('user', ['userInfo']),
     gender() {
       switch (+this.userInfo.gender) {
         case 1:

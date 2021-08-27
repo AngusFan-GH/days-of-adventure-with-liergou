@@ -182,7 +182,7 @@
           <u-input
             class="u-flex-1 u-margin-right-18"
             placeholder="请输入手机号"
-            v-model="phone"
+            v-model="phoneNumber"
             type="tel"
             input-align="right"
             maxlength="11"
@@ -320,7 +320,7 @@ export default {
     return {
       mode: null, // 1包场，0拼场
       blockBooking: false,
-      phone: null,
+      phoneNumber: null,
       name: null,
       screening: {},
       price: 0,
@@ -375,6 +375,7 @@ export default {
   },
   computed: {
     ...mapState('pay', ['unpaidOrderMap']),
+    ...mapState('user', ['userInfo', 'phone']),
     totalPrice() {
       return BigNumber(this.price).multipliedBy(this.count);
     },
@@ -392,21 +393,22 @@ export default {
     }),
     getUserInfo() {
       const token = uni.getStorageSync('token');
-      const userInfo = uni.getStorageSync('userInfo');
-      const phone = uni.getStorageSync('phone');
+      const userInfo = this.userInfo;
+      const phone = this.phone;
       if (!token || !userInfo || !phone) {
         return this.goToLogin();
       }
       this.name = userInfo.nickName;
-      this.phone = phone;
+      this.phoneNumber = phone;
     },
     changeMode(mode) {
       this.mode = mode;
     },
     createPay() {
-      if (!/\d{11}/.test(this.phone)) {
+      if (!/\d{11}/.test(this.phoneNumber)) {
         uni.showToast({
-          title: this.phone == null || this.phone === '' ? '请填写手机号' : '手机号输入有误',
+          title:
+            this.phoneNumber == null || this.phoneNumber === '' ? '请填写手机号' : '手机号输入有误',
           icon: 'none',
         });
         return;
@@ -414,9 +416,8 @@ export default {
       this.loading = true;
       const params = {
         itemCount: this.count,
-        payerName:
-          this.name || (uni.getStorageSync('userInfo') && uni.getStorageSync('userInfo').nickName),
-        payerPhone: this.phone,
+        payerName: this.name || (this.userInfo && this.userInfo.nickName),
+        payerPhone: this.phoneNumber,
         productItemUniqueId: this.screening.uniqueId,
         userNote: this.remark,
       };

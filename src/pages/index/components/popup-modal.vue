@@ -21,6 +21,7 @@
 <script>
 import $wechatPay from '@/common/js/utils/wechat-pay';
 import { env } from '@/common/js/config';
+import { mapState } from 'vuex';
 export default {
   name: 'popup-modal',
   data() {
@@ -28,6 +29,9 @@ export default {
       popupList: [],
       isSkipNextTime: false,
     };
+  },
+  computed: {
+    ...mapState('user', ['userInfo', 'phone']),
   },
   methods: {
     init() {
@@ -73,8 +77,8 @@ export default {
       }
     },
     createActivityPay(id) {
-      const { nickname } = uni.getStorageSync('userInfo') || {};
-      const phone = uni.getStorageSync('phone');
+      const { nickname } = this.userInfo || {};
+      const phone = this.phone;
       this.$u.api
         .createActivityPay({
           activityId: id,
