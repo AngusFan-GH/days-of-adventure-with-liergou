@@ -313,6 +313,7 @@ export default {
     });
   },
   onShow() {
+    this.getViewScene();
     this.getUserInfo();
     this.handleUnpaidOrder();
   },
@@ -391,6 +392,11 @@ export default {
       setUnpaidOrder: 'setUnpaidOrder',
       clearUnpaidOrder: 'clearUnpaidOrder',
     }),
+    getViewScene() {
+      this.$u.api.getViewScene(this.screening.uniqueId).then(e => {
+        console.log(e);
+      });
+    },
     getUserInfo() {
       const token = uni.getStorageSync('token');
       const userInfo = this.userInfo;
@@ -444,6 +450,7 @@ export default {
         .catch(err => {
           this.loading = false;
           console.error(err);
+          this.getViewScene();
         });
     },
     getValidCouponList(price) {
