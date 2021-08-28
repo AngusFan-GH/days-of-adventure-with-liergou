@@ -4,7 +4,7 @@
       <!-- 主题描述 -->
       <theme-describe :data="data"></theme-describe>
       <!-- 组队信息 -->
-      <group-info v-if="isShowGroupInfo"></group-info>
+      <group-info v-if="isShowGroupInfo" :data="groupInfo"></group-info>
       <!-- 拼场规则 -->
       <pool-detail :data="data" v-if="isShowPoolDetail"></pool-detail>
       <!-- 主题icon -->
@@ -23,9 +23,29 @@
       <u-gap height="479"></u-gap>
     </view>
     <view class="theme-submit safe-area-inset-bottom">
+      <!-- 场次描述 -->
+      <session-describe
+        :data="data"
+        :uniqueId="uniqueId"
+        v-if="isShowSessionDescribe"
+      ></session-describe>
       <view class="btn-group">
         <!-- 选择场次 -->
-        <choose-session :data="data" :day="date" v-model="chosenSession"></choose-session>
+        <choose-session
+          :data="data"
+          :day="date"
+          v-model="chosenSession"
+          v-if="isShowChooseSessionBtn"
+        ></choose-session>
+        <!-- 邀请朋友 -->
+        <share-button :data="data" v-if="isShowShareBtn"></share-button>
+        <!-- 立即加入 -->
+        <join-button
+          v-if="isShowJoinBtn"
+          :data="data"
+          :uniqueId="uniqueId"
+          @getSession="handleGetSession"
+        ></join-button>
       </view>
     </view>
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
@@ -44,8 +64,11 @@ import ThemeUgc from './components/theme-ugc.vue';
 import ThemeDetail from './components/theme-detail.vue';
 import ThemeRules from './components/theme-rules.vue';
 import LinkIcon from './components/link-icon.vue';
+import SessionDescribe from './components/session-describe.vue';
 import ChooseSession from './components/choose-session.vue';
+import ShareButton from './components/share-button.vue';
 import { mapState } from 'vuex';
+import JoinButton from './components/join-button.vue';
 export default {
   components: {
     ThemeDescribe,
@@ -58,21 +81,27 @@ export default {
     ThemeRules,
     LinkIcon,
     ChooseSession,
+    SessionDescribe,
+    ShareButton,
+    JoinButton,
   },
   onLoad(options) {
-    const { productId, from } = options || {};
+    const { productId, uniqueId, from, avatarUrl, nickName, id } = options || {};
     this.productId = +productId;
+    this.uniqueId = uniqueId;
+    this.sharerInfo = { src: avatarUrl, name: nickName, id };
     this.from = from || 'share';
     this.handleFrom(from);
-    const { peopleFrom, roomBeginTimeFrom } = from === 'play' ? this.filter : {};
-    this.date = roomBeginTimeFrom ? new Date(roomBeginTimeFrom.replace(/-/g, '/')).getTime() : null;
-    this.chosenPeople = !!peopleFrom;
+    console.log('@@@', options);
     this.getDetail();
     uni.showShareMenu();
   },
   data() {
     return {
       productId: null,
+      uniqueId: null,
+      sharerInfo: null,
+      groupInfo: [],
       from: null,
       loading: true,
       data: {
@@ -85,41 +114,73 @@ export default {
       backgroundImage: fileUrl + 'background_image.png!d1',
       fromMap: {
         index: {
-          showList: ['isShowPoolDetail'],
+          showList: ['isShowPoolDetail', 'isShowChooseSessionBtn'],
         },
         play: {
-          showList: ['isShowPoolDetail'],
-        },
-        share: {
-          title: '场次详情',
-          showList: ['isShowGroupInfo'],
+          showList: ['isShowPoolDetail', 'isShowChooseSessionBtn'],
         },
         pay: {
           title: '支付成功',
-          showList: ['isShowGroupInfo'],
+          showList: ['isShowGroupInfo', 'isShowShareBtn', 'isShowSessionDescribe'],
+        },
+        share: {
+          title: '场次详情',
+          showList: ['isShowGroupInfo', 'isShowSessionDescribe', 'isShowJoinBtn'],
         },
       },
       isShowGroupInfo: false,
       isShowPoolDetail: false,
+      isShowChooseSessionBtn: false,
+      isShowShareBtn: false,
+      isShowSessionDescribe: false,
+      isShowJoinBtn: false,
     };
   },
   computed: {
     ...mapState('filter', ['filter']),
+    ...mapState('user', ['userInfo']),
   },
   onShareAppMessage(res) {
     console.log(res.target);
+    const { avatarUrl, nickName, id } = this.userInfo;
+    const query = {
+      productId: this.productId,
+      from: 'share',
+      id,
+      nickName,
+      avatarUrl,
+    };
+    if (this.uniqueId) {
+      query.uniqueId = this.uniqueId;
+    }
     return {
       title: this.data.productName,
-      path: `/subPackages/detail/index?productId=${this.productId}`,
+      path: `/subPackages/detail/index?${this.paramsMaker(query)}`,
       imageUrl: this.data.headPicUrl,
     };
   },
   methods: {
     handleFrom(from) {
-      console.log(from);
       const { title, showList } = this.fromMap[from] || {};
       this.setNavigationBarTitle(title);
       this.handleShowContent(showList);
+      switch (from) {
+        case 'play':
+          const { peopleFrom, roomBeginTimeFrom } = from === 'play' ? this.filter : {};
+          this.date = roomBeginTimeFrom
+            ? new Date(roomBeginTimeFrom.replace(/-/g, '/')).getTime()
+            : null;
+          this.chosenPeople = !!peopleFrom;
+          break;
+        case 'pay':
+          const { avatarUrl, nickName, id } = this.userInfo;
+          this.sharerInfo = { src: avatarUrl, name: nickName, id };
+          this.uniqueId && this.getViewScene(this.uniqueId);
+          break;
+        case 'share':
+          this.uniqueId && this.getViewScene(this.uniqueId);
+          break;
+      }
     },
     setNavigationBarTitle(title) {
       title &&
@@ -169,12 +230,28 @@ export default {
         })
         .catch(err => console.error(err));
     },
+    getViewScene(uniqueId) {
+      this.$u.api.getViewScene(uniqueId).then(e => {
+        console.log(e);
+        this.groupInfo = new Array(e.room.currentPeople).fill({ src: null });
+        this.groupInfo.splice(0, 1, this.sharerInfo);
+        console.log(this.groupInfo);
+      });
+    },
     goToOrder() {
-      const { advicePeopleMin, advicePeopleMax, duration, blockBooking, productName, headPicUrl } =
-        this.data;
+      const {
+        advicePeopleMin,
+        advicePeopleMax,
+        duration,
+        blockBooking,
+        productId,
+        productName,
+        headPicUrl,
+      } = this.data;
       const shopInfo = this.data.shopInfo || {};
       const data = {
         ...this.chosenSession,
+        productId,
         productName,
         advicePeopleMin,
         advicePeopleMax,
@@ -183,13 +260,22 @@ export default {
         blockBooking,
         headPic: headPicUrl,
       };
-      console.log(data);
+      console.log('goToOrder', data);
       uni.navigateTo({
         url: '/subPackages/pay/index?from=' + this.from,
         success: res => {
           res.eventChannel.emit('submitOrder', data);
         },
       });
+    },
+    paramsMaker(params) {
+      return Object.keys(params)
+        .reduce((res, key) => (res += `&${key}=${params[key]}`), '')
+        .substr(1);
+    },
+    handleGetSession(session) {
+      this.chosenSession = session;
+      console.log(this.chosenSession);
     },
   },
   provide() {

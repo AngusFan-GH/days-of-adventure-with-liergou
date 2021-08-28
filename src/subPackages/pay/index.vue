@@ -312,9 +312,11 @@ export default {
     });
   },
   onShow() {
-    this.getViewScene();
-    this.getUserInfo();
-    this.handleUnpaidOrder();
+    this.$nextTick(() => {
+      this.getUserInfo();
+      this.getViewScene();
+      this.handleUnpaidOrder();
+    });
   },
   data() {
     return {
@@ -393,9 +395,10 @@ export default {
       clearUnpaidOrder: 'clearUnpaidOrder',
     }),
     getViewScene() {
-      this.$u.api.getViewScene(this.screening.uniqueId).then(e => {
-        console.log(e);
-      });
+      this.screening.uniqueId &&
+        this.$u.api.getViewScene(this.screening.uniqueId).then(e => {
+          console.log(e);
+        });
     },
     getUserInfo() {
       const token = uni.getStorageSync('token');
@@ -497,38 +500,39 @@ export default {
     },
     handleUnpaidOrder() {
       this.canSubmitOrder = false;
-      this.$u.api
-        .getOrderList({
-          productItemUniqueId: this.screening.uniqueId,
-          payStatus: '1',
-          orderType: '1',
-        })
-        .then(e => {
-          const unpaidOrder = e.orders[0];
-          if (unpaidOrder) {
-            this.unpaidOrder = unpaidOrder;
-            this.setUnpaidOrder({
-              orderId: unpaidOrder.outTradeNo,
-              time: unpaidOrder.buyTime,
-              screening: {
-                ...this.screening,
-                totalPrice: unpaidOrder.orderPrice,
-                price: unpaidOrder.payPrice,
-                count: unpaidOrder.itemCount,
-                discountAmount: unpaidOrder.orderPrice - unpaidOrder.payPrice,
-              },
-            });
-            this.hasUnpaidOrder = true;
-            const buyTime = new Date(unpaidOrder.buyTime.replace(/-/g, '/')).getTime();
-            const ms = 5 * 60 * 1000 - (Date.now() - buyTime);
-            this.timer = setTimeout(() => {
-              this.hasUnpaidOrder = false;
-            }, ms);
-          } else {
-            this.clearUnpaidOrder();
-            this.canSubmitOrder = true;
-          }
-        });
+      this.screening.uniqueId &&
+        this.$u.api
+          .getOrderList({
+            productItemUniqueId: this.screening.uniqueId,
+            payStatus: '1',
+            orderType: '1',
+          })
+          .then(e => {
+            const unpaidOrder = e.orders[0];
+            if (unpaidOrder) {
+              this.unpaidOrder = unpaidOrder;
+              this.setUnpaidOrder({
+                orderId: unpaidOrder.outTradeNo,
+                time: unpaidOrder.buyTime,
+                screening: {
+                  ...this.screening,
+                  totalPrice: unpaidOrder.orderPrice,
+                  price: unpaidOrder.payPrice,
+                  count: unpaidOrder.itemCount,
+                  discountAmount: unpaidOrder.orderPrice - unpaidOrder.payPrice,
+                },
+              });
+              this.hasUnpaidOrder = true;
+              const buyTime = new Date(unpaidOrder.buyTime.replace(/-/g, '/')).getTime();
+              const ms = 5 * 60 * 1000 - (Date.now() - buyTime);
+              this.timer = setTimeout(() => {
+                this.hasUnpaidOrder = false;
+              }, ms);
+            } else {
+              this.clearUnpaidOrder();
+              this.canSubmitOrder = true;
+            }
+          });
     },
     goToUnpaidOrder() {
       uni.navigateTo({

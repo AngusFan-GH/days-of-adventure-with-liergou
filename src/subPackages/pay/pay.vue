@@ -75,6 +75,7 @@ export default {
   },
   onLoad() {
     const { time, orderId, orderInfo, screening } = this.unpaidOrder || {};
+    console.log(this.unpaidOrder);
     this.time = $moment(time).format('YYYY/MM/DD HH:mm:ss');
     this.orderId = orderId;
     this.orderInfo = orderInfo;
@@ -138,7 +139,7 @@ export default {
     },
     goToResultPage() {
       uni.redirectTo({
-        url: `/subPackages/detail/index?productId=${this.screening.productId}&from=pay`,
+        url: `/subPackages/detail/index?productId=${this.screening.productId}&uniqueId=${this.screening.uniqueId}&from=pay`,
       });
     },
     goback() {
