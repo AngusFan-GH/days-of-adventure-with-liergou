@@ -3,8 +3,10 @@
     <view class="wrapper" :style="{ '--background': 'url(' + backgroundImage + ')' }">
       <!-- 主题描述 -->
       <theme-describe :data="data"></theme-describe>
+      <!-- 组队信息 -->
+      <group-info v-if="isShowGroupInfo"></group-info>
       <!-- 拼场规则 -->
-      <pool-detail :data="data"></pool-detail>
+      <pool-detail :data="data" v-if="isShowPoolDetail"></pool-detail>
       <!-- 主题icon -->
       <theme-icon :data="data"></theme-icon>
       <!-- 店铺信息 -->
@@ -21,20 +23,9 @@
       <u-gap height="479"></u-gap>
     </view>
     <view class="theme-submit safe-area-inset-bottom">
-      <!-- <view class="u-relative u-flex u-row-between notice">
-        <view class="txt-area">
-          <text class="txt">当前有2场在拼，最近一场差</text>
-          <text class="txt high-light">{{ data.advicePeopleMin }}</text>
-          <text class="txt">人即可开场</text>
-        </view>
-        <view class="notice-space"></view>
-        <view class="u-flex u-margin-left-4 join">
-          立即加入
-          <navigator class="u-margin-left-8 arrow-right"></navigator>
-        </view>
-      </view> -->
       <view class="btn-group">
-        <choose-session :data="data"></choose-session>
+        <!-- 选择场次 -->
+        <choose-session :data="data" :day="date" v-model="chosenSession"></choose-session>
       </view>
     </view>
     <u-skeleton :loading="loading" :animation="true" bgcolor="#FFF"></u-skeleton>
@@ -45,6 +36,7 @@
 import defaultThumb from '@/static/image/bg_login.png';
 import { fileUrl } from '@/common/js/config';
 import ThemeDescribe from './components/theme-describe.vue';
+import GroupInfo from './components/group-info.vue';
 import PoolDetail from './components/pool-detail.vue';
 import ThemeIcon from './components/theme-icon.vue';
 import ThemeShop from './components/theme-shop.vue';
@@ -53,9 +45,11 @@ import ThemeDetail from './components/theme-detail.vue';
 import ThemeRules from './components/theme-rules.vue';
 import LinkIcon from './components/link-icon.vue';
 import ChooseSession from './components/choose-session.vue';
+import { mapState } from 'vuex';
 export default {
   components: {
     ThemeDescribe,
+    GroupInfo,
     PoolDetail,
     ThemeIcon,
     ThemeShop,
@@ -65,16 +59,52 @@ export default {
     LinkIcon,
     ChooseSession,
   },
-  provide: {
-    goToOrder: 'goToOrder',
-  },
   onLoad(options) {
-    this.productId = +options.productId;
-    const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
-    const { peopleFrom } = uni.getStorageSync(currentTabPage + '_filter_data') || {};
+    const { productId, from } = options || {};
+    this.productId = +productId;
+    this.from = from || 'share';
+    this.handleFrom(from);
+    const { peopleFrom, roomBeginTimeFrom } = from === 'play' ? this.filter : {};
+    this.date = roomBeginTimeFrom ? new Date(roomBeginTimeFrom.replace(/-/g, '/')).getTime() : null;
     this.chosenPeople = !!peopleFrom;
     this.getDetail();
     uni.showShareMenu();
+  },
+  data() {
+    return {
+      productId: null,
+      from: null,
+      loading: true,
+      data: {
+        headPicUrl: defaultThumb,
+      },
+      date: null,
+      chosenPeople: true,
+      hasCommits: false,
+      chosenSession: null,
+      backgroundImage: fileUrl + 'background_image.png!d1',
+      fromMap: {
+        index: {
+          showList: ['isShowPoolDetail'],
+        },
+        play: {
+          showList: ['isShowPoolDetail'],
+        },
+        share: {
+          title: '场次详情',
+          showList: ['isShowGroupInfo'],
+        },
+        pay: {
+          title: '支付成功',
+          showList: ['isShowGroupInfo'],
+        },
+      },
+      isShowGroupInfo: false,
+      isShowPoolDetail: false,
+    };
+  },
+  computed: {
+    ...mapState('filter', ['filter']),
   },
   onShareAppMessage(res) {
     console.log(res.target);
@@ -84,19 +114,22 @@ export default {
       imageUrl: this.data.headPicUrl,
     };
   },
-  data() {
-    return {
-      productId: null,
-      loading: true,
-      hasCommits: false,
-      data: {
-        headPicUrl: defaultThumb,
-      },
-      chosenPeople: true,
-      backgroundImage: fileUrl + 'background_image.png!d1',
-    };
-  },
   methods: {
+    handleFrom(from) {
+      console.log(from);
+      const { title, showList } = this.fromMap[from] || {};
+      this.setNavigationBarTitle(title);
+      this.handleShowContent(showList);
+    },
+    setNavigationBarTitle(title) {
+      title &&
+        uni.setNavigationBarTitle({
+          title,
+        });
+    },
+    handleShowContent(showList = []) {
+      showList.forEach(isShow => (this[isShow] = true));
+    },
     getDetail() {
       if (this.productId == null) {
         return console.warn('There is no productId');
@@ -150,13 +183,19 @@ export default {
         blockBooking,
         headPic: headPicUrl,
       };
+      console.log(data);
       uni.navigateTo({
-        url: '/subPackages/order/pay/index',
+        url: '/subPackages/pay/index?from=' + this.from,
         success: res => {
           res.eventChannel.emit('submitOrder', data);
         },
       });
     },
+  },
+  provide() {
+    return {
+      goToOrder: this.goToOrder,
+    };
   },
 };
 </script>
@@ -183,26 +222,6 @@ export default {
     width: 100%;
 
     background-color: #fff;
-    .notice {
-        font-size: 22rpx;
-        line-height: 80rpx;
-
-        height: 70rpx;
-        padding: 0 30rpx;
-
-        background: #fff;
-        .txt-area {
-            color: #777;
-        }
-        .high-light {
-            color: $theme-color;
-        }
-        .join {
-            font-size: 22rpx;
-
-            color: #999;
-        }
-    }
     .btn-group {
         padding: 15rpx 32rpx;
         /deep/ .btn-text {

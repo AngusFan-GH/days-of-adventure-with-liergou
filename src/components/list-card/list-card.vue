@@ -92,11 +92,13 @@
 <script>
 import defaultThumb from '@/static/image/bg_login.png';
 import cardScreening from '@/components/card-screening/card-screening.vue';
-import style from '../../common/style/variable.scss';
-import { fileUrl } from '../../common/js/config';
-import getBackgroundImage from '../../common/model/bg-image';
+import style from '@/common/style/variable.scss';
+import { fileUrl } from '@/common/js/config';
+import getBackgroundImage from '@/common/model/bg-image';
+import routeMixin from '@/common/js/mixin/route';
 export default {
   name: 'list-card',
+  mixins: [routeMixin],
   components: {
     cardScreening,
   },
@@ -150,8 +152,9 @@ export default {
   },
   methods: {
     goToDetail() {
+      const path = this.$getCurrentPage().route.split('/')[1];
       uni.navigateTo({
-        url: '/subPackages/detail/index?productId=' + this.data.productId,
+        url: `/subPackages/detail/index?productId=${this.data.productId}&from=${path}`,
       });
     },
     distanceFmt(distance) {

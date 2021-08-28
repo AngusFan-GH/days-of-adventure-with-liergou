@@ -4,6 +4,7 @@ import tabbar from './modules/tabbar';
 import pay from './modules/pay';
 import user from './modules/user';
 import position from './modules/position';
+import filter from './modules/filter';
 import mutations from './mutations';
 import createLocalStoragePlugin from './plugin';
 
@@ -28,7 +29,8 @@ const store = new Vuex.Store({
         tabbar,
         pay,
         user,
-        position
+        position,
+        filter
     },
     mutations,
     plugins: [plugin]

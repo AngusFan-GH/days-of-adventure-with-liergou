@@ -37,7 +37,7 @@
               :key="index"
               :class="{
                 disabled: session.disabled,
-                selected: chosenSession && session.uniqueId === chosenSession.uniqueId,
+                selected: value && session.uniqueId === value.uniqueId,
               }"
               @click="chooseSession(session)"
             >
@@ -91,22 +91,22 @@
           </view>
         </view>
         <view class="btn-container">
-          <view class="choosed" v-show="!chosenSession">尚未选择预订场次</view>
-          <view class="choosed" v-show="chosenSession">
+          <view class="choosed" v-show="!value">尚未选择预订场次</view>
+          <view class="choosed" v-show="value">
             <view>
               预订场次：
-              <text class="choosed-msg">{{ chosenSession.date }} {{ chosenSession.time }}</text>
+              <text class="choosed-msg">{{ value.date }} {{ value.time }}</text>
             </view>
-            <view v-show="data.blockBooking === 0 && chosenSession.currentPeople">
+            <view v-show="data.blockBooking === 0 && value.currentPeople">
               已加入玩家：
-              <text>{{ chosenSession.currentPeople }}人</text>
+              <text>{{ value.currentPeople }}人</text>
             </view>
           </view>
-          <view class="btn" :class="{ disabled: !chosenSession }">
+          <view class="btn" :class="{ disabled: !value }">
             <u-button
               shape="circle"
               :custom-style="customStyle"
-              :disabled="!chosenSession"
+              :disabled="!value"
               @click="goToOrder()"
             >
               下一步
@@ -124,14 +124,22 @@ import { timeFmt } from '@/common/js/utils/time-fmt';
 import style from '@/common/style/variable.scss';
 export default {
   name: 'choose-session',
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
+    value: {
+      type: Object,
+      default: null,
+    },
     data: null,
+    day: null,
   },
   inject: ['goToOrder'],
   data() {
     return {
       date: null,
-      chosenSession: null,
       showChooseSession: false,
       displaySession: [],
 
@@ -146,14 +154,17 @@ export default {
   },
   methods: {
     openChooseSession() {
-      this.date = null;
-      this.chosenSession = null;
+      this.$emit('input', null);
       this.showChooseSession = true;
-      this.handleDisplaySession();
+      this.date = null;
+      this.$nextTick(() => {
+        this.date = this.day || null;
+        this.handleDisplaySession(this.date);
+      });
     },
     dateChange(e) {
       this.date = e;
-      // this.chosenSession = null;
+      this.$emit('input', null);
       this.handleDisplaySession(e);
     },
     handleDisplaySession(date) {
@@ -177,7 +188,7 @@ export default {
       if (session.disabled) {
         return;
       }
-      this.chosenSession = session;
+      this.$emit('input', session);
     },
   },
 };

@@ -281,7 +281,7 @@ import BigNumber from 'bignumber.js';
 import { fileUrl } from '@/common/js/config';
 import { mapState, mapMutations } from 'vuex';
 export default {
-  onLoad() {
+  onLoad(options) {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
       this.screening = {
@@ -292,14 +292,13 @@ export default {
 
       this.price = data.price;
       this.blockBooking = data.blockBooking === 1;
-      const currentTabPage = uni.getStorageSync('current_tab_page') || 'play';
-      const filterData = uni.getStorageSync(currentTabPage + '_filter_data');
-      this.filterData = filterData;
+      console.log(options.from);
+      this.filterData = options.from === 'play' ? this.filter : {};
       // 不可以包场，只能拼场
       if (!this.blockBooking) {
         return this.changeMode(0);
       }
-      const { blockBooking, peopleFrom } = this.filterData || {};
+      const { blockBooking, peopleFrom } = this.filterData;
       // 选择了优先包场或拼场
       if (blockBooking != null) {
         return this.changeMode(blockBooking);
@@ -377,6 +376,7 @@ export default {
   computed: {
     ...mapState('pay', ['unpaidOrderMap']),
     ...mapState('user', ['userInfo', 'phone']),
+    ...mapState('filter', ['filter']),
     totalPrice() {
       return BigNumber(this.price).multipliedBy(this.count);
     },
@@ -465,7 +465,7 @@ export default {
     },
     goToValidCouponList() {
       uni.navigateTo({
-        url: '/subPackages/order/pay/valid-coupon-list',
+        url: '/subPackages/pay/valid-coupon-list',
         events: {
           chooseCoupon: ({ id }) => {
             const couponInfo = this.couponList.find(v => v.id === id);
@@ -532,7 +532,7 @@ export default {
     },
     goToUnpaidOrder() {
       uni.navigateTo({
-        url: '/subPackages/order/pay/pay?id=' + this.screening.uniqueId,
+        url: '/subPackages/pay/pay?id=' + this.screening.uniqueId,
       });
     },
     cancelOrder() {
@@ -555,7 +555,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../common/style/variable.scss';
+@import '../../common/style/variable.scss';
 .pay-container {
     min-height: 100%;
     padding: 0 22rpx 120rpx;

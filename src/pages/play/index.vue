@@ -97,7 +97,7 @@ import { timeFmt, defaultStartTimeMaker } from '@/common/js/utils/time-fmt';
 import positionPopup from '@/components/position-popup/position-popup.vue';
 import style from '../../common/style/variable.scss';
 import { fileUrl } from '../../common/js/config';
-import { mapState } from 'vuex';
+import { mapState, mapMutations } from 'vuex';
 export default {
   components: {
     listCard,
@@ -108,13 +108,11 @@ export default {
     positionPopup,
   },
   onShow() {
-    uni.setStorageSync('current_tab_page', this.tabPageName);
     // 开始实时监控位置
     this.$refs.positionRef.startLocationUpdate();
   },
   data() {
     return {
-      tabPageName: 'play',
       tabbarIndex: 1,
       loading: true,
       // 加载更多
@@ -235,6 +233,9 @@ export default {
     this.scrollTop = e.scrollTop;
   },
   methods: {
+    ...mapMutations('filter', {
+      setFilterData: 'setFilterData',
+    }),
     // 列表
     getCardList(isRefrash = false) {
       this.isRefrash = isRefrash;
@@ -246,7 +247,7 @@ export default {
         this.pageNum = 1;
       }
       const params = this.handleParams();
-      uni.setStorageSync(this.tabPageName + '_filter_data', params);
+      this.setFilterData(params);
       this.$u.api
         .getCardList(params)
         .then(res => {

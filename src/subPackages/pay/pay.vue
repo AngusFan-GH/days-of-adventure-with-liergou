@@ -67,6 +67,7 @@ import { timeRangeFmt } from '@/common/js/utils/time-fmt';
 import { fileUrl } from '@/common/js/config';
 import { mapState, mapMutations } from 'vuex';
 import { countDownCircle } from '@/components/count-down-circle/count-down-circle.vue';
+import $wechatPay from '@/common/js/utils/wechat-pay';
 const $moment = require('moment');
 export default {
   components: {
@@ -110,31 +111,13 @@ export default {
           console.error(error);
         }
       }
-      const [appId, timeStamp, nonceStr, prepayId, paySign] = this.orderInfo;
-      uni.requestPayment({
-        appId,
-        timeStamp,
-        nonceStr,
-        package: prepayId,
-        signType: 'RSA',
-        paySign,
-        success: e => {
-          if (e.errMsg === 'requestPayment:ok') {
-            uni.showToast({
-              title: '支付成功',
-            });
-            this.clearUnpaidOrder();
-            // 跳转支付成功结果页面
-            return this.goToResultPage();
-          }
-        },
-        fail: err => {
-          console.error(err);
-          uni.showToast({
-            title: err.errMsg === 'requestPayment:fail cancel' ? '取消支付' : '支付失败，请重试',
-            icon: 'none',
-          });
-        },
+      $wechatPay(this.orderInfo).then(() => {
+        uni.showToast({
+          title: '支付成功',
+        });
+        this.clearUnpaidOrder();
+        // 跳转支付成功结果页面
+        return this.goToResultPage();
       });
     },
     cancel() {
@@ -155,7 +138,7 @@ export default {
     },
     goToResultPage() {
       uni.redirectTo({
-        url: '/subPackages/order/pay/result',
+        url: `/subPackages/detail/index?productId=${this.screening.productId}&from=pay`,
       });
     },
     goback() {
@@ -168,7 +151,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../common/style/variable.scss';
+@import '../../common/style/variable.scss';
 .wrapper {
     box-sizing: border-box;
     height: 100%;

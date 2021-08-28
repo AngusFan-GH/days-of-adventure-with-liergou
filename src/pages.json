@@ -35,25 +35,25 @@
 			"root": "subPackages",
 			"pages": [
 				{
-					"path": "order/pay/index",
+					"path": "pay/index",
 					"style": {
 						"navigationBarTitleText": "提交订单"
 					}
 				},
 				{
-					"path": "order/pay/pay",
+					"path": "pay/pay",
 					"style": {
 						"navigationBarTitleText": "支付订单"
 					}
 				},
 				{
-					"path": "order/pay/result",
+					"path": "pay/result",
 					"style": {
 						"navigationBarTitleText": "支付结果"
 					}
 				},
 				{
-					"path": "order/pay/valid-coupon-list",
+					"path": "pay/valid-coupon-list",
 					"style": {
 						"navigationBarTitleText": "优惠券列表"
 					}

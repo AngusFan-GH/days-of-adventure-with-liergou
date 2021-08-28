@@ -65,7 +65,6 @@ export default {
     BackTop,
   },
   onShow() {
-    uni.setStorageSync('current_tab_page', this.tabPageName);
     this.$refs.positionRef.startLocationUpdate();
     this.$refs.bannerRef.init();
     this.$refs.popupRef.init();
@@ -75,7 +74,6 @@ export default {
   },
   data() {
     return {
-      tabPageName: 'index',
       tabbarIndex: 0,
       loading: true,
       status: 'loadmore',
@@ -146,7 +144,6 @@ export default {
       if (this.keyword) {
         params.name = this.keyword;
       }
-      uni.setStorageSync(this.tabPageName + '_filter_data', params);
       this.$u.api
         .getCardList(params)
         .then(res => {

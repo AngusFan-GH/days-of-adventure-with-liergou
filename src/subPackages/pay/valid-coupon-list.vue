@@ -59,8 +59,8 @@
 </template>
 
 <script>
-import { fileUrl } from '../../../common/js/config';
-import style from '../../../common/style/variable.scss';
+import { fileUrl } from '@/common/js/config';
+import style from '@/common/style/variable.scss';
 import loading from '@/components/loading/loading.vue';
 export default {
   components: {
@@ -112,7 +112,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../common/style/variable';
+@import '../../common/style/variable';
 .wrapper {
     height: 100%;
     padding-top: 40rpx;

@@ -40,8 +40,10 @@
 
 <script>
 import { timeRangeFmt } from '@/common/js/utils/time-fmt';
-import style from '../../common/style/variable.scss';
+import style from '@/common/style/variable.scss';
+import routeMixin from '@/common/js/mixin/route';
 export default {
+  mixins: [routeMixin],
   props: {
     screening: {
       type: Object,
@@ -64,8 +66,9 @@ export default {
   methods: {
     joinGroup() {
       console.log(this.screening);
+      const path = this.$getCurrentPage().route.split('/')[1];
       uni.navigateTo({
-        url: '/subPackages/order/pay/index',
+        url: '/subPackages/pay/index?from=' + path,
         success: res => {
           res.eventChannel.emit('submitOrder', JSON.parse(JSON.stringify(this.screening)));
         },
