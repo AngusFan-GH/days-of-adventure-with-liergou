@@ -437,8 +437,11 @@ export default {
         .createPay(params)
         .then(res => {
           this.loading = false;
+          const now = Date.now();
+          const timestamp = res.orderInfo[1] * 1000;
+          console.log(res, now, timestamp);
           this.setUnpaidOrder({
-            time: res.timestamp,
+            time: timestamp > now ? now : timestamp,
             screening: {
               ...this.screening,
               totalPrice: this.totalPrice,

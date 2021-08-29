@@ -86,10 +86,9 @@ export default {
     JoinButton,
   },
   onLoad(options) {
-    const { productId, uniqueId, from, avatarUrl, nickName, id } = options || {};
+    const { productId, uniqueId, from, id } = options || {};
     this.productId = +productId;
     this.uniqueId = uniqueId;
-    this.sharerInfo = { src: avatarUrl, name: nickName, id };
     this.from = from || 'share';
     this.handleFrom(from);
     console.log('@@@', options);
@@ -100,7 +99,6 @@ export default {
     return {
       productId: null,
       uniqueId: null,
-      sharerInfo: null,
       groupInfo: [],
       from: null,
       loading: true,
@@ -142,13 +140,11 @@ export default {
   },
   onShareAppMessage(res) {
     console.log(res.target);
-    const { avatarUrl, nickName, id } = this.userInfo;
+    const { id } = this.userInfo;
     const query = {
       productId: this.productId,
       from: 'share',
       id,
-      nickName,
-      avatarUrl,
     };
     if (this.uniqueId) {
       query.uniqueId = this.uniqueId;
@@ -173,8 +169,6 @@ export default {
           this.chosenPeople = !!peopleFrom;
           break;
         case 'pay':
-          const { avatarUrl, nickName, id } = this.userInfo;
-          this.sharerInfo = { src: avatarUrl, name: nickName, id };
           this.uniqueId && this.getViewScene(this.uniqueId);
           break;
         case 'share':
@@ -231,12 +225,32 @@ export default {
         .catch(err => console.error(err));
     },
     getViewScene(uniqueId) {
-      this.$u.api.getViewScene(uniqueId).then(e => {
-        console.log(e);
-        this.groupInfo = new Array(e.room.currentPeople).fill({ src: null });
-        this.groupInfo.splice(0, 1, this.sharerInfo);
-        console.log(this.groupInfo);
-      });
+      this.$u.api
+        .getViewScene(uniqueId)
+        .then(e => {
+          const { paidDetails, room } = e || [];
+          const mumbers = paidDetails.reduce((p, c) => {
+            const others = new Array(c.buyCount - 1).fill({
+              avatarUrl: null,
+              nickName: `${c.nickName}的小伙伴`,
+            });
+            return p.concat([c, ...others]);
+          }, []);
+          if (room.currentPeople - mumbers.length > 0) {
+            this.groupInfo = mumbers.concat(
+              new Array(room.currentPeople - mumbers.length).fill({ avatarUrl: null })
+            );
+          } else {
+            mumbers.length = room.currentPeople;
+            this.groupInfo = mumbers;
+          }
+          console.log(this.groupInfo);
+        })
+        .catch(err => {
+          console.error(err);
+          this.isShowGroupInfo = false;
+          this.isShowSessionDescribe = false;
+        });
     },
     goToOrder() {
       const {
