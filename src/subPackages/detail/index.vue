@@ -228,7 +228,9 @@ export default {
       this.$u.api
         .getViewScene(uniqueId)
         .then(e => {
-          const { paidDetails, room } = e || [];
+          const { paidDetails, room } = e || {};
+          console.log('222', e);
+          const { currentPeople, lockPeople, paidPeople } = room;
           const mumbers = paidDetails.reduce((p, c) => {
             const others = new Array(c.buyCount - 1).fill({
               avatarUrl: null,
