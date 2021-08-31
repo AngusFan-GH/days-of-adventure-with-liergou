@@ -3,6 +3,8 @@
     <view class="wrapper" :style="{ '--background': 'url(' + backgroundImage + ')' }">
       <!-- 主题描述 -->
       <theme-describe :data="data"></theme-describe>
+      <!-- 活动 -->
+      <activity :list="activityList"></activity>
       <!-- 组队信息 -->
       <group-info v-if="isShowGroupInfo" :data="groupInfo"></group-info>
       <!-- 拼场规则 -->
@@ -29,6 +31,8 @@
         :uniqueId="uniqueId"
         v-if="isShowSessionDescribe"
       ></session-describe>
+      <!-- 领取优惠券 -->
+      <coupon :data="coupon" :list="couponList"></coupon>
       <view class="btn-group">
         <!-- 选择场次 -->
         <choose-session
@@ -69,6 +73,8 @@ import ChooseSession from './components/choose-session.vue';
 import ShareButton from './components/share-button.vue';
 import { mapState } from 'vuex';
 import JoinButton from './components/join-button.vue';
+import Activity from './components/activity.vue';
+import Coupon from './components/coupon.vue';
 export default {
   components: {
     ThemeDescribe,
@@ -84,6 +90,8 @@ export default {
     SessionDescribe,
     ShareButton,
     JoinButton,
+    Activity,
+    Coupon,
   },
   onLoad(options) {
     const { productId, uniqueId, from, id } = options || {};
@@ -95,10 +103,16 @@ export default {
     this.getDetail();
     uni.showShareMenu();
   },
+  onShow() {
+    this.getActivityList();
+  },
   data() {
     return {
       productId: null,
       uniqueId: null,
+      activityList: [],
+      coupon: null,
+      couponList: [],
       groupInfo: [],
       from: null,
       loading: true,
@@ -156,6 +170,17 @@ export default {
     };
   },
   methods: {
+    getActivityList() {
+      this.$u.api.getActivityList({ location: '3' }).then(e => {
+        this.activityList = e.filter(activity => activity.type === '2');
+        this.coupon = e.filter(activity => activity.type === '1')[0];
+      });
+    },
+    getValidCouponList(price) {
+      this.$u.api.getValidCouponList(price).then(e => {
+        this.couponList = e;
+      });
+    },
     handleFrom(from) {
       const { title, showList } = this.fromMap[from] || {};
       this.setNavigationBarTitle(title);
@@ -221,6 +246,7 @@ export default {
           data.commitCount = this.data.commitCount || 0;
           this.data = data;
           this.loading = false;
+          this.getValidCouponList(data.basicPrice);
         })
         .catch(err => console.error(err));
     },

@@ -4,7 +4,7 @@
     :style="{ '--background': 'url(' + backgroundImage + ')' }"
   >
     <view class="u-m-30">
-      <text class="u-m-r-20 title">可用优惠券</text>
+      <text class="u-m-r-20 title">{{ title }}</text>
       <text class="count">共{{ couponList.length }}张</text>
     </view>
     <view class="u-flex-1 list">
@@ -50,7 +50,7 @@
             :hair-line="false"
             @click="chooseCoupon"
           >
-            确定
+            {{ btnText }}
           </u-button>
         </view>
       </view>
@@ -68,6 +68,9 @@ export default {
   },
   data() {
     return {
+      type: 'choose',
+      title: '可用优惠券',
+      btnText: '确定',
       eventChannel: null,
       couponList: [],
       value: null,
@@ -85,7 +88,12 @@ export default {
       },
     };
   },
-  onLoad() {
+  onLoad(options) {
+    this.type = options.type || 'choose';
+    if (this.type === 'take') {
+      this.title = '可领优惠券';
+      this.btnText = '领取';
+    }
     this.eventChannel = this.getOpenerEventChannel();
     this.eventChannel.on('validCouponList', ({ value, list }) => {
       this.couponList = list;
