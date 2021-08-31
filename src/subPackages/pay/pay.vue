@@ -112,7 +112,6 @@ export default {
           console.error(error);
         }
       }
-      return this.goToResultPage();
       $wechatPay(this.orderInfo).then(() => {
         uni.showToast({
           title: '支付成功',

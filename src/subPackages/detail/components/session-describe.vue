@@ -1,5 +1,5 @@
 <template>
-  <view class="u-p-25 u-flex u-col-bottom session-describe">
+  <view class="u-p-t-25 u-p-b-25 u-flex u-col-bottom session-describe">
     <view class="u-m-r-40 status">{{ status }}</view>
     <view class="u-m-r-10 u-m-b-6 u-m-r-18 current">{{ data.advicePeopleMin }}人成团</view>
     <view class="u-m-b-4 u-flex-1 u-line-1 rest">
@@ -48,16 +48,7 @@ export default {
 
 <style lang="scss" scoped>
 .session-describe {
-    position: absolute;
-    top: 0;
-
     width: 100%;
-
-    transform: translateY(-100%);
-
-    border-top-left-radius: 20rpx;
-    border-top-right-radius: 20rpx;
-    background-color: #f3dc9b;
     .status {
         font-size: 40rpx;
         font-weight: 600;

@@ -6,7 +6,14 @@
       <!-- 活动 -->
       <activity :list="activityList"></activity>
       <!-- 组队信息 -->
-      <group-info v-if="isShowGroupInfo" :data="groupInfo"></group-info>
+      <group-info v-if="isShowGroupInfo" :data="groupInfo">
+        <!-- 场次描述 -->
+        <session-describe
+          :data="data"
+          :uniqueId="uniqueId"
+          v-if="isShowSessionDescribe"
+        ></session-describe>
+      </group-info>
       <!-- 拼场规则 -->
       <pool-detail :data="data" v-if="isShowPoolDetail"></pool-detail>
       <!-- 主题icon -->
@@ -25,12 +32,6 @@
       <u-gap height="479"></u-gap>
     </view>
     <view class="theme-submit safe-area-inset-bottom">
-      <!-- 场次描述 -->
-      <session-describe
-        :data="data"
-        :uniqueId="uniqueId"
-        v-if="isShowSessionDescribe"
-      ></session-describe>
       <!-- 领取优惠券 -->
       <coupon :data="coupon" :list="couponList"></coupon>
       <view class="btn-group">
@@ -254,24 +255,20 @@ export default {
       this.$u.api
         .getViewScene(uniqueId)
         .then(e => {
-          const { paidDetails, room } = e || {};
-          console.log('222', e);
-          const { currentPeople, lockPeople, paidPeople } = room;
-          const mumbers = paidDetails.reduce((p, c) => {
-            const others = new Array(c.buyCount - 1).fill({
-              avatarUrl: null,
-              nickName: `${c.nickName}的小伙伴`,
-            });
-            return p.concat([c, ...others]);
-          }, []);
-          if (room.currentPeople - mumbers.length > 0) {
-            this.groupInfo = mumbers.concat(
-              new Array(room.currentPeople - mumbers.length).fill({ avatarUrl: null })
-            );
-          } else {
-            mumbers.length = room.currentPeople;
-            this.groupInfo = mumbers;
-          }
+          const { lockedDetails, paidDetails, room } = e || {};
+          const { currentPeople } = room;
+          const mumbers = [].concat(
+            lockedDetails.map(m => {
+              m.status = 'lock';
+              return m;
+            }),
+            paidDetails.map(m => {
+              m.status = 'paid';
+              return m;
+            }),
+            new Array(currentPeople).fill({ avatarUrl: null })
+          );
+          this.groupInfo = mumbers;
           console.log(this.groupInfo);
         })
         .catch(err => {
