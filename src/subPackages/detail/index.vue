@@ -95,7 +95,8 @@ export default {
     Coupon,
   },
   onLoad(options) {
-    const { productId, uniqueId, from, id } = options || {};
+    const { productId, uniqueId, from, baseOutTradeNo } = options || {};
+    this.baseOutTradeNo = baseOutTradeNo;
     this.productId = +productId;
     this.uniqueId = uniqueId;
     this.from = from || 'share';
@@ -111,6 +112,7 @@ export default {
     return {
       productId: null,
       uniqueId: null,
+      baseOutTradeNo: null,
       activityList: [],
       coupon: null,
       couponList: [],
@@ -163,6 +165,9 @@ export default {
     };
     if (this.uniqueId) {
       query.uniqueId = this.uniqueId;
+    }
+    if (this.baseOutTradeNo) {
+      query.baseOutTradeNo = this.baseOutTradeNo;
     }
     return {
       title: this.data.productName,
@@ -299,6 +304,9 @@ export default {
         blockBooking,
         headPic: headPicUrl,
       };
+      if (this.baseOutTradeNo) {
+        data.baseOutTradeNo = this.baseOutTradeNo;
+      }
       console.log('goToOrder', data);
       uni.navigateTo({
         url: '/subPackages/pay/index?from=' + this.from,

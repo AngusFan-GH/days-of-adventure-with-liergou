@@ -430,6 +430,9 @@ export default {
         productItemUniqueId: this.screening.uniqueId,
         userNote: this.remark,
       };
+      if (this.screening.baseOutTradeNo) {
+        params.baseOutTradeNo = this.screening.baseOutTradeNo;
+      }
       if (this.couponChoosn) {
         params.couponId = this.couponChoosn.id;
       }

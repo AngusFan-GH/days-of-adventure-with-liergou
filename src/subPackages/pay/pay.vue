@@ -139,7 +139,7 @@ export default {
     },
     goToResultPage() {
       uni.redirectTo({
-        url: `/subPackages/detail/index?productId=${this.screening.productId}&uniqueId=${this.screening.uniqueId}&from=pay`,
+        url: `/subPackages/detail/index?productId=${this.screening.productId}&uniqueId=${this.screening.uniqueId}&baseOutTradeNo=${this.orderId}&from=pay`,
       });
     },
     goback() {
