@@ -21,7 +21,7 @@
           }"
         >
           <u-avatar class="avatar" size="60" :src="item.avatarUrl"></u-avatar>
-          <view class="count" v-if="item.bayCount > 1">×{{ item.bayCount }}</view>
+          <view class="count" v-if="item.buyCount > 1">×{{ item.buyCount }}</view>
           <view class="count" v-if="item.lockCount > 1">×{{ item.lockCount }}</view>
         </view>
         <view class="u-line-1 name">{{ item.nickName || '神秘人' }}</view>
