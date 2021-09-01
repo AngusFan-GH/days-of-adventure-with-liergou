@@ -56,26 +56,26 @@
                   class="u-line-1 tip"
                   v-show="
                     !session.disabled &&
-                    session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople > 0
+                    session.totalCount &&
+                    data.advicePeopleMin - session.totalCount > 0
                   "
                 >
-                  已加入{{ session.currentPeople }}人，差
+                  已加入{{ session.totalCount }}人，差
                   <text class="high-light">
-                    {{ data.advicePeopleMin - session.currentPeople }}
+                    {{ data.advicePeopleMin - session.totalCount }}
                   </text>
-                  人可开场，最多再加入{{ data.advicePeopleMax - session.currentPeople }}人
+                  人可开场，最多再加入{{ data.advicePeopleMax - session.totalCount }}人
                 </view>
                 <view
                   class="u-line-1 tip"
                   v-show="
                     !session.disabled &&
-                    session.currentPeople &&
-                    data.advicePeopleMin - session.currentPeople <= 0
+                    session.totalCount &&
+                    data.advicePeopleMin - session.totalCount <= 0
                   "
                 >
                   已开场，最多再加入
-                  <text class="high-light">{{ data.advicePeopleMax - session.currentPeople }}</text>
+                  <text class="high-light">{{ data.advicePeopleMax - session.totalCount }}</text>
                   人
                 </view>
               </view>
@@ -97,9 +97,9 @@
               预订场次：
               <text class="choosed-msg">{{ value.date }} {{ value.time }}</text>
             </view>
-            <view v-show="data.blockBooking === 0 && value.currentPeople">
+            <view v-show="data.blockBooking === 0 && value.totalCount">
               已加入玩家：
-              <text>{{ value.currentPeople }}人</text>
+              <text>{{ value.totalCount }}人</text>
             </view>
           </view>
           <view class="btn" :class="{ disabled: !value }">
@@ -175,10 +175,11 @@ export default {
       const res = rooms[date] || [];
       this.displaySession = res.map(room => {
         const timeout = new Date(room.roomEndTime.replace(/-/g, '/')).getTime() <= Date.now();
+        room.totalCount = room.currentPeople + room.lockPeople + room.paidPeople;
         return {
           time: `${timeFmt(room.roomBeginTime, 'HH:mm')}-${timeFmt(room.roomEndTime, 'HH:mm')}`,
           date: `${timeFmt(this.date, 'dddd')}(${timeFmt(this.date, 'MM-DD')})`,
-          disabled: room.status === '2' || room.currentPeople >= advicePeopleMax || timeout,
+          disabled: room.status === '2' || room.totalCount >= advicePeopleMax || timeout,
           timeout,
           ...room,
         };
