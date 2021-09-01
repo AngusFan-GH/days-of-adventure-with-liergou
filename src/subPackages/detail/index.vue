@@ -175,11 +175,19 @@ export default {
       this.$u.api.getActivityList({ location: '3' }).then(e => {
         this.activityList = e.filter(activity => activity.type === '2');
         this.coupon = e.filter(activity => activity.type === '1')[0];
+        this.getValidCouponList();
       });
     },
-    getValidCouponList(price) {
-      this.$u.api.getValidCouponList(price).then(e => {
-        this.couponList = e;
+    getValidCouponList() {
+      this.$u.api.getActivityDetail(this.coupon.id).then(e => {
+        this.couponList = e.extras.activity_coupons
+          .filter(coupon => coupon.userTakeCount < coupon.takeCount)
+          .map(coupon => {
+            if (!coupon.title) {
+              coupon.title = this.coupon.title;
+            }
+            return coupon;
+          });
       });
     },
     handleFrom(from) {
@@ -247,7 +255,6 @@ export default {
           data.commitCount = this.data.commitCount || 0;
           this.data = data;
           this.loading = false;
-          this.getValidCouponList(data.basicPrice);
         })
         .catch(err => console.error(err));
     },
