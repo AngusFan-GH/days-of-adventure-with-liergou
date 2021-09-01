@@ -27,8 +27,9 @@ export default {
     data(data) {
       if (data) {
         const session = this.getSessionDescribe();
-        this.restPeople = data.advicePeopleMax - session.currentPeople;
-        if (session.currentPeople >= data.advicePeopleMin) {
+        const totalCount = session.currentPeople + session.lockPeople + session.paidPeople;
+        this.restPeople = data.advicePeopleMax - totalCount;
+        if (totalCount >= data.advicePeopleMin) {
           this.status = '已成团';
         }
       }

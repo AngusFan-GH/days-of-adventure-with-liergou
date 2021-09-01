@@ -9,10 +9,15 @@
       <group-info v-if="isShowGroupInfo" :data="groupInfo">
         <!-- 场次描述 -->
         <session-describe
+          slot="session-describe"
           :data="data"
           :uniqueId="uniqueId"
           v-if="isShowSessionDescribe"
         ></session-describe>
+        <view slot="session-info" class="u-m-b-28 u-flex">
+          <u-icon name="calendar" color="#2979ff" size="40"></u-icon>
+          <view class="u-m-l-10 session-time">{{ sessionTime }}</view>
+        </view>
       </group-info>
       <!-- 拼场规则 -->
       <pool-detail :data="data" v-if="isShowPoolDetail"></pool-detail>
@@ -76,6 +81,7 @@ import { mapState } from 'vuex';
 import JoinButton from './components/join-button.vue';
 import Activity from './components/activity.vue';
 import Coupon from './components/coupon.vue';
+import { timeRangeFmt } from '@/common/js/utils/time-fmt';
 export default {
   components: {
     ThemeDescribe,
@@ -115,6 +121,7 @@ export default {
       coupon: null,
       couponList: [],
       groupInfo: [],
+      sessionTime: null,
       from: null,
       loading: true,
       data: {
@@ -262,21 +269,22 @@ export default {
       this.$u.api
         .getViewScene(uniqueId)
         .then(e => {
+          console.log('sessionTime', e);
           const { lockedDetails, paidDetails, room } = e || {};
-          const { currentPeople } = room;
+          const { currentPeople, roomBeginTime, roomEndTime } = room;
+          this.sessionTime = timeRangeFmt(roomBeginTime, roomEndTime, true);
           const mumbers = [].concat(
-            lockedDetails.map(m => {
-              m.status = 'lock';
-              return m;
-            }),
             paidDetails.map(m => {
               m.status = 'paid';
+              return m;
+            }),
+            lockedDetails.map(m => {
+              m.status = 'lock';
               return m;
             }),
             new Array(currentPeople).fill({ avatarUrl: null })
           );
           this.groupInfo = mumbers;
-          console.log(this.groupInfo);
         })
         .catch(err => {
           console.error(err);
@@ -342,6 +350,9 @@ export default {
         min-height: 100%;
 
         background: var(--background) no-repeat bottom / 100%;
+    }
+    .session-time {
+        font-weight: 600;
     }
 }
 .theme-submit {
