@@ -25,6 +25,13 @@
     </view>
     <view class="op-list">
       <view class="u-flex u-row-between list-item" @click="goToOrderList()">
+        <text class="label">余额</text>
+        <view class="balance">
+          ¥
+          <text class="u-font-36">{{ balance }}</text>
+        </view>
+      </view>
+      <view class="u-flex u-row-between list-item" @click="goToOrderList()">
         <text class="label">订单</text>
         <u-icon name="arrow-right" custom-prefix="custom-icon" size="30"></u-icon>
       </view>
@@ -50,6 +57,7 @@ export default {
   },
   onShow() {
     this.getUserInfo();
+    this.getBalanceInfo();
     this.user && this.resetLabels();
   },
   data() {
@@ -84,6 +92,7 @@ export default {
       current: 0,
       timer: null,
       first: true,
+      balance: 0,
 
       backgroundImage: fileUrl + 'background_image.png!d1',
     };
@@ -118,6 +127,12 @@ export default {
         }
         this.current++;
       }, 2 * 1000);
+    },
+    getBalanceInfo() {
+      this.$u.api.getBalanceInfo().then(e => {
+        console.log('getBalanceInfo', e);
+        this.balance = e.balance || 100;
+      });
     },
     goToOrderList() {
       uni.navigateTo({
@@ -199,6 +214,9 @@ export default {
         .label {
             color: $title-color;
         }
+    }
+    .balance {
+      color: $theme-color;
     }
 }
 .loading {
