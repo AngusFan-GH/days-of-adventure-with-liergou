@@ -1,9 +1,9 @@
 <template>
   <view class="u-flex coupon" v-if="isShow && data && list.length">
     <u-icon name="youhuiquan" custom-prefix="custom-icon" color="#f4a56e" size="36"></u-icon>
-    <view class="u-flex u-flex-1 u-line-1 u-m-l-20 u-m-r-40 main">
+    <view class="u-flex u-flex-1 u-line-1 u-m-l-20 u-m-r-40 main" @click="getCoupon">
       <view class="u-flex-1 u-line-1 text">{{ data.title }}</view>
-      <text class="u-m-l-20 btn" @click="getCoupon" v-if="!hasGotCoupon">立即领取</text>
+      <text class="u-m-l-20 btn" v-if="!hasGotCoupon">立即领取</text>
       <text class="u-m-l-20 btn" v-else>已领取</text>
     </view>
     <u-icon name="close" size="30" @click="close"></u-icon>
@@ -25,6 +25,9 @@ export default {
   },
   methods: {
     getCoupon() {
+      if (this.hasGotCoupon) {
+        return;
+      }
       uni.navigateTo({
         url: '/subPackages/pay/valid-coupon-list?type=take',
         events: {

@@ -167,9 +167,10 @@ export default {
           v.tags = v.tags.split(',').filter(v => v);
           v.difficultLevel = v.difficultLevel / 10;
           v.screenings = v.rooms.map(room => {
+            const totalCount = room.currentPeople + room.lockPeople + room.paidPeople;
             return {
-              morePeople: v.advicePeopleMax - room.currentPeople,
-              restPeople: v.advicePeopleMin - room.currentPeople,
+              morePeople: v.advicePeopleMax - totalCount,
+              restPeople: v.advicePeopleMin - totalCount,
               ...room,
               ...v,
             };

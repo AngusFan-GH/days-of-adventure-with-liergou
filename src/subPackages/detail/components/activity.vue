@@ -1,5 +1,5 @@
 <template>
-  <view class="activity">
+  <view class="common-custome-style activity">
     <u-notice-bar
       mode="horizontal"
       volume-size="36"

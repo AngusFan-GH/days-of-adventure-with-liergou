@@ -284,9 +284,10 @@ export default {
   onLoad(options) {
     const eventChannel = this.getOpenerEventChannel();
     eventChannel.on('submitOrder', data => {
+      const totalCount = data.currentPeople + data.lockPeople + data.paidPeople;
       this.screening = {
-        morePeople: data.advicePeopleMax - data.currentPeople,
-        restPeople: data.advicePeopleMin - data.currentPeople,
+        morePeople: data.advicePeopleMax - totalCount,
+        restPeople: data.advicePeopleMin - totalCount,
         ...data,
       };
 

@@ -192,7 +192,7 @@ export default {
             font-size: 26rpx;
             font-weight: 400;
         }
-        /deep/ .review-pics {
+        ::v-deep .review-pics {
             display: inline-flex;
             overflow: hidden;
 

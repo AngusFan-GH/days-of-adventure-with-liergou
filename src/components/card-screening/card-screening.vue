@@ -3,7 +3,9 @@
     <view class="play-left">
       <view class="left-top u-flex-1 u-line-1">
         <text class="u-margin-right-18 time">{{ time }}</text>
-        <text class="u-padding-left-18 current-count">{{ screening.currentPeople }}人已加入</text>
+        <text class="u-padding-left-18 current-count">
+          {{ screening.currentPeople + screening.lockPeople + screening.paidPeople }}人已加入
+        </text>
       </view>
       <view class="left-bottom">
         <text v-if="screening.restPeople > 0">

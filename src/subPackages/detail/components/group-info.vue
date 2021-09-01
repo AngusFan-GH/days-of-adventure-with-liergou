@@ -8,19 +8,22 @@
       '--background-bottom': 'url(' + backgroundImage[2] + ')',
     }"
   >
-    <slot></slot>
+    <slot name="session-describe"></slot>
+    <slot name="session-info"></slot>
     <view class="u-flex u-row-between title u-skeleton-fillet">组队信息</view>
     <view class="u-flex u-p-t-30 u-p-b-30 wrapper">
       <view class="u-m-6 mumber" v-for="(item, index) in data" :key="index">
-        <u-avatar
-          class="avatar"
+        <view
+          class="avatar-wrapper"
           :class="{
             paid: item.status === 'paid',
             lock: item.status === 'lock',
           }"
-          size="60"
-          :src="item.avatarUrl"
-        ></u-avatar>
+        >
+          <u-avatar class="avatar" size="60" :src="item.avatarUrl"></u-avatar>
+          <view class="count" v-if="item.buyCount > 1">×{{ item.buyCount }}</view>
+          <view class="count" v-if="item.lockCount > 1">×{{ item.lockCount }}</view>
+        </view>
         <view class="u-line-1 name">{{ item.nickName || '神秘人' }}</view>
       </view>
     </view>
@@ -65,24 +68,51 @@ export default {
         flex-wrap: wrap;
         .mumber {
             width: 70rpx;
-            .avatar {
-                display: block;
+            .avatar-wrapper {
+                position: relative;
+                .avatar {
+                    display: block;
 
-                width: 60rpx;
-                height: 60rpx;
-                margin: 0 auto 10rpx;
+                    width: 60rpx;
+                    height: 60rpx;
+                    margin: 0 auto 10rpx;
 
-                border: 2px solid #ccc;
-                border-radius: 100%;
+                    border: 2px solid #ccc;
+                    border-radius: 100%;
+                }
+                .count {
+                    font-size: 16rpx;
+
+                    position: absolute;
+                    right: -4rpx;
+                    bottom: 0;
+
+                    padding: 0 8rpx;
+
+                    color: #fff;
+                    border-radius: 8rpx;
+                    background: #ccc;
+                }
                 &.paid {
-                    border: 2px solid #f0ba43;
+                    .avatar {
+                        border: 2px solid #f0ba43;
+                    }
+                    .count {
+                        background: #f0ba43;
+                    }
                 }
                 &.lock {
-                    border: 2px solid #fa3534;
+                    .avatar {
+                        border: 2px solid #fa3534;
+                    }
+                    .count {
+                        background: #fa3534;
+                    }
                 }
             }
             .name {
                 font-size: 22rpx;
+                font-weight: 500;
 
                 width: 100%;
 
