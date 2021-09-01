@@ -188,7 +188,7 @@ export default {
     getValidCouponList() {
       this.$u.api.getActivityDetail(this.coupon.id).then(e => {
         this.couponList = e.extras.activity_coupons
-          .filter(coupon => coupon.userTakeCount < coupon.takeCount)
+          .filter(coupon => coupon.userTakeCount < coupon.totalPerUser)
           .map(coupon => {
             if (!coupon.title) {
               coupon.title = this.coupon.title;
