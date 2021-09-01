@@ -131,7 +131,7 @@ export default {
     getBalanceInfo() {
       this.$u.api.getBalanceInfo().then(e => {
         console.log('getBalanceInfo', e);
-        this.balance = e.balance || 100;
+        this.balance = e.balance;
       });
     },
     goToOrderList() {
