@@ -24,7 +24,7 @@
       ></u-icon>
     </view>
     <view class="op-list">
-      <view class="u-flex u-row-between list-item" @click="goToOrderList()">
+      <view class="u-flex u-row-between list-item">
         <text class="label">余额</text>
         <view class="balance">
           ¥
