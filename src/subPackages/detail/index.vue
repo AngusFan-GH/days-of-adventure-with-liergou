@@ -367,7 +367,7 @@ export default {
     background-color: #fff;
     .btn-group {
         padding: 15rpx 32rpx;
-        /deep/ .btn-text {
+        ::v-deep .btn-text {
             font-size: 36rpx;
             font-weight: bold;
 
