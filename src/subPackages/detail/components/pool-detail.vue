@@ -140,7 +140,7 @@ export default {
 }
 // 拼场规则弹框
 .pool-rule-desc {
-    padding: 35rpx 30rpx;
+    padding: 35rpx 30rpx 15rpx;
     .title {
         font-size: 32rpx;
         font-weight: 600;

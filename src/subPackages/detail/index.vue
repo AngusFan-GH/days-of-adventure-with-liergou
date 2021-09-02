@@ -38,7 +38,7 @@
     </view>
     <view class="theme-submit safe-area-inset-bottom">
       <!-- 领取优惠券 -->
-      <coupon :data="coupon" :list="couponList"></coupon>
+      <coupon :data="coupon" v-model="couponList"></coupon>
       <view class="btn-group">
         <!-- 选择场次 -->
         <choose-session
@@ -192,14 +192,11 @@ export default {
     },
     getValidCouponList() {
       this.$u.api.getActivityDetail(this.coupon.id).then(e => {
-        this.couponList = e.extras.activity_coupons
-          .filter(coupon => coupon.userTakeCount < coupon.totalPerUser)
-          .map(coupon => {
-            if (!coupon.title) {
-              coupon.title = this.coupon.title;
-            }
-            return coupon;
-          });
+        this.couponList = e.extras.activity_coupons.map(coupon => {
+          coupon.title = coupon.title || this.coupon.title;
+          coupon.hasGot = coupon.userTakeCount >= coupon.totalPerUser;
+          return coupon;
+        });
       });
     },
     handleFrom(from) {

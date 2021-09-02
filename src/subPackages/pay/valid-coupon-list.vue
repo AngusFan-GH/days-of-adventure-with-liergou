@@ -20,7 +20,7 @@
               <view class="u-flex-1 u-line-1">
                 <view class="u-line-1 u-m-b-20 name">{{ item.title }}</view>
                 <view class="u-line-1 time">
-                  有效期至{{ item.validStartTime || `领取后的${item.validDays}内` }}
+                  有效期至{{ item.validEndTime || `领取后的${item.validDays}天内` }}
                 </view>
               </view>
               <view class="u-flex-col u-col-center">
