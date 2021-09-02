@@ -94,26 +94,14 @@ export default {
       if (hasGot) {
         return;
       }
-      this.$u.api
-        .takeCoupon(id)
-        .then(() => {
-          coupon.hasGot = true;
-          console.log('takeCoupon', this.value);
-          this.$emit('input', this.value);
-          uni.showToast({
-            title: '恭喜，抢到了',
-            icon: 'none',
-          });
-        })
-        .catch(() => {
-          coupon.hasGot = true;
-          console.log('takeCoupon', this.value);
-          this.$emit('input', this.value);
-          uni.showToast({
-            title: '恭喜，抢到了',
-            icon: 'none',
-          });
+      this.$u.api.takeCoupon(id).then(() => {
+        coupon.hasGot = true;
+        this.$emit('input', this.value);
+        uni.showToast({
+          title: '恭喜，抢到了',
+          icon: 'none',
         });
+      });
     },
     close() {
       this.isShow = false;

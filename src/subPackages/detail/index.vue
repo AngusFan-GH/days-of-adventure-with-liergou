@@ -192,11 +192,16 @@ export default {
     },
     getValidCouponList() {
       this.$u.api.getActivityDetail(this.coupon.id).then(e => {
-        this.couponList = e.extras.activity_coupons.map(coupon => {
+        this.couponList = e.extras.activity_coupons.reduce((set, coupon) => {
           coupon.title = coupon.title || this.coupon.title;
-          coupon.hasGot = coupon.userTakeCount >= coupon.totalPerUser;
-          return coupon;
-        });
+          set.push(
+            ...new Array(coupon.totalPerUser).fill(coupon).map((c, i) => {
+              c.hasGot = c.userTakeCount <= i + 1;
+              return c;
+            })
+          );
+          return set;
+        }, []);
       });
     },
     handleFrom(from) {
