@@ -44,6 +44,7 @@
         <choose-session
           :data="data"
           :day="date"
+          :chosenPeople="chosenPeople"
           v-model="chosenSession"
           v-if="isShowChooseSessionBtn"
         ></choose-session>
@@ -107,11 +108,10 @@ export default {
     this.uniqueId = uniqueId;
     this.from = from || 'share';
     this.handleFrom(from);
-    console.log('@@@', options);
-    this.getDetail();
     uni.showShareMenu();
   },
   onShow() {
+    this.getDetail();
     this.getActivityList();
   },
   data() {
@@ -130,7 +130,7 @@ export default {
         headPicUrl: defaultThumb,
       },
       date: null,
-      chosenPeople: true,
+      chosenPeople: false,
       hasCommits: false,
       chosenSession: null,
       backgroundImage: fileUrl + 'background_image.png!d1',
@@ -210,7 +210,7 @@ export default {
       this.handleShowContent(showList);
       switch (from) {
         case 'play':
-          const { peopleFrom, roomBeginTimeFrom } = from === 'play' ? this.filter : {};
+          const { peopleFrom, roomBeginTimeFrom } = this.filter;
           this.date = roomBeginTimeFrom
             ? new Date(roomBeginTimeFrom.replace(/-/g, '/')).getTime()
             : null;
@@ -276,7 +276,6 @@ export default {
       this.$u.api
         .getViewScene(uniqueId)
         .then(e => {
-          console.log('sessionTime', e);
           const { lockedDetails, paidDetails, room } = e || {};
           const { currentPeople, roomBeginTime, roomEndTime } = room;
           this.sessionTime = timeRangeFmt(roomBeginTime, roomEndTime, true);
@@ -346,6 +345,12 @@ export default {
     return {
       goToOrder: this.goToOrder,
     };
+  },
+  onUnload() {
+    this.from === 'pay' &&
+      uni.navigateBack({
+        delta: 1,
+      });
   },
 };
 </script>

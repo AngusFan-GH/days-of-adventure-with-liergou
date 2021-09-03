@@ -75,7 +75,6 @@ export default {
   },
   onLoad() {
     const { time, orderId, orderInfo, screening } = this.unpaidOrder || {};
-    console.log(this.unpaidOrder);
     this.time = $moment(time).format('YYYY/MM/DD HH:mm:ss');
     this.orderId = orderId;
     this.orderInfo = orderInfo;

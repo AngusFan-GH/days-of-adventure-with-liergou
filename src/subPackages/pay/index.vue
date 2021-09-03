@@ -293,29 +293,13 @@ export default {
 
       this.price = data.price;
       this.blockBooking = data.blockBooking === 1;
-      console.log(options.from);
       this.filterData = options.from === 'play' ? this.filter : {};
-      // 不可以包场，只能拼场
-      if (!this.blockBooking) {
-        return this.changeMode(0);
-      }
-      const { blockBooking, peopleFrom } = this.filterData;
-      // 选择了优先包场或拼场
-      if (blockBooking != null) {
-        return this.changeMode(blockBooking);
-      }
-      // 根据人数是否达到包场最小人数
-      if ((peopleFrom || 1) >= data.advicePeopleMin) {
-        return this.changeMode(1);
-      }
-      // 拼场
-      this.changeMode(0);
+      this.handleChangeMode();
     });
   },
   onShow() {
+    this.getUserInfo();
     this.$nextTick(() => {
-      this.getUserInfo();
-      this.getViewScene();
       this.handleUnpaidOrder();
     });
   },
@@ -357,21 +341,6 @@ export default {
     };
   },
   watch: {
-    mode(val) {
-      const { peopleFrom } = this.filterData || {};
-      if (peopleFrom != null) {
-        this.count = peopleFrom;
-        return;
-      }
-      switch (val) {
-        case 1:
-          this.count = this.screening.advicePeopleMin;
-          break;
-        case 0:
-          this.count = 1;
-          break;
-      }
-    },
     totalPrice(val) {
       this.getValidCouponList(val);
     },
@@ -396,10 +365,27 @@ export default {
       clearUnpaidOrder: 'clearUnpaidOrder',
     }),
     getViewScene() {
-      this.screening.uniqueId &&
+      return new Promise((res, rej) => {
+        if (!this.screening.uniqueId) {
+          return rej();
+        }
         this.$u.api.getViewScene(this.screening.uniqueId).then(e => {
-          console.log(e);
+          const { currentPeople, lockPeople, paidPeople } = e.room || {};
+          const totalCount = currentPeople + lockPeople + paidPeople;
+          const data = this.screening;
+          this.screening = {
+            ...data,
+            ...{
+              currentPeople,
+              lockPeople,
+              paidPeople,
+              morePeople: data.advicePeopleMax - totalCount,
+              restPeople: data.advicePeopleMin - totalCount,
+            },
+          };
+          return res();
         });
+      });
     },
     getUserInfo() {
       const token = uni.getStorageSync('token');
@@ -411,8 +397,39 @@ export default {
       this.name = userInfo.nickName;
       this.phoneNumber = phone;
     },
+    handleChangeMode() {
+      // 不可以包场，只能拼场
+      if (!this.blockBooking) {
+        return this.changeMode(0);
+      }
+      const { blockBooking, peopleFrom } = this.filterData;
+      // 选择了优先包场或拼场
+      if (blockBooking != null) {
+        return this.changeMode(blockBooking);
+      }
+      // 根据人数是否达到包场最小人数
+      if ((peopleFrom || 1) >= this.screening.advicePeopleMin) {
+        return this.changeMode(1);
+      }
+      // 拼场
+      this.changeMode(0);
+    },
     changeMode(mode) {
       this.mode = mode;
+      const { peopleFrom } = this.filterData || {};
+      const { restPeople, advicePeopleMin } = this.screening;
+      if (peopleFrom != null && peopleFrom <= restPeople) {
+        this.count = peopleFrom;
+        return;
+      }
+      switch (mode) {
+        case 1:
+          this.count = advicePeopleMin;
+          break;
+        case 0:
+          this.count = 1;
+          break;
+      }
     },
     createPay() {
       if (!/\d{11}/.test(this.phoneNumber)) {
@@ -443,7 +460,6 @@ export default {
           this.loading = false;
           const now = Date.now();
           const timestamp = res.orderInfo[1] * 1000;
-          console.log(res, now, timestamp);
           this.setUnpaidOrder({
             time: timestamp > now ? now : timestamp,
             screening: {
@@ -458,9 +474,9 @@ export default {
           this.goToUnpaidOrder();
         })
         .catch(err => {
-          this.loading = false;
           console.error(err);
-          this.getViewScene();
+          this.loading = false;
+          this.getViewScene().then(() => this.handleChangeMode());
         });
     },
     getValidCouponList(price) {

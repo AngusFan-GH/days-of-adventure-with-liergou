@@ -107,7 +107,7 @@
               shape="circle"
               :custom-style="customStyle"
               :disabled="!value"
-              @click="goToOrder()"
+              @click="handleSubmit"
             >
               下一步
               <text v-show="!chosenPeople">，选择人数</text>
@@ -135,6 +135,7 @@ export default {
     },
     data: null,
     day: null,
+    chosenPeople: false,
   },
   inject: ['goToOrder'],
   data() {
@@ -190,6 +191,10 @@ export default {
         return;
       }
       this.$emit('input', session);
+    },
+    handleSubmit() {
+      this.goToOrder();
+      this.showChooseSession = false;
     },
   },
 };

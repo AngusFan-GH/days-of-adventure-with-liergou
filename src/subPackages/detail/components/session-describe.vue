@@ -2,11 +2,12 @@
   <view class="u-p-t-25 u-p-b-25 u-flex u-col-bottom session-describe">
     <view class="u-m-r-40 status">{{ status }}</view>
     <view class="u-m-r-10 u-m-b-6 u-m-r-18 current">{{ data.advicePeopleMin }}人成团</view>
-    <view class="u-m-b-4 u-flex-1 u-line-1 rest">
+    <view class="u-m-b-4 u-flex-1 u-line-1 rest" v-if="restPeople > 0">
       还可加入
       <text class="rest-count">{{ restPeople }}</text>
       人
     </view>
+    <view class="u-m-b-4 u-flex-1 u-line-1 rest" v-else>人已凑齐</view>
   </view>
 </template>
 
